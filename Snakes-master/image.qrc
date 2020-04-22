@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>image/bg.jpg</file>
+        <file>image/food.png</file>
+        <file>image/head.png</file>
+        <file>image/logo.ico</file>
+        <file>image/tail.png</file>
+    </qresource>
+</RCC>
