@@ -76,6 +76,7 @@ void Snake::drawViewArea() {
 }
 
 // 初始化游戏
+//这是贾晟浩修改的部分 
 void Snake::init() {
     foodCount = 0;
     moveSpeed = 400;
