@@ -7,24 +7,28 @@
 #include <QThread>
 #include <QStyle>
 
+//snake是从QWidget中继承的函数，参数parent是用来初始化QWidget的
 Snake::Snake(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Snake)
 {
+    //ui是Ui::snake型的指针，用this指针给其赋值
     ui->setupUi(this);
-    setWindowIcon(QIcon(":/image/image/logo.ico"));
+    //QIcon用来保存小部件的图标
+    setWindowIcon(QIcon(":/image/image/logo.ico"));//用来设置左上角的图标
 
     score = 0;
     level = 1;
 
-    this->setWindowTitle("Snake");
-    this->resize((MAX_X + 7) * Lable_Size,MAX_Y * Lable_Size); //窗体大小
+    this->setWindowTitle("Snake");//setWindowTitle是Qstring类下的一个函数（为什么会有Qstring类？）
+    this->resize((MAX_X + 7) * Lable_Size,MAX_Y * Lable_Size); //窗体大小，resize是Qsize下的一个函数
 
-    startButton = new QPushButton("StartGame",this);
+    startButton = new QPushButton("StartGame",this);//开始游戏的startgame按钮的初始化
     startButton->setStyleSheet("font-size:20px;QPushButton{ background-color: rgb(143,122,102); border-radius: 10px; font: bold; color: white; }");
-
+    //setStyleSheet相当于设置字体之类的
     startButton->setGeometry(MAX_X * Lable_Size / 2 - 80,MAX_Y * Lable_Size / 2 - 40,160,80);
 
+    //对整个界面的初始化
     mLabel = new QLabel(this);
     mLabel->setStyleSheet("font-size:30px;");
 
@@ -34,7 +38,7 @@ Snake::Snake(QWidget *parent) :
 
     mLabel->setAlignment(Qt::AlignCenter);//函数setAlignment()主要将是消除布局中的空隙，让两个控件紧紧挨在一起
     // 将分数转换为QString类型
-    viewText = QString::number (score,10);
+    viewText = QString::number (score,10);//根据指定的基数返回与数字n等效的字符串。
     mLabel->setText("分数:" + viewText +'\n' + "关数:" + QString::number (level,10));
     mLabel->show();
 
@@ -76,7 +80,6 @@ void Snake::drawViewArea() {
 }
 
 // 初始化游戏
-//这是贾晟浩修改的部分 
 void Snake::init() {
     foodCount = 0;
     moveSpeed = 400;
@@ -88,6 +91,7 @@ void Snake::init() {
             label->setGeometry(x * Lable_Size, y * Lable_Size, Lable_Size - 1, Lable_Size - 1);
             label->hide();
 
+            //snake_label【x】【y】是一个snakeNode类型的指针,每次循环都给其中的XY赋值
             snake_label[x][y] = new snakeNode;
             snake_label[x][y]->label = label;
             snake_label[x][y]->type = Normal_label;
@@ -106,7 +110,7 @@ void Snake::drawBorder() {
         for(int y = 0; y < MAX_Y; y++) {
             if(x == 0 || y == 0 || x == MAX_X -1 || y == MAX_Y - 1) {
                 snake_label[x][y]->label->setStyleSheet("background:gray");
-                snake_label[x][y]->label->show();
+                snake_label[x][y]->label->show();//show的作用是展示widget
                 snake_label[x][y]->type = Border_label;
             }
         }
