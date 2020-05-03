@@ -12,9 +12,10 @@
 #include <cstdlib>
 #define MAX_X 24
 #define MAX_Y  20
-#define Lable_Size  30 //label快大小
+#define Lable_Size  30 //label块大小
 
 // label类型
+//lable是用来提供文本或文章展示的
 enum Label{
      // 普通类型，即背景
     Normal_label,
@@ -24,9 +25,10 @@ enum Label{
     Snake_label,
    // 食物类型
     Food_label
-};
+};//通过枚举给四个变量分别赋值1，2，3，4，相当于四个int型的数，用来判断每个节点的类型
 
 // 结构体蛇结点
+//struct可以看作一个没有成员函数的类
 struct snakeNode {
     QLabel *label;
     int type;
