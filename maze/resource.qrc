@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>catwin.jpg</file>
+        <file>catwin1.gif</file>
+        <file>mousewin.jpg</file>
+        <file>diban.jpg</file>
+        <file>wall.jpg</file>
+        <file>tubiao.ico</file>
+        <file>cat2.gif</file>
+        <file>cat3.gif</file>
+        <file>cat4.gif</file>
+        <file>cat5.gif</file>
+        <file>mouse1.gif</file>
+        <file>mouse2.gif</file>
+        <file>mouse3.gif</file>
+        <file>mouse4.gif</file>
+        <file>cheese.jpg</file>
+        <file>cover.jpg</file>
+        <file>m1.png</file>
+        <file>m2.png</file>
+        <file>m3.png</file>
+        <file>replay.png</file>
+        <file>return.png</file>
+        <file>setting.png</file>
+        <file>time.png</file>
+    </qresource>
+</RCC>

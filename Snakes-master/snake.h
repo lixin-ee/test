@@ -66,9 +66,6 @@ private slots:
     void startGameSlots();      // 游戏开始
 
 
-
-
-
 private:
     Ui::Snake *ui;
 
