@@ -85,6 +85,8 @@ private:
     QMovie* catgif;
     int dx=1;
     int dy=0;
+    int dx1=0;
+    int dy1=-1;
     int MX=41;
     int MY=31;
     int gametime;
