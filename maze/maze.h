@@ -46,6 +46,7 @@ public:
 
     void gameover(int);
     void destructwall();
+    void RandestructWall();
     void movecat();
     void structface();
     void keyPressEvent(QKeyEvent *event);
@@ -53,8 +54,8 @@ public:
     ~maze();
 private slots:
     //void findpath();这个可以看情况做不做，如果太难实现就不做了，主要负责寻路，类似提示路线；
-    void startgame1();
-    void startgame2();
+   void startgame1();
+   void startgame2();
     void startgame3();
     void replay();
     void returnhome();
@@ -62,6 +63,8 @@ private slots:
     void settingslot();
     void updatetimer();
     void movemouse();
+    void movemouse2();
+    void walk();
 private:
     Ui::maze *ui;
     QPushButton* setting;
@@ -70,7 +73,6 @@ private:
     QPushButton* start2;
     QPushButton* start3;
     QLabel* Clabel;
-    QLabel* win;
     QPushButton* Return;
     QPushButton* Replay;
     QLCDNumber* printtime;
@@ -80,15 +82,16 @@ private:
     square*mouse;
     square*food;
     QMovie* mousegif;
+    QMovie* catgif;
     int dx=1;
     int dy=0;
     int MX=41;
     int MY=31;
     int gametime;
     QVector<square*>wall;
-    square*** allsquare;
+    square*** allsquare=nullptr;
     QVector<square*>ground;
 
 };
-
+static int gamesta=0;
 #endif // MAZE_H
