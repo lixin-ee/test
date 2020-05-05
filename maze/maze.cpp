@@ -143,7 +143,7 @@ void maze::startgame2()
 }
 void maze::startgame3()
 {
-    gamesta=1;
+    gamesta=3;
     initgame();
     gametime =MX*MY*0.2;
     updatetimer();
@@ -170,7 +170,7 @@ void maze::walk()
         allsquare[cat->X][cat->Y]->label->show();
         allsquare[cat->X][cat->Y]->label->setMovie(catgif);
          catgif->start();
-        gameover(0);
+        gameover(0,1);
     }
 }
 void maze::movecat()//响应键盘的移动函数，要有必要的判断，判断是否有墙
@@ -350,6 +350,8 @@ void maze::keyPressEvent(QKeyEvent *event)//键盘控制部分
             movemouse();
         if(gamesta==2)
             movemouse2();
+        if(gamesta==3)
+            movemouse3();
         break;
     case Qt::Key_Down:
         dx=0;
@@ -358,6 +360,8 @@ void maze::keyPressEvent(QKeyEvent *event)//键盘控制部分
             movemouse();
         if(gamesta==2)
             movemouse2();
+        if(gamesta==3)
+            movemouse3();
         break;
     case Qt::Key_Left:
         dx=-1;
@@ -366,6 +370,8 @@ void maze::keyPressEvent(QKeyEvent *event)//键盘控制部分
             movemouse();
         if(gamesta==2)
             movemouse2();
+        if(gamesta==3)
+            movemouse3();
         break;
     case Qt::Key_Right:
         dx=1;
@@ -374,6 +380,8 @@ void maze::keyPressEvent(QKeyEvent *event)//键盘控制部分
             movemouse();
         if(gamesta==2)
             movemouse2();
+        if(gamesta==3)
+            movemouse3();
         break;
     }
 }
@@ -381,9 +389,38 @@ void maze::movemouse()//响应键盘的移动函数，要有必要的判断，�
 {
     square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
+        if(tempMouse->type==wall_label)//如果老鼠撞到了墙
+        {
+
+        }
+        else//如果老鼠没有撞到墙
+        {
+            if(tempMouse->type==food_label)
+                gameover(1,0);
+            else
+                {
+                tempMouse->type=mouse_label;
+                allsquare[mouse->X][mouse->Y]->type=ground_label;
+                allsquare[mouse->X][mouse->Y]->label->clear();
+                allsquare[mouse->X][mouse->Y]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                allsquare[mouse->X][mouse->Y]->label->show();
+                allsquare[mouse->X+dx][mouse->Y+dy]->type=mouse_label;
+                allsquare[mouse->X+dx][mouse->Y+dy]->label->setMovie(mousegif);
+                mousegif->start();
+                mouse=tempMouse;
+            }
+
+
+        }
+
+}
+void maze::movemouse3()//响应键盘的移动函数，要有必要的判断，判断是否有墙
+{
+    square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
+
         if(tempMouse->type==cat_label)
         {
-            gameover(0);
+            gameover(0,1);
         }
         if(tempMouse->type==wall_label)//如果老鼠撞到了墙
         {
@@ -392,7 +429,7 @@ void maze::movemouse()//响应键盘的移动函数，要有必要的判断，�
         else//如果老鼠没有撞到墙
         {
             if(tempMouse->type==food_label)
-                gameover(1);
+                gameover(1,1);
             else
                 {
                 tempMouse->type=mouse_label;
@@ -422,7 +459,7 @@ tempMouse->type=ground_label;
         else//如果老鼠没有撞到墙
         {
             if(tempMouse->type==food_label)
-                gameover(1);
+                gameover(1,0);
             else
                 {
                 tempMouse->type=mouse_label;
@@ -710,9 +747,11 @@ void maze::updatetimer()//主要负责显示时间
    if(gametime<10&&gametime>=0){str="000"+QString::number(gametime);}
    if(gametime>100){str="0"+QString::number(gametime);}
    printtime->display(str);
-   if(gametime==0){gameover(0);}
+   if(gametime==0&&gamesta==1){gameover(0,0);}
+   if(gametime==0&&gamesta==2){gameover(0,0);}
+   if(gametime==0&&gamesta==3){gameover(0,1);}
 }
-void maze::gameover(int a)
+void maze::gameover(int a,int b)
 {
 
     //接下来可以做游戏结束界面，记得，先删除当前界面,除了下方栏；
@@ -756,7 +795,7 @@ void maze::gameover(int a)
                      gametime=MX*MY*0.2;
                  counttimer->start();
                 structface();
-                if(cat!=nullptr)
+                if(b==1)
                 {
                     allsquare[1][MY-2]->type=cat_label;
                     cat=allsquare[1][MY-2];
@@ -767,7 +806,7 @@ void maze::gameover(int a)
              {
                  if(a==0)
                      gametime=MX*MY*0.2;
-                if(cat!=nullptr)
+                if(b==1)
                 {
                     allsquare[1][MY-2]->type=cat_label;
                     cat=allsquare[1][MY-2];
