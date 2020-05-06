@@ -80,6 +80,10 @@ void maze::returnhome()//返回主界面
 {
     wall.clear();
     ground.clear();
+    if(gamesta==3)
+    {
+        change.clear();
+    }
     for(int i=0;i<MX;i++)
     {
         for (int j=0;j<MY;j++)
@@ -125,6 +129,14 @@ void maze::replay()//重玩
         cat->label->clear();
         allsquare[1][MY-2]->type=cat_label;
         cat=allsquare[1][MY-2];
+        for(square* a:change)
+        {
+            a->type = ground_label;
+            a->label->clear();
+            a->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+            a->label->show();
+        }
+        change.clear();
         cat->label->setMovie(catgif);
         catgif->start();
     }
@@ -233,6 +245,7 @@ void maze::movecat()//响应键盘的移动函数，要有必要的判断，判�
     allsquare[cat->X][cat->Y]->label->show();
     allsquare[cat->X+dx1][cat->Y+dy1]->type=cat_label;
     cat=allsquare[cat->X+dx1][cat->Y+dy1];
+    change.append( allsquare[cat->X][cat->Y]);
     allsquare[cat->X][cat->Y]->label->setMovie(catgif);
      catgif->start();
 }
@@ -420,7 +433,7 @@ void maze::movemouse3()//响应键盘的移动函数，要有必要的判断，�
 
         if(tempMouse->type==cat_label)
         {
-            gameover(0,1);
+            walk();
         }
         if(tempMouse->type==wall_label)//如果老鼠撞到了墙
         {
@@ -792,20 +805,21 @@ void maze::gameover(int a,int b)
                  wall.clear();
                  ground.clear();
                  if(a==0)
-                     gametime=MX*MY*0.2;
-                 counttimer->start();
+                 {gametime=MX*MY*0.2;}
+                 counttimer->start();  
                 structface();
                 if(b==1)
                 {
                     allsquare[1][MY-2]->type=cat_label;
                     cat=allsquare[1][MY-2];
+                    cat->label->setMovie(catgif);
                     catgif->start();
+                    change.clear();
                 }
+
              }
              else
              {
-                 if(a==0)
-                     gametime=MX*MY*0.2;
                 if(b==1)
                 {
                     allsquare[1][MY-2]->type=cat_label;
@@ -813,9 +827,6 @@ void maze::gameover(int a,int b)
                     mouse->label->clear();
                 }
              }
-
-
-
              delete donghua;
 }
 

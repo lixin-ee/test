@@ -93,6 +93,7 @@ private:
     QVector<square*>wall;
     square*** allsquare=nullptr;
     QVector<square*>ground;
+    QVector<square*>change;
 
 };
 static int gamesta=0;
