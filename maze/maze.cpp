@@ -80,10 +80,6 @@ void maze::returnhome()//返回主界面
 {
     wall.clear();
     ground.clear();
-    if(gamesta==3)
-    {
-        change.clear();
-    }
     for(int i=0;i<MX;i++)
     {
         for (int j=0;j<MY;j++)
@@ -96,6 +92,12 @@ void maze::returnhome()//返回主界面
     } 
     delete allsquare;
     allsquare=nullptr;
+    if(gamesta==3)
+    {
+        change.clear();
+        delete cat->label;
+        delete cat;
+    }
     Clabel->show();
     Clabel->setDisabled(false);
     setting->show();
@@ -112,6 +114,8 @@ void maze::returnhome()//返回主界面
     delete printtime;
     delete clock1;
     delete clock2;
+    delete mouse;
+    delete mouse->label;
 }
 void maze::replay()//重玩
 {
@@ -121,14 +125,25 @@ void maze::replay()//重玩
     mouse->label->clear();
     mouse->type=ground_label;
     allsquare[1][1]->type=mouse_label;
-    mouse=allsquare[1][1];
+    mouse->X=1;
+    mouse->Y=1;
+    mouse->label->setGeometry(Label_Size,Label_Size,Label_Size,Label_Size);
     mouse->label->setMovie(mousegif);
     mousegif->start();
+    mouse->label->show();
+    mouse->type=mouse_label;
     if(gamesta==3)
     {
         cat->label->clear();
-        allsquare[1][MY-2]->type=cat_label;
-        cat=allsquare[1][MY-2];
+        cat->type=ground_label;
+        allsquare[1][MY-2]->type=wall_label;
+        allsquare[1][MY-2]->label->clear();
+        allsquare[1][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+        allsquare[1][MY-2]->label->show();
+        cat->X=1;
+        cat->Y=MY-2;
+        cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
+        cat->type=cat_label;
         for(square* a:change)
         {
             a->type = ground_label;
@@ -159,13 +174,22 @@ void maze::startgame3()
     initgame();
     gametime =MX*MY*0.2;
     updatetimer();
+    cat=new square;
+    cat->label=new QLabel(this);
+    cat->X=1;
+    cat->Y=MY-2;
+    cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
     catgif=new QMovie(":/cat2.gif");
-    allsquare[1][MY-2]->type=cat_label;
-    cat=allsquare[1][MY-2];
+    allsquare[1][MY-2]->type=wall_label;
+    allsquare[1][MY-2]->label->clear();
+    allsquare[1][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+    allsquare[1][MY-2]->label->show();
     QSize s2(Label_Size+10,Label_Size+10);
     catgif->setScaledSize(s2);
+    cat->type=cat_label;
     cat->label->setMovie(catgif);
     catgif->start();
+    cat->label->show();
     counttimer=new QTimer(this);
     QObject::connect(counttimer,SIGNAL(timeout()),this,SLOT(updatetimer()));
     QObject::connect(counttimer,SIGNAL(timeout()),this,SLOT(walk()));
@@ -175,7 +199,7 @@ void maze::startgame3()
 void maze::walk()
 {
     movecat();
-    if(allsquare[mouse->X][mouse->Y]->type==cat_label)
+    if(cat->label->x()==mouse->label->x()&&cat->label->y()==mouse->label->y())
     {
         allsquare[cat->X][cat->Y]->label->clear();
         allsquare[cat->X][cat->Y]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
@@ -187,7 +211,11 @@ void maze::walk()
 }
 void maze::movecat()//响应键盘的移动函数，要有必要的判断，判断是否有墙
 {
-     if(mouse->X>cat->X&&mouse->Y<cat->Y)
+    if(allsquare[mouse->X][mouse->Y]->type==wall_label)
+    {
+        gameover(0,1);
+    }
+     if(mouse->label->x()>cat->label->x()&&mouse->label->y()<cat->label->y())
      {
          if(rand()%2==1)
          {
@@ -198,7 +226,7 @@ void maze::movecat()//响应键盘的移动函数，要有必要的判断，判�
               dx1=1;dy1=0;
          }
      }
-     if(mouse->X>cat->X&&mouse->Y>cat->Y)
+     if(mouse->label->x()>cat->label->x()&&mouse->label->y()>cat->label->y())
      {
          if(rand()%2==1)
          {
@@ -209,7 +237,7 @@ void maze::movecat()//响应键盘的移动函数，要有必要的判断，判�
               dx1=1;dy1=0;
          }
      }
-     if(mouse->X<cat->X&&mouse->Y>cat->Y)
+     if(mouse->label->x()<cat->label->x()&&mouse->label->y()>cat->label->y())
      {
          if(rand()%2==1)
          {
@@ -220,7 +248,7 @@ void maze::movecat()//响应键盘的移动函数，要有必要的判断，判�
               dx1=-1;dy1=0;
          }
      }
-     if(mouse->X<cat->X&&mouse->Y<cat->Y)
+     if(mouse->label->x()<cat->label->x()&&mouse->label->y()<cat->label->y())
      {
          if(rand()%2==1)
          {
@@ -231,23 +259,100 @@ void maze::movecat()//响应键盘的移动函数，要有必要的判断，判�
               dx1=-1;dy1=0;
          }
      }
-     if(mouse->X==cat->X&&mouse->Y<cat->Y)
+     if(mouse->label->x()==cat->label->x()&&mouse->label->y()<cat->label->y())
               {dx1=0;dy1=-1;}
-     if(mouse->X==cat->X&&mouse->Y>cat->Y)
+     if(mouse->label->x()==cat->label->x()&&mouse->label->y()>cat->label->y())
               {dx1=0;dy1=1;}
-     if(mouse->X<cat->X&&mouse->Y==cat->Y)
+     if(mouse->label->x()<cat->label->x()&&mouse->label->y()==cat->label->y())
               {dx1=-1;dy1=0;}
-     if(mouse->X>cat->X&&mouse->Y==cat->Y)
+     if(mouse->label->x()>cat->label->x()&&mouse->label->y()==cat->label->y())
               {dx1=1;dy1=0;}
-    allsquare[cat->X][cat->Y]->type=wall_label;
-    allsquare[cat->X][cat->Y]->label->clear();
-    allsquare[cat->X][cat->Y]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-    allsquare[cat->X][cat->Y]->label->show();
-    allsquare[cat->X+dx1][cat->Y+dy1]->type=cat_label;
-    cat=allsquare[cat->X+dx1][cat->Y+dy1];
-    change.append( allsquare[cat->X][cat->Y]);
-    allsquare[cat->X][cat->Y]->label->setMovie(catgif);
-     catgif->start();
+     if(dx1==1||dy1==1)
+    {
+         if(cat->X!=(cat->label->x()/Label_Size)|| cat->Y!=(cat->label->y()/Label_Size))
+         {
+             allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]->type=wall_label;
+             allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]->label->clear();
+             allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+             allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]->label->show();
+             change.append( allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]);
+         }
+         cat->X=(cat->label->x()/Label_Size);
+         cat->Y=(cat->label->y()/Label_Size);
+    }
+     if(dx1==-1||dy1==-1)
+     {
+         if(cat->X!=((cat->label->x()+dx1)/Label_Size)-dx1|| cat->Y!=((cat->label->y()+dy1)/Label_Size)-dy1)
+         {
+             allsquare[((cat->label->x()+dx1)/Label_Size)-dx1][((cat->label->y()+dy1)/Label_Size)-dy1]->type=wall_label;
+             allsquare[((cat->label->x()+dx1)/Label_Size)-dx1][((cat->label->y()+dy1)/Label_Size)-dy1]->label->clear();
+             allsquare[((cat->label->x()+dx1)/Label_Size)-dx1][((cat->label->y()+dy1)/Label_Size)-dy1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+             allsquare[((cat->label->x()+dx1)/Label_Size)-dx1][((cat->label->y()+dy1)/Label_Size)-dy1]->label->show();
+             change.append( allsquare[(cat->label->x()/Label_Size)-dx1][(cat->label->y()/Label_Size)-dy1]);
+         }
+        cat->X=((cat->label->x()+dx1)/Label_Size)-dx1;
+        cat->Y=((cat->label->y()+dy1)/Label_Size)-dy1;
+     }
+     if(dy==0)
+     {
+              cat->label->move(cat->label->x()+3*dx1,cat->label->y()+3*dy1);
+     }
+
+     if(dx==0)
+     {
+             cat->label->move(cat->label->x()+3*dx1,cat->label->y()+3*dy1);
+     }
+     if( allsquare[cat->X+1][cat->Y+1]->type==ground_label)
+     {allsquare[cat->X+1][cat->Y+1]->type=wall_label;
+         allsquare[cat->X+1][cat->Y+1]->label->clear();
+         allsquare[cat->X+1][cat->Y+1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+         allsquare[cat->X+1][cat->Y+1]->label->show();
+         change.append( allsquare[cat->X+1][cat->Y+1]);}
+     if( allsquare[cat->X+1][cat->Y-1]->type==ground_label)
+     {allsquare[cat->X+1][cat->Y-1]->type=wall_label;
+         allsquare[cat->X+1][cat->Y-1]->label->clear();
+         allsquare[cat->X+1][cat->Y-1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+         allsquare[cat->X+1][cat->Y-1]->label->show();
+         change.append( allsquare[cat->X+1][cat->Y-1]);}
+     if( allsquare[cat->X-1][cat->Y+1]->type==ground_label)
+     {allsquare[cat->X-1][cat->Y+1]->type=wall_label;
+         allsquare[cat->X-1][cat->Y+1]->label->clear();
+         allsquare[cat->X-1][cat->Y+1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+         allsquare[cat->X-1][cat->Y+1]->label->show();
+         change.append( allsquare[cat->X-1][cat->Y+1]);}
+     if( allsquare[cat->X-1][cat->Y-1]->type==ground_label)
+     {allsquare[cat->X-1][cat->Y-1]->type=wall_label;
+         allsquare[cat->X-1][cat->Y-1]->label->clear();
+         allsquare[cat->X-1][cat->Y-1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+         allsquare[cat->X-1][cat->Y-1]->label->show();
+         change.append( allsquare[cat->X-1][cat->Y-1]);}
+     if( allsquare[cat->X][cat->Y-1]->type==ground_label)
+     {allsquare[cat->X][cat->Y-1]->type=wall_label;
+         allsquare[cat->X][cat->Y-1]->label->clear();
+         allsquare[cat->X][cat->Y-1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+         allsquare[cat->X][cat->Y-1]->label->show();
+         change.append( allsquare[cat->X][cat->Y-1]);}
+     if( allsquare[cat->X-1][cat->Y]->type==ground_label)
+     {allsquare[cat->X-1][cat->Y]->type=wall_label;
+         allsquare[cat->X-1][cat->Y]->label->clear();
+         allsquare[cat->X-1][cat->Y]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+         allsquare[cat->X-1][cat->Y]->label->show();
+         change.append( allsquare[cat->X-1][cat->Y]);}
+     if( allsquare[cat->X][cat->Y+1]->type==ground_label)
+     {allsquare[cat->X][cat->Y+1]->type=wall_label;
+         allsquare[cat->X][cat->Y+1]->label->clear();
+         allsquare[cat->X][cat->Y+1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+         allsquare[cat->X][cat->Y+1]->label->show();
+         change.append( allsquare[cat->X][cat->Y+1]);}
+     if( allsquare[cat->X+1][cat->Y]->type==ground_label)
+     {allsquare[cat->X+1][cat->Y]->type=wall_label;
+         allsquare[cat->X+1][cat->Y]->label->clear();
+         allsquare[cat->X+1][cat->Y]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+         allsquare[cat->X+1][cat->Y]->label->show();
+         change.append( allsquare[cat->X+1][cat->Y]);}
+
+
+
 }
 
 void maze::structface()
@@ -307,10 +412,15 @@ void maze::structface()
     }
     srand(time(0));
     destructwall();
-    mouse=allsquare[1][1];
+    mouse=new square;
+    mouse->label=new QLabel(this);
     food=allsquare[MX-2][MY-2];
+    mouse->X=1;
+    mouse->Y=1;
+    mouse->label->setGeometry(Label_Size,Label_Size,Label_Size,Label_Size);
     mouse->label->setMovie(mousegif);
     mousegif->start();
+    mouse->label->show();
     mouse->type=mouse_label;
     food->label->setStyleSheet("QLabel{border-image:url(:/cheese.jpg)}");
     food->type=food_label;
@@ -400,64 +510,118 @@ void maze::keyPressEvent(QKeyEvent *event)//键盘控制部分
 }
 void maze::movemouse()//响应键盘的移动函数，要有必要的判断，判断是否有墙
 {
-    square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
-
-        if(tempMouse->type==wall_label)//如果老鼠撞到了墙
+    if(dx==1||dy==1)
+   {
+        mouse->X=(mouse->label->x()/Label_Size);
+        mouse->Y=(mouse->label->y()/Label_Size);
+   }
+    if(dx==-1||dy==-1)
+    {
+       mouse->X=((mouse->label->x()+dx)/Label_Size)-dx;
+       mouse->Y=((mouse->label->y()+dy)/Label_Size)-dy;
+    }
+    if(dy==0)
+    {
+        if(mouse->label->y()%Label_Size==0)
         {
+            square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
-        }
-        else//如果老鼠没有撞到墙
-        {
-            if(tempMouse->type==food_label)
-                gameover(1,0);
-            else
+                if(tempMouse->type==wall_label)//如果老鼠撞到了墙
                 {
-                tempMouse->type=mouse_label;
-                allsquare[mouse->X][mouse->Y]->type=ground_label;
-                allsquare[mouse->X][mouse->Y]->label->clear();
-                allsquare[mouse->X][mouse->Y]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
-                allsquare[mouse->X][mouse->Y]->label->show();
-                allsquare[mouse->X+dx][mouse->Y+dy]->type=mouse_label;
-                allsquare[mouse->X+dx][mouse->Y+dy]->label->setMovie(mousegif);
-                mousegif->start();
-                mouse=tempMouse;
-            }
 
-
+                }
+                else//如果老鼠没有撞到墙
+                {
+                    if(tempMouse->type==food_label)
+                    gameover(1,0);
+                    if(tempMouse->type==ground_label)
+                        {
+                        mouse->label->move(mouse->label->x()+3*dx,mouse->label->y()+3*dy);
+                       }
+                }
         }
+    }
+    if(dx==0)
+    {
+        if(mouse->label->x()%Label_Size==0)
+        {
+            square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
+
+                if(tempMouse->type==wall_label)//如果老鼠撞到了墙
+                {
+
+                }
+                else//如果老鼠没有撞到墙
+                {
+                    if(tempMouse->type==food_label)
+                        gameover(1,0);
+                    if(tempMouse->type==ground_label)
+                        {
+                        mouse->label->move(mouse->label->x()+3*dx,mouse->label->y()+3*dy);
+                       }
+                }
+        }
+    }
 
 }
 void maze::movemouse3()//响应键盘的移动函数，要有必要的判断，判断是否有墙
 {
-    square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
+    if(dx==1||dy==1)
+   {
+        mouse->X=(mouse->label->x()/Label_Size);
+        mouse->Y=(mouse->label->y()/Label_Size);
+   }
+    if(dx==-1||dy==-1)
+    {
+       mouse->X=((mouse->label->x()+dx)/Label_Size)-dx;
+       mouse->Y=((mouse->label->y()+dy)/Label_Size)-dy;
+    }
+    if(dy==0)
+    {
+        if(mouse->label->y()%Label_Size==0)
+        {
+            square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
-        if(tempMouse->type==cat_label)
-        {
-            walk();
-        }
-        if(tempMouse->type==wall_label)//如果老鼠撞到了墙
-        {
-
-        }
-        else//如果老鼠没有撞到墙
-        {
-            if(tempMouse->type==food_label)
-                gameover(1,1);
-            else
+                if(tempMouse->type==wall_label)//如果老鼠撞到了墙
                 {
-                tempMouse->type=mouse_label;
-                allsquare[mouse->X][mouse->Y]->type=ground_label;
-                allsquare[mouse->X][mouse->Y]->label->clear();
-                allsquare[mouse->X][mouse->Y]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
-                allsquare[mouse->X][mouse->Y]->label->show();
-                allsquare[mouse->X+dx][mouse->Y+dy]->type=mouse_label;
-                allsquare[mouse->X+dx][mouse->Y+dy]->label->setMovie(mousegif);
-                mousegif->start();
-                mouse=tempMouse;
-            }
 
-
+                }
+                if(tempMouse->type==cat_label)//如果老鼠撞到了猫
+                {
+                    gameover(0,1);
+                }
+                else//如果老鼠没有撞到墙
+                {
+                    if(tempMouse->type==food_label)
+                    gameover(1,1);
+                    if(tempMouse->type==ground_label)
+                        {
+                        mouse->label->move(mouse->label->x()+3*dx,mouse->label->y()+3*dy);
+                       }
+                }
         }
+    }
+    if(dx==0)
+    {
+        if(mouse->label->x()%Label_Size==0)
+        {
+            square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
+
+                if(tempMouse->type==wall_label)//如果老鼠撞到了墙
+                {
+
+                }
+                else//如果老鼠没有撞到墙
+                {
+                    if(tempMouse->type==food_label)
+                        gameover(1,0);
+                    if(tempMouse->type==ground_label)
+                        {
+                        mouse->label->move(mouse->label->x()+3*dx,mouse->label->y()+3*dy);
+                       }
+                }
+        }
+    }
 
 }
 
@@ -467,7 +631,7 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
 
         if(tempMouse->type==wall_label)//如果老鼠撞到了墙
         {
-tempMouse->type=ground_label;
+            tempMouse->type=ground_label;
         }
         else//如果老鼠没有撞到墙
         {
@@ -802,6 +966,8 @@ void maze::gameover(int a,int b)
                  }
                  delete allsquare;
                  allsquare=nullptr;
+                 delete mouse;
+                 delete mouse->label;
                  wall.clear();
                  ground.clear();
                  if(a==0)
@@ -810,10 +976,24 @@ void maze::gameover(int a,int b)
                 structface();
                 if(b==1)
                 {
-                    allsquare[1][MY-2]->type=cat_label;
-                    cat=allsquare[1][MY-2];
+                    delete cat->label;
+                    delete cat;
+                    cat=new square;
+                    cat->label=new QLabel(this);
+                    cat->X=1;
+                    cat->Y=MY-2;
+                    cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
+                    catgif=new QMovie(":/cat2.gif");
+                    allsquare[1][MY-2]->type=wall_label;
+                    allsquare[1][MY-2]->label->clear();
+                    allsquare[1][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+                    allsquare[1][MY-2]->label->show();
+                    QSize s2(Label_Size+10,Label_Size+10);
+                    catgif->setScaledSize(s2);
+                    cat->type=cat_label;
                     cat->label->setMovie(catgif);
                     catgif->start();
+                    cat->label->show();
                     change.clear();
                 }
 
@@ -822,8 +1002,21 @@ void maze::gameover(int a,int b)
              {
                 if(b==1)
                 {
-                    allsquare[1][MY-2]->type=cat_label;
-                    cat=allsquare[1][MY-2];
+                    delete cat->label;
+                    delete cat;
+                    cat=new square;
+                    cat->label=new QLabel(this);
+                    cat->X=1;
+                    cat->Y=MY-2;
+                    cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
+                    catgif=new QMovie(":/cat2.gif");
+
+                    QSize s2(Label_Size+10,Label_Size+10);
+                    catgif->setScaledSize(s2);
+                    cat->type=cat_label;
+                    cat->label->setMovie(catgif);
+                    catgif->start();
+                    cat->label->show();
                     mouse->label->clear();
                 }
              }
@@ -838,11 +1031,11 @@ void maze::resizewindow()
     resize((MX)*Label_Size,(MY+2)*Label_Size);
     Clabel->setStyleSheet("QLabel{border-image:url(:/cover.jpg);}");
     Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
-    start1->setGeometry(MX * Label_Size / 2-120 ,MY * Label_Size / 2,240,120);
+    start1->setGeometry(MX * Label_Size / 2-width()/10 ,MY * Label_Size / 2,width()/5,2*height()/15);
     start1->setStyleSheet("QPushButton{border-image:url(:/m1.png);}");
-    start2->setGeometry(MX * Label_Size /2-120,MY * Label_Size / 2+140,240,120);
+    start2->setGeometry(MX * Label_Size /2-width()/10,MY * Label_Size / 2+2*height()/15+20,width()/5,2*height()/15);
     start2->setStyleSheet("QPushButton{border-image:url(:/m2.png);}");
-    start3->setGeometry(MX * Label_Size / 2 -120,MY * Label_Size / 2+280,240,120);
+    start3->setGeometry(MX * Label_Size / 2 -width()/10,MY * Label_Size / 2+4*height()/15+20,width()/5,2*height()/15);
     start3->setStyleSheet("QPushButton{border-image:url(:/m3.png);}");
     setting->setStyleSheet("QPushButton{border-image:url(:/setting.png);}");
     setting->setGeometry(4*MX/5*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
