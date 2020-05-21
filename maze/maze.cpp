@@ -97,6 +97,7 @@ void maze::returnhome()//返回主界面
         change.clear();
         delete cat->label;
         delete cat;
+        delete cattimer;
     }
     Clabel->show();
     Clabel->setDisabled(false);
@@ -191,9 +192,11 @@ void maze::startgame3()
     catgif->start();
     cat->label->show();
     counttimer=new QTimer(this);
+    cattimer=new QTimer(this);
     QObject::connect(counttimer,SIGNAL(timeout()),this,SLOT(updatetimer()));
-    QObject::connect(counttimer,SIGNAL(timeout()),this,SLOT(walk()));
+    QObject::connect(cattimer,SIGNAL(timeout()),this,SLOT(walk()));
     counttimer->start(1000);
+    cattimer->start(50);
     printtime->show();
 }
 void maze::walk()
@@ -933,6 +936,7 @@ void maze::gameover(int a,int b)
 
     //接下来可以做游戏结束界面，记得，先删除当前界面,除了下方栏；
     counttimer->stop();
+    cattimer->stop();
     QDialog *donghua=new QDialog(this);
              donghua->setWindowTitle("游戏结束");
              donghua->resize(400,400);
@@ -972,7 +976,8 @@ void maze::gameover(int a,int b)
                  ground.clear();
                  if(a==0)
                  {gametime=MX*MY*0.2;}
-                 counttimer->start();  
+                 counttimer->start();
+                 cattimer->start();
                 structface();
                 if(b==1)
                 {

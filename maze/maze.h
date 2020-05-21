@@ -94,6 +94,7 @@ private:
     square*** allsquare=nullptr;
     QVector<square*>ground;
     QVector<square*>change;
+    QTimer *cattimer;
 
 };
 static int gamesta=0;
