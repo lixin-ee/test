@@ -1,5 +1,31 @@
 #include "maze.h"
 #include "ui_maze.h"
+#define m (MX-2)//row
+#define n (MY-2)
+#define down 1
+#define right 2
+#define left 4
+#define up 8
+#define WALL -1
+#define NOTHING 2
+
+    struct block {
+        int row, column, direction;
+        block(int _row, int _column, int _direction) {
+            row = _row;
+            column = _column;
+            direction = _direction;
+        }
+    };
+    struct point {
+        int x;
+        int y;
+    }start, end;
+int x_num , y_num ;//矿工位置
+    vector<block> myblock;
+    int G[100][100];
+    //将地图全部置为墙
+
 maze::maze(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::maze)
@@ -12,26 +38,29 @@ maze::maze(QWidget *parent)
     start2=new QPushButton(this);
     start3=new QPushButton(this);
     setting=new QPushButton(this);
+    presentation=new QPushButton(this);
     resizewindow();
     QObject::connect(start1,SIGNAL(clicked()),this,SLOT(startgame1()));
     QObject::connect(start2,SIGNAL(clicked()),this,SLOT(startgame2()));
     QObject::connect(start3,SIGNAL(clicked()),this,SLOT(startgame3()));
     QObject::connect(setting,SIGNAL(clicked()),this,SLOT(settingslot()));
+    QObject::connect(presentation,SIGNAL(clicked()),this,SLOT(present()));
     mousegif=new QMovie(":/mouse1.gif");
     QSize s1(Label_Size+5,Label_Size+5);
     mousegif->setScaledSize(s1);       
 }
 void maze::startgame1()
 {
+
     gamesta=1;
     initgame();
+    destructwall();
     gametime =MX*MY*0.2;
     updatetimer();
     counttimer=new QTimer(this);
     QObject::connect(counttimer,SIGNAL(timeout()),this,SLOT(updatetimer()));
     counttimer->start(1000);
     printtime->show();
-
 }
 void maze::initgame()//初始化游戏界面
 {
@@ -46,6 +75,8 @@ void maze::initgame()//初始化游戏界面
     start2->setDisabled(true);
     start3->hide();
     start3->setDisabled(true);
+    presentation->hide();
+    presentation->setDisabled(true);
     Return=new QPushButton(this);
     Return->setFocusPolicy(Qt::NoFocus);
     Replay=new QPushButton(this);
@@ -54,9 +85,13 @@ void maze::initgame()//初始化游戏界面
     clock2=new QLabel(this);
     printtime=new QLCDNumber(this);
     Return->setGeometry(0,MY*Label_Size,2*Label_Size,2*Label_Size);
-    Return->setStyleSheet("QPushButton{border-image:url(:/return.png);}");
+    Return->setStyleSheet("QPushButton{border-image:url(:/return.png);}"
+                          "QPushButton:hover{border-image:url(:/return2.png);}"
+                           );
     Replay->setGeometry((MX-2)*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
-    Replay->setStyleSheet("QPushButton{border-image:url(:/replay.png);}");
+    Replay->setStyleSheet("QPushButton{border-image:url(:/replay.png);}"
+                          "QPushButton:hover{border-image:url(:/replay2.png);}"
+                           "QPushButton:pressed{border-image:url(:/replay1.png);}");
     clock1->setGeometry((2*MX/5-2)*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
     clock2->setGeometry(3*MX*Label_Size/5,MY*Label_Size,2*Label_Size,2*Label_Size);
     clock1->setStyleSheet("QLabel{border-image:url(:/time.png);}");
@@ -74,7 +109,13 @@ void maze::initgame()//初始化游戏界面
     QObject::connect(Return,SIGNAL(clicked()),this,SLOT(returnhome()));
     QObject::connect(Replay,SIGNAL(clicked()),this,SLOT(replay()));
     //铺地板，铺墙
+    x_num = 1; y_num = 1;//矿工位置
+    memset(G, WALL, sizeof(G));
+    //定义起始点
+    G[1][1] = NOTHING;
+    start.x = start.y = 1;
     structface();
+
 }
 void maze::returnhome()//返回主界面
 {
@@ -109,7 +150,10 @@ void maze::returnhome()//返回主界面
     start2->setDisabled(false);
     start3->show();
     start3->setDisabled(false);
-    delete counttimer;
+    presentation->show();
+    presentation->setDisabled(false);
+   if(gamesta==4){delete ptimer;}
+    else delete counttimer;
     delete Return;
     delete Replay;
     delete printtime;
@@ -117,9 +161,12 @@ void maze::returnhome()//返回主界面
     delete clock2;
     delete mouse;
     delete mouse->label;
+    myblock.clear();
 }
 void maze::replay()//重玩
 {
+    if(gamesta!=4)
+     {
     gametime =MX*MY*0.2;
     updatetimer();
     counttimer->start(1000);
@@ -156,11 +203,13 @@ void maze::replay()//重玩
         cat->label->setMovie(catgif);
         catgif->start();
     }
+    }
 }
 void maze::startgame2()
 {
     gamesta=2;
     initgame();
+    destructwall();
     gametime =MX*MY*0.2;
     updatetimer();
     counttimer=new QTimer(this);
@@ -173,6 +222,7 @@ void maze::startgame3()
 {
     gamesta=3;
     initgame();
+    destructwall();
     gametime =MX*MY*0.2;
     updatetimer();
     cat=new square;
@@ -196,8 +246,129 @@ void maze::startgame3()
     QObject::connect(counttimer,SIGNAL(timeout()),this,SLOT(updatetimer()));
     QObject::connect(cattimer,SIGNAL(timeout()),this,SLOT(walk()));
     counttimer->start(1000);
-    cattimer->start(50);
+    cattimer->start(100);
     printtime->show();
+}
+void maze::dwall()
+{
+    if (myblock.size()) {
+        int BlockSize = myblock.size();
+        //随机选择一堵墙（生成0 ~ BlockSize-1之间的随机数，同时也是vector里墙的下标）
+        int randnum = rand() % BlockSize;
+        block SelectBlock = myblock[randnum];
+        x_num = SelectBlock.row;//矿工来到我们“选择的墙”这里
+        y_num = SelectBlock.column;
+        //根据当前选择的墙的方向进行后续操作
+        //此时，起始点 选择的墙 目标块 三块区域在同一直线上
+        //我们让矿工从“选择的墙”继续前进到“目标块”
+        //矿工有穿墙能力 ：)
+        switch (SelectBlock.direction) {
+        case right: {
+            x_num++;
+            break;
+        }
+        case down: {
+            y_num++;
+            break;
+        }
+        case up: {
+            y_num--;
+            break;
+        }
+        case left: {
+            x_num--;
+            break;
+        }
+        }
+        //目标块如果是墙
+        if (G[x_num][y_num] == WALL) {
+            //打通墙和目标块
+            G[SelectBlock.row][SelectBlock.column] = G[x_num][y_num] = NOTHING;
+            //再次找出与矿工当前位置相邻的墙
+            //找出与当前位置相邻的墙
+            if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
+                myblock.push_back(block(x_num + 1, y_num, right));
+            }
+            if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//down
+                myblock.push_back(block(x_num, y_num + 1, down));
+            }
+            if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//left
+                myblock.push_back(block(x_num - 1, y_num, left));
+            }
+            if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
+                myblock.push_back(block(x_num, y_num - 1,  up));
+            }
+        }
+        else {//如果不是呢？说明我们的矿工挖到了一个空旷的通路上面 休息一下就好了
+         //relax
+            allsquare[SelectBlock.row][SelectBlock.column]->label->clear();
+            allsquare[SelectBlock.row][SelectBlock.column]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+            allsquare[SelectBlock.row][SelectBlock.column]->label->show();
+        }
+        //删除这堵墙(把用不了的墙删了，对于那些已经施工过了不必再施工了，同时也是确保我们能跳出循环)
+        myblock.erase(myblock.begin() + randnum);
+
+    for (int i = 0; i <= m + 1; i++)
+    {
+        for (int j = 0; j <= n + 1; j++)
+        {
+            if (G[i][j] == NOTHING&&allsquare[i][j]->type!=food_label)
+            {
+                allsquare[i][j]->type = ground_label;
+                allsquare[i][j]->label->clear();
+                allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                allsquare[i][j]->label->show();
+
+            }
+        }
+    }
+    for (int i=0;i<myblock.size();i++)
+    {
+       if(myblock[i].direction==down)
+       {
+       allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/down.png)}");
+       allsquare[myblock[i]. row][myblock[i].column]->label->show();
+       }
+       if(myblock[i].direction==up)
+       {
+       allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/up.png)}");
+       allsquare[myblock[i]. row][myblock[i].column]->label->show();
+       }
+       if(myblock[i].direction==left)
+       {
+       allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/left.png)}");
+       allsquare[myblock[i]. row][myblock[i].column]->label->show();
+       }
+       if(myblock[i].direction==right)
+       {
+       allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/right.png)}");
+       allsquare[myblock[i]. row][myblock[i].column]->label->show();
+       }
+    }
+}
+
+}
+void maze::present()
+{
+
+    initgame();
+    gamesta=4;
+    if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
+        myblock.push_back(block(x_num + 1, y_num, right));
+    }
+    if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//down
+        myblock.push_back(block(x_num, y_num + 1, down));
+    }
+    if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//left
+        myblock.push_back(block(x_num - 1, y_num, left));
+    }
+    if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
+        myblock.push_back(block(x_num, y_num - 1,  up));
+    }
+    ptimer=new QTimer(this);
+    ptimer->start(500);
+    QObject::connect(ptimer,SIGNAL(timeout()),this,SLOT(dwall()));
+
 }
 void maze::walk()
 {
@@ -208,7 +379,7 @@ void maze::walk()
         allsquare[cat->X][cat->Y]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
         allsquare[cat->X][cat->Y]->label->show();
         allsquare[cat->X][cat->Y]->label->setMovie(catgif);
-         catgif->start();
+        catgif->start();
         gameover(0,1);
     }
 }
@@ -414,7 +585,6 @@ void maze::structface()
         }
     }
     srand(time(0));
-    destructwall();
     mouse=new square;
     mouse->label=new QLabel(this);
     food=allsquare[MX-2][MY-2];
@@ -509,6 +679,15 @@ void maze::keyPressEvent(QKeyEvent *event)//键盘控制部分
         if(gamesta==3)
             movemouse3();
         break;
+    case Qt::Key_Space:
+        if(gamesta==4)
+        {
+            if(ptimer->isActive())
+                ptimer->stop();
+            else ptimer->start();
+        }
+        break;
+
     }
 }
 void maze::movemouse()//响应键盘的移动函数，要有必要的判断，判断是否有墙
@@ -804,49 +983,19 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
 }*/
 void maze::destructwall()//该函数借鉴于CSDN上用户god_speed、的函数
 {
-#define m (MX-2)//row
-#define n (MY-2)
-#define down 1
-#define right 2
-#define left 4
-#define up 8
-#define WALL -1
-#define NOTHING 2
 
-    struct block {
-        int row, column, direction;
-        block(int _row, int _column, int _direction) {
-            row = _row;
-            column = _column;
-            direction = _direction;
-        }
-    };
-    struct point {
-        int x;
-        int y;
-    }start, end;
 
-    vector<block> myblock;
-    int x_num = 1, y_num = 1;//矿工位置
-    int G[100][100];
-
-    //将地图全部置为墙
-    memset(G, WALL, sizeof(G));
-    //定义起始点
-    G[1][1] = NOTHING;
-    start.x = start.y = 1;
-
-    if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//down
-        myblock.push_back(block(x_num + 1, y_num, down));
+    if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
+        myblock.push_back(block(x_num + 1, y_num, right));
     }
-    if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//right
-        myblock.push_back(block(x_num, y_num + 1, right));
+    if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//down
+        myblock.push_back(block(x_num, y_num + 1, down));
     }
-    if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//up
-        myblock.push_back(block(x_num - 1, y_num, up));
+    if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//left
+        myblock.push_back(block(x_num - 1, y_num, left));
     }
-    if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//left
-        myblock.push_back(block(x_num, y_num - 1, left));
+    if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
+        myblock.push_back(block(x_num, y_num - 1,  up));
     }
 
     while (myblock.size()) {
@@ -861,19 +1010,19 @@ void maze::destructwall()//该函数借鉴于CSDN上用户god_speed、的函数
         //我们让矿工从“选择的墙”继续前进到“目标块”
         //矿工有穿墙能力 ：)
         switch (SelectBlock.direction) {
-        case down: {
+        case right: {
             x_num++;
             break;
         }
-        case right: {
+        case down: {
             y_num++;
             break;
         }
-        case left: {
+        case up: {
             y_num--;
             break;
         }
-        case up: {
+        case left: {
             x_num--;
             break;
         }
@@ -884,17 +1033,17 @@ void maze::destructwall()//该函数借鉴于CSDN上用户god_speed、的函数
             G[SelectBlock.row][SelectBlock.column] = G[x_num][y_num] = NOTHING;
             //再次找出与矿工当前位置相邻的墙
             //找出与当前位置相邻的墙
-            if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//down
-                myblock.push_back(block(x_num + 1, y_num, down));
+            if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
+                myblock.push_back(block(x_num + 1, y_num, right));
             }
-            if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//right
-                myblock.push_back(block(x_num, y_num + 1, right));
+            if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//down
+                myblock.push_back(block(x_num, y_num + 1, down));
             }
-            if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//up
-                myblock.push_back(block(x_num - 1, y_num, up));
+            if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//left
+                myblock.push_back(block(x_num - 1, y_num, left));
             }
-            if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//left
-                myblock.push_back(block(x_num, y_num - 1, left));
+            if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
+                myblock.push_back(block(x_num, y_num - 1,  up));
             }
         }
         else {//如果不是呢？说明我们的矿工挖到了一个空旷的通路上面 休息一下就好了
@@ -907,7 +1056,7 @@ void maze::destructwall()//该函数借鉴于CSDN上用户god_speed、的函数
     {
         for (int j = 0; j <= n + 1; j++)
         {
-            if (G[i][j] == NOTHING)
+            if (G[i][j] == NOTHING&&allsquare[i][j]->type!=food_label)
             {
                 allsquare[i][j]->type = ground_label;
                 allsquare[i][j]->label->clear();
@@ -936,7 +1085,7 @@ void maze::gameover(int a,int b)
 
     //接下来可以做游戏结束界面，记得，先删除当前界面,除了下方栏；
     counttimer->stop();
-    cattimer->stop();
+   if(gamesta==3){ cattimer->stop();}
     QDialog *donghua=new QDialog(this);
              donghua->setWindowTitle("游戏结束");
              donghua->resize(400,400);
@@ -974,19 +1123,19 @@ void maze::gameover(int a,int b)
                  delete mouse->label;
                  wall.clear();
                  ground.clear();
-                 if(a==0)
-                 {gametime=MX*MY*0.2;}
+                 gametime=MX*MY*0.2;
                  counttimer->start();
-                 cattimer->start();
                 structface();
                 if(b==1)
                 {
+
                     delete cat->label;
                     delete cat;
                     cat=new square;
                     cat->label=new QLabel(this);
                     cat->X=1;
                     cat->Y=MY-2;
+                    cattimer->start();
                     cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
                     catgif=new QMovie(":/cat2.gif");
                     allsquare[1][MY-2]->type=wall_label;
@@ -1037,13 +1186,25 @@ void maze::resizewindow()
     Clabel->setStyleSheet("QLabel{border-image:url(:/cover.jpg);}");
     Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
     start1->setGeometry(MX * Label_Size / 2-width()/10 ,MY * Label_Size / 2,width()/5,2*height()/15);
-    start1->setStyleSheet("QPushButton{border-image:url(:/m1.png);}");
+    start1->setStyleSheet("QPushButton{border-image:url(:/m1.png);}"
+                          "QPushButton:hover{border-image:url(:/m12.png);}"
+                           "QPushButton:pressed{border-image:url(:/m11.png);}");
     start2->setGeometry(MX * Label_Size /2-width()/10,MY * Label_Size / 2+2*height()/15+20,width()/5,2*height()/15);
-    start2->setStyleSheet("QPushButton{border-image:url(:/m2.png);}");
+    start2->setStyleSheet("QPushButton{border-image:url(:/m2.png);}"
+                          "QPushButton:hover{border-image:url(:/m22.png);}"
+                           "QPushButton:pressed{border-image:url(:/m21.png);}");
     start3->setGeometry(MX * Label_Size / 2 -width()/10,MY * Label_Size / 2+4*height()/15+20,width()/5,2*height()/15);
-    start3->setStyleSheet("QPushButton{border-image:url(:/m3.png);}");
-    setting->setStyleSheet("QPushButton{border-image:url(:/setting.png);}");
+    start3->setStyleSheet("QPushButton{border-image:url(:/m3.png);}"
+                          "QPushButton:hover{border-image:url(:/m32.png);}"
+                           "QPushButton:pressed{border-image:url(:/m31.png);}");
+    setting->setStyleSheet("QPushButton{border-image:url(:/setting.png);}"
+                           "QPushButton:hover{border-image:url(:/setting2.png);}"
+                           );
     setting->setGeometry(4*MX/5*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
+    presentation->setGeometry(1*MX/5*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
+    presentation->setStyleSheet("QPushButton{border-image:url(:/present.png);}"
+                                "QPushButton:hover{border-image:url(:/present2.png);}"
+                                 "QPushButton:pressed{border-image:url(:/present1.png);}");
 }
 maze::~maze()
 {

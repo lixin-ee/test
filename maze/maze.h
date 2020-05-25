@@ -65,6 +65,8 @@ private slots:
     void movemouse2();
     void movemouse3();
     void walk();
+    void present();
+    void dwall();
 private:
     Ui::maze *ui;
     QPushButton* setting;
@@ -95,6 +97,8 @@ private:
     QVector<square*>ground;
     QVector<square*>change;
     QTimer *cattimer;
+    QPushButton* presentation;
+    QTimer* ptimer;
 
 };
 static int gamesta=0;

@@ -23,5 +23,22 @@
         <file>return.png</file>
         <file>setting.png</file>
         <file>time.png</file>
+        <file>down.png</file>
+        <file>left.png</file>
+        <file>right.png</file>
+        <file>up.png</file>
+        <file>present.png</file>
+        <file>m11.png</file>
+        <file>m12.png</file>
+        <file>m21.png</file>
+        <file>m22.png</file>
+        <file>m31.png</file>
+        <file>m32.png</file>
+        <file>present1.png</file>
+        <file>present2.png</file>
+        <file>replay1.png</file>
+        <file>replay2.png</file>
+        <file>return2.png</file>
+        <file>setting2.png</file>
     </qresource>
 </RCC>
