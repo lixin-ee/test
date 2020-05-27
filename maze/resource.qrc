@@ -41,5 +41,7 @@
         <file>return2.png</file>
         <file>setting2.png</file>
         <file>catwin2.jpg</file>
+        <file>hammer.jpg</file>
+        <file>hammer2.png</file>
     </qresource>
 </RCC>
