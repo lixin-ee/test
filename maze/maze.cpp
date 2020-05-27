@@ -1100,7 +1100,7 @@ void maze::gameover(int a,int b)
                   }
                   else
                   {
-                    image->setStyleSheet("QLabel{border-image:url(:/catwin.jpg);}");
+                    image->setStyleSheet("QLabel{border-image:url(:/catwin2.jpg);}");
                   }
                   image->setGeometry(0,0,400,300);
              QPushButton *ok=new QPushButton("OK",donghua);
