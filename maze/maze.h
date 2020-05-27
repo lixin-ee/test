@@ -100,7 +100,7 @@ private:
     QTimer *cattimer;
     QPushButton* presentation;
     QTimer* ptimer;
-
+    QPixmap*hammer;
 };
 static int gamesta=0;
 static int havehammer=0;

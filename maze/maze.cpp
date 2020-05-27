@@ -47,7 +47,8 @@ maze::maze(QWidget *parent)
     QObject::connect(presentation,SIGNAL(clicked()),this,SLOT(present()));
     mousegif=new QMovie(":/mouse1.gif");
     QSize s1(Label_Size+5,Label_Size+5);
-    mousegif->setScaledSize(s1);       
+    mousegif->setScaledSize(s1);
+    hammer=new QPixmap(":/hammer.png");
 }
 void maze::startgame1()
 {
@@ -154,6 +155,7 @@ void maze::returnhome()//返回主界面
     start3->setDisabled(false);
     presentation->show();
     presentation->setDisabled(false);
+    if(gamesta==2){change.clear();havehammer=0;}
    if(gamesta==4){delete ptimer;}
     else delete counttimer;
     delete Return;
@@ -164,6 +166,7 @@ void maze::returnhome()//返回主界面
     delete mouse;
     delete mouse->label;
     myblock.clear();
+
 }
 void maze::replay()//重玩
 {
@@ -205,6 +208,22 @@ void maze::replay()//重玩
         cat->label->setMovie(catgif);
         catgif->start();
     }
+    if(gamesta==2&&havehammer==1)
+    {
+       havehammer=0;
+       for(auto& a:change)
+       {
+           a->type = wall_label;
+           a->label->clear();
+           a->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+           a->label->show();
+       }
+       change[0]->type=hammer_label;
+       change[0]->label->setPixmap(*hammer);
+       change[0]->label->setScaledContents(true);
+       change[0]->label->show();
+       change.clear();
+    }
     }
 }
 void maze::startgame2()
@@ -213,10 +232,11 @@ void maze::startgame2()
     initgame();
     destructwall();
     srand(time(0));
-    int hamX=rand()%(MX-5);
-    int hamY=rand()%(MY-5);
+    int hamX=(rand()%(MX-5))+2;
+    int hamY=(rand()%(MY-5))+2;
     allsquare[hamX][hamY]->type=hammer_label;
-    allsquare[hamX][hamY]->label->setStyleSheet("QLabel{border-image:url(:/hammer2.png)}");
+    allsquare[hamX][hamY]->label->setPixmap(*hammer);
+    allsquare[hamX][hamY]->label->setScaledContents(true);
     allsquare[hamX][hamY]->label->show();
     gametime =MX*MY*0.2;
     updatetimer();
@@ -910,12 +930,17 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
             if(tempMouse->type==hammer_label)
            {
                tempMouse->type=ground_label;
+               tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
-               havehammer=1;}
+                tempMouse->label->show();
+               havehammer=1;
+            change.append(tempMouse);}
             if(tempMouse->type==wall_label)//如果老鼠撞到了墙
-                {if(havehammer==1)
+                {if(havehammer==1&&tempMouse->X!=MX-1&&tempMouse->X!=0&&tempMouse->Y!=MY-1&&tempMouse->Y!=0)
                     {tempMouse->type=ground_label;
-                    tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");}
+                    tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                    change.append(tempMouse);
+                }
                     else ;
                }
                 else//如果老鼠没有撞到墙
@@ -938,12 +963,14 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
             if(tempMouse->type==hammer_label)
            {
                tempMouse->type=ground_label;
+                tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
-               havehammer=1;}
+               havehammer=1;change.append(tempMouse);}
             if(tempMouse->type==wall_label)//如果老鼠撞到了墙
-                {if(havehammer==1)
+                {if(havehammer==1&&tempMouse->X!=MX-1&&tempMouse->X!=0&&tempMouse->Y!=MY-1&&tempMouse->Y!=0)
                     {tempMouse->type=ground_label;
-                    tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");}
+                    tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                change.append(tempMouse);}
                     else ;
                }
                 else//如果老鼠没有撞到墙
@@ -1254,8 +1281,25 @@ void maze::gameover(int a,int b)
                  //定义起始点
                  G[1][1] = NOTHING;
                  start.x = start.y = 1;
-                structface();
+                 if(gamesta==2)
+                 {
+                     change.clear();
+                     havehammer=0;
+                     structface2();
+                 }
+                else structface();
                 destructwall();
+                if(gamesta==2)
+
+                { srand(time(0));
+                    int hamX=(rand()%(MX-5))+2;
+                    int hamY=(rand()%(MY-5))+2;
+                    allsquare[hamX][hamY]->type=hammer_label;
+                    allsquare[hamX][hamY]->label->setPixmap(*hammer);
+                    allsquare[hamX][hamY]->label->setScaledContents(true);
+                    allsquare[hamX][hamY]->label->show();
+                }
+
                 if(b==1)
                 {
 
@@ -1280,6 +1324,7 @@ void maze::gameover(int a,int b)
                     cat->label->show();
                     change.clear();
                 }
+
 
              }
              else
