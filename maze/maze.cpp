@@ -1125,7 +1125,13 @@ void maze::gameover(int a,int b)
                  ground.clear();
                  gametime=MX*MY*0.2;
                  counttimer->start();
+                 x_num = 1; y_num = 1;//矿工位置
+                 memset(G, WALL, sizeof(G));
+                 //定义起始点
+                 G[1][1] = NOTHING;
+                 start.x = start.y = 1;
                 structface();
+                destructwall();
                 if(b==1)
                 {
 
