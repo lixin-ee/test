@@ -212,6 +212,12 @@ void maze::startgame2()
     gamesta=2;
     initgame();
     destructwall();
+    srand(time(0));
+    int hamX=rand()%(MX-5);
+    int hamY=rand()%(MY-5);
+    allsquare[hamX][hamY]->type=hammer_label;
+    allsquare[hamX][hamY]->label->setStyleSheet("QLabel{border-image:url(:/hammer2.png)}");
+    allsquare[hamX][hamY]->label->show();
     gametime =MX*MY*0.2;
     updatetimer();
     counttimer=new QTimer(this);
@@ -853,12 +859,7 @@ void maze::structface2()
             wall.append(allsquare[i][j]);
         }
     }
-    srand(time(0));
-    int hamX=rand()%(MX-5);
-    int hamY=rand()%(MY-5);
-    allsquare[hamX][hamY]->type=hammer_label;
-    allsquare[hamX][hamY]->label->setStyleSheet("QLabel{border-image:url(:/hammer2.png)}");
-    allsquare[hamX][hamY]->label->show();
+
     int counter=0;
     for(int i=1;i<MX;i=i+2)
     {
