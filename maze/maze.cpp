@@ -445,11 +445,13 @@ void maze::movecat()//响应键盘的移动函数，要有必要的判断，判�
     {
          if(cat->X!=(cat->label->x()/Label_Size)|| cat->Y!=(cat->label->y()/Label_Size))
          {
+             if(allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]->type==ground_label)
+                 change.append( allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]);
              allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]->type=wall_label;
              allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]->label->clear();
              allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
              allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]->label->show();
-             change.append( allsquare[(cat->label->x()/Label_Size)][(cat->label->y()/Label_Size)]);
+
          }
          cat->X=(cat->label->x()/Label_Size);
          cat->Y=(cat->label->y()/Label_Size);
@@ -458,11 +460,13 @@ void maze::movecat()//响应键盘的移动函数，要有必要的判断，判�
      {
          if(cat->X!=((cat->label->x()+dx1)/Label_Size)-dx1|| cat->Y!=((cat->label->y()+dy1)/Label_Size)-dy1)
          {
+             if(allsquare[((cat->label->x()+dx1)/Label_Size)-dx1][((cat->label->y()+dy1)/Label_Size)-dy1]->type==ground_label)
+                 change.append( allsquare[(cat->label->x()/Label_Size)-dx1][(cat->label->y()/Label_Size)-dy1]);
              allsquare[((cat->label->x()+dx1)/Label_Size)-dx1][((cat->label->y()+dy1)/Label_Size)-dy1]->type=wall_label;
              allsquare[((cat->label->x()+dx1)/Label_Size)-dx1][((cat->label->y()+dy1)/Label_Size)-dy1]->label->clear();
              allsquare[((cat->label->x()+dx1)/Label_Size)-dx1][((cat->label->y()+dy1)/Label_Size)-dy1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
              allsquare[((cat->label->x()+dx1)/Label_Size)-dx1][((cat->label->y()+dy1)/Label_Size)-dy1]->label->show();
-             change.append( allsquare[(cat->label->x()/Label_Size)-dx1][(cat->label->y()/Label_Size)-dy1]);
+
          }
         cat->X=((cat->label->x()+dx1)/Label_Size)-dx1;
         cat->Y=((cat->label->y()+dy1)/Label_Size)-dy1;
