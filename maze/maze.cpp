@@ -1,5 +1,7 @@
 #include "maze.h"
 #include "ui_maze.h"
+#include<QScreen>
+#include <QApplication>
 #define m (MX-2)//row
 #define n (MY-2)
 #define down 1
@@ -8,19 +10,17 @@
 #define up 8
 #define WALL -1
 #define NOTHING 2
-
-    struct block {
+struct block
+{
         int row, column, direction;
-        block(int _row, int _column, int _direction) {
+        block(int _row, int _column, int _direction)
+        {
             row = _row;
             column = _column;
             direction = _direction;
         }
-    };
-    struct point {
-        int x;
-        int y;
-    }start, end;
+ };
+
 int x_num , y_num ;//矿工位置
     vector<block> myblock;
     int G[100][100];
@@ -30,6 +30,14 @@ maze::maze(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::maze)
 {
+    QScreen *screen=QGuiApplication::primaryScreen ();
+    QRect mm=screen->availableGeometry() ;
+    screen_width = mm.width();
+    screen_height = mm.height();
+    int temp1=0.7*screen_width/(Label_Size*2);
+    MX=2*temp1+1;
+    temp1=0.9*screen_height/(Label_Size*2);
+    MY=2*temp1+1;
     ui->setupUi(this);
     setWindowIcon(QIcon(":/tubiao.ico"));
     setWindowTitle("maze521");
@@ -114,16 +122,10 @@ void maze::initgame()//初始化游戏界面
     memset(G, WALL, sizeof(G));
     //定义起始点
     G[1][1] = NOTHING;
-    start.x = start.y = 1;
-    if(gamesta==2)
-    structface2();
-    else structface();
-
+    structface();
 }
 void maze::returnhome()//返回主界面
 {
-    wall.clear();
-    ground.clear();
     for(int i=0;i<MX;i++)
     {
         for (int j=0;j<MY;j++)
@@ -155,7 +157,6 @@ void maze::returnhome()//返回主界面
     start3->setDisabled(false);
     presentation->show();
     presentation->setDisabled(false);
-    if(gamesta==2){change.clear();havehammer=0;}
    if(gamesta==4){delete ptimer;}
     else delete counttimer;
     delete Return;
@@ -166,6 +167,7 @@ void maze::returnhome()//返回主界面
     delete mouse;
     delete mouse->label;
     myblock.clear();
+    if(gamesta==2){change.clear();havehammer=0;}
 
 }
 void maze::replay()//重玩
@@ -574,46 +576,9 @@ void maze::structface()
             allsquare[i][j]->Y=j;
             allsquare[i][j]->label=new QLabel(this);
             allsquare[i][j]->label->setGeometry(i*Label_Size,j*Label_Size,Label_Size,Label_Size);
-        }
-    }
-    for(int i=0;i<MX;i=i+2)
-        {
-            for(int j=0;j<MY;j=j+1)
-            {
-                allsquare[i][j]->type=wall_label;
-                allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-                allsquare[i][j]->label->show();
-                wall.append(allsquare[i][j]);
-            }
-        }
-
-    for(int i=1;i<MX;i=i+2)
-    {
-        for (int j=0;j<MY;j=j+2)
-        {
-           /* allsquare[i][j]->type=wall_label;
-            allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-            allsquare[i][j]->label->show();
-            wall.append(allsquare[i][j]);*/
-            //此处把ground改为wall
             allsquare[i][j]->type=wall_label;
             allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
             allsquare[i][j]->label->show();
-            wall.append(allsquare[i][j]);
-        }
-    }
-    int counter=0;
-    for(int i=1;i<MX;i=i+2)
-    {
-        for (int j=1;j<MY;j=j+2)
-        {
-            //此处把ground改为wall
-            allsquare[i][j]->type=wall_label;
-            allsquare[i][j]->path=counter;
-            allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-            allsquare[i][j]->label->show();
-            wall.append(allsquare[i][j]);
-            counter++;
         }
     }
     srand(time(0));
@@ -651,12 +616,17 @@ void maze::settingslot()//设置地图大小的函数
       W->setOrientation(Qt::Horizontal);
       L->setGeometry(60,50,300,50);
       W->setGeometry(60,100,100,50);
-      L->setRange(6,26);
+      int temp;
+      temp=((0.9*screen_width/Label_Size+1)/2);
+      L->setRange(6,temp);
       L->setSingleStep(1);
-      W->setRange(8,16);
+      temp=((0.9*screen_height/Label_Size+2)/2);
+      W->setRange(6,temp);
       W->setSingleStep(1);
-      L->setValue((MX+1)/2);
-      W->setValue((MY+1)/2);
+      temp=((MX+1)/2);
+      L->setValue(temp);
+      temp=((MY+1)/2);
+      W->setValue(temp);
       QObject::connect(save,SIGNAL(clicked()),setwindowsize,SLOT(accept()));
       QObject::connect(cancle,SIGNAL(clicked()),setwindowsize,SLOT(reject()));
       if(setwindowsize->exec()==QDialog::Accepted)
@@ -838,77 +808,7 @@ void maze::movemouse3()//响应键盘的移动函数，要有必要的判断，�
     }
 
 }
-void maze::structface2()
-{
-    allsquare=new square**[MX];
-    for(int i=0;i<MX;i++)
-    {
-        allsquare[i]=new square*[MY];
-        for (int j=0;j<MY;j++)
-        {
-            allsquare[i][j]=new square;
-            allsquare[i][j]->X=i;
-            allsquare[i][j]->Y=j;
-            allsquare[i][j]->label=new QLabel(this);
-            allsquare[i][j]->label->setGeometry(i*Label_Size,j*Label_Size,Label_Size,Label_Size);
-        }
-    }
-    for(int i=0;i<MX;i=i+2)
-        {
-            for(int j=0;j<MY;j=j+1)
-            {
-                allsquare[i][j]->type=wall_label;
-                allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-                allsquare[i][j]->label->show();
-                wall.append(allsquare[i][j]);
-            }
-        }
 
-    for(int i=1;i<MX;i=i+2)
-    {
-        for (int j=0;j<MY;j=j+2)
-        {
-           /* allsquare[i][j]->type=wall_label;
-            allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-            allsquare[i][j]->label->show();
-            wall.append(allsquare[i][j]);*/
-            //此处把ground改为wall
-            allsquare[i][j]->type=wall_label;
-            allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-            allsquare[i][j]->label->show();
-            wall.append(allsquare[i][j]);
-        }
-    }
-
-    int counter=0;
-    for(int i=1;i<MX;i=i+2)
-    {
-        for (int j=1;j<MY;j=j+2)
-        {
-            //此处把ground改为wall
-            allsquare[i][j]->type=wall_label;
-            allsquare[i][j]->path=counter;
-            allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-            allsquare[i][j]->label->show();
-            wall.append(allsquare[i][j]);
-            counter++;
-        }
-    }
-    srand(time(0));
-    destructwall();
-    mouse=new square;
-    mouse->label=new QLabel(this);
-    mouse->X=1;
-    mouse->Y=1;
-    mouse->label->setGeometry(Label_Size,Label_Size,Label_Size,Label_Size);
-    food=allsquare[MX-2][MY-2];
-    mouse->label->setMovie(mousegif);
-    mousegif->start();
-    mouse->label->show();
-    mouse->type=mouse_label;
-    food->label->setStyleSheet("QLabel{border-image:url(:/cheese.jpg)}");
-    food->type=food_label;
-}
 void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，判断是否有墙
 {
     if(dx==1||dy==1)
@@ -1272,26 +1172,19 @@ void maze::gameover(int a,int b)
                  allsquare=nullptr;
                  delete mouse;
                  delete mouse->label;
-                 wall.clear();
-                 ground.clear();
                  gametime=MX*MY*0.2;
                  counttimer->start();
                  x_num = 1; y_num = 1;//矿工位置
                  memset(G, WALL, sizeof(G));
                  //定义起始点
                  G[1][1] = NOTHING;
-                 start.x = start.y = 1;
-                 if(gamesta==2)
-                 {
-                     change.clear();
-                     havehammer=0;
-                     structface2();
-                 }
-                else structface();
+                 structface();
                 destructwall();
                 if(gamesta==2)
 
-                { srand(time(0));
+                {
+                    change.clear();
+                    havehammer=0;srand(time(0));
                     int hamX=(rand()%(MX-5))+2;
                     int hamY=(rand()%(MY-5))+2;
                     allsquare[hamX][hamY]->type=hammer_label;

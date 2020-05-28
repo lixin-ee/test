@@ -23,10 +23,6 @@
         <file>return.png</file>
         <file>setting.png</file>
         <file>time.png</file>
-        <file>down.png</file>
-        <file>left.png</file>
-        <file>right.png</file>
-        <file>up.png</file>
         <file>present.png</file>
         <file>m11.png</file>
         <file>m12.png</file>
@@ -42,5 +38,9 @@
         <file>setting2.png</file>
         <file>catwin2.jpg</file>
         <file>hammer.png</file>
+        <file>down.png</file>
+        <file>left.png</file>
+        <file>right.png</file>
+        <file>up.png</file>
     </qresource>
 </RCC>

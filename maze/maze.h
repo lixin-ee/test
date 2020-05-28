@@ -67,8 +67,7 @@ private slots:
     void walk();
     void present();
     void dwall();
-    void structface2();
-private:
+  private:
     Ui::maze *ui;
     QPushButton* setting;
     QTimer* counttimer;
@@ -93,9 +92,9 @@ private:
     int MX=41;
     int MY=31;
     int gametime;
-    QVector<square*>wall;
+    int screen_width;
+    int screen_height;
     square*** allsquare=nullptr;
-    QVector<square*>ground;
     QVector<square*>change;
     QTimer *cattimer;
     QPushButton* presentation;
