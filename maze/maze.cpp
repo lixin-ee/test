@@ -23,6 +23,8 @@ struct block
 
 int x_num , y_num ;//矿工位置
     vector<block> myblock;
+    vector<block> Ling;
+    bool flag=1;
     int G[100][100];
     //将地图全部置为墙
 
@@ -118,11 +120,15 @@ void maze::initgame()//初始化游戏界面
     QObject::connect(Return,SIGNAL(clicked()),this,SLOT(returnhome()));
     QObject::connect(Replay,SIGNAL(clicked()),this,SLOT(replay()));
     //铺地板，铺墙
-    x_num = 1; y_num = 1;//矿工位置
-    memset(G, WALL, sizeof(G));
-    //定义起始点
-    G[1][1] = NOTHING;
     structface();
+    x_num =2*((rand()%(m+1))/2)+1;
+    y_num =2*((rand()%(n+1))/2)+1;
+    if(dtype==1)
+    {G[x_num][y_num] = NOTHING;memset(G, WALL, sizeof(G));}
+    if(dtype==2)
+    {G[x_num][y_num]=1;memset(G, 0, sizeof(G));}
+
+   //定义起始点
 }
 void maze::returnhome()//返回主界面
 {
@@ -281,101 +287,213 @@ void maze::startgame3()
 }
 void maze::dwall()
 {
-    if (myblock.size()) {
-        int BlockSize = myblock.size();
-        //随机选择一堵墙（生成0 ~ BlockSize-1之间的随机数，同时也是vector里墙的下标）
-        int randnum = rand() % BlockSize;
-        block SelectBlock = myblock[randnum];
-        x_num = SelectBlock.row;//矿工来到我们“选择的墙”这里
-        y_num = SelectBlock.column;
-        //根据当前选择的墙的方向进行后续操作
-        //此时，起始点 选择的墙 目标块 三块区域在同一直线上
-        //我们让矿工从“选择的墙”继续前进到“目标块”
-        //矿工有穿墙能力 ：)
-        switch (SelectBlock.direction) {
+    if(dtype==1)
+    {
+        if (myblock.size()) {
+            int BlockSize = myblock.size();
+            //随机选择一堵墙（生成0 ~ BlockSize-1之间的随机数，同时也是vector里墙的下标）
+            int randnum = rand() % BlockSize;
+            block SelectBlock = myblock[randnum];
+            x_num = SelectBlock.row;//矿工来到我们“选择的墙”这里
+            y_num = SelectBlock.column;
+            //根据当前选择的墙的方向进行后续操作
+            //此时，起始点 选择的墙 目标块 三块区域在同一直线上
+            //我们让矿工从“选择的墙”继续前进到“目标块”
+            //矿工有穿墙能力 ：)
+            switch (SelectBlock.direction) {
+            case right: {
+                x_num++;
+                break;
+            }
+            case down: {
+                y_num++;
+                break;
+            }
+            case up: {
+                y_num--;
+                break;
+            }
+            case left: {
+                x_num--;
+                break;
+            }
+            }
+            //目标块如果是墙
+            if (G[x_num][y_num] == WALL) {
+                //打通墙和目标块
+                G[SelectBlock.row][SelectBlock.column] = G[x_num][y_num] = NOTHING;
+                //再次找出与矿工当前位置相邻的墙
+                //找出与当前位置相邻的墙
+                if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
+                    myblock.push_back(block(x_num + 1, y_num, right));
+                }
+                if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//down
+                    myblock.push_back(block(x_num, y_num + 1, down));
+                }
+                if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//left
+                    myblock.push_back(block(x_num - 1, y_num, left));
+                }
+                if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
+                    myblock.push_back(block(x_num, y_num - 1,  up));
+                }
+            }
+            else {//如果不是呢？说明我们的矿工挖到了一个空旷的通路上面 休息一下就好了
+             //relax
+                allsquare[SelectBlock.row][SelectBlock.column]->label->clear();
+                allsquare[SelectBlock.row][SelectBlock.column]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+                allsquare[SelectBlock.row][SelectBlock.column]->label->show();
+            }
+            //删除这堵墙(把用不了的墙删了，对于那些已经施工过了不必再施工了，同时也是确保我们能跳出循环)
+            myblock.erase(myblock.begin() + randnum);
+
+        for (int i = 0; i <= m + 1; i++)
+        {
+            for (int j = 0; j <= n + 1; j++)
+            {
+                if (G[i][j] == NOTHING&&allsquare[i][j]->type!=food_label)
+                {
+                    allsquare[i][j]->type = ground_label;
+                    allsquare[i][j]->label->clear();
+                    allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                    allsquare[i][j]->label->show();
+
+                }
+            }
+        }
+        for (int i=0;i<myblock.size();i++)
+        {
+           if(myblock[i].direction==down)
+           {
+           allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/down.png)}");
+           allsquare[myblock[i]. row][myblock[i].column]->label->show();
+           }
+           if(myblock[i].direction==up)
+           {
+           allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/up.png)}");
+           allsquare[myblock[i]. row][myblock[i].column]->label->show();
+           }
+           if(myblock[i].direction==left)
+           {
+           allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/left.png)}");
+           allsquare[myblock[i]. row][myblock[i].column]->label->show();
+           }
+           if(myblock[i].direction==right)
+           {
+           allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/right.png)}");
+           allsquare[myblock[i]. row][myblock[i].column]->label->show();
+           }
+        }
+    }
+    }
+    if(dtype==2)
+    {
+        int rand1;
+        srand(time(0));
+        if(myblock.size()!=0||flag==1)
+        {
+            flag=0;
+
+         if(Ling.size())
+         {
+         rand1=rand()%Ling.size();
+
+        myblock.push_back(block(x_num,y_num,0));
+        x_num=Ling[rand1].row;
+        y_num=Ling[rand1].column;
+        G[x_num][y_num]=1;
+
+        switch (Ling[rand1].direction)
+        {
         case right: {
-            x_num++;
-            break;
-        }
-        case down: {
-            y_num++;
-            break;
-        }
-        case up: {
-            y_num--;
-            break;
-        }
-        case left: {
+
             x_num--;
             break;
         }
-        }
-        //目标块如果是墙
-        if (G[x_num][y_num] == WALL) {
-            //打通墙和目标块
-            G[SelectBlock.row][SelectBlock.column] = G[x_num][y_num] = NOTHING;
-            //再次找出与矿工当前位置相邻的墙
-            //找出与当前位置相邻的墙
-            if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
-                myblock.push_back(block(x_num + 1, y_num, right));
-            }
-            if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//down
-                myblock.push_back(block(x_num, y_num + 1, down));
-            }
-            if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//left
-                myblock.push_back(block(x_num - 1, y_num, left));
-            }
-            if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
-                myblock.push_back(block(x_num, y_num - 1,  up));
-            }
-        }
-        else {//如果不是呢？说明我们的矿工挖到了一个空旷的通路上面 休息一下就好了
-         //relax
-            allsquare[SelectBlock.row][SelectBlock.column]->label->clear();
-            allsquare[SelectBlock.row][SelectBlock.column]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-            allsquare[SelectBlock.row][SelectBlock.column]->label->show();
-        }
-        //删除这堵墙(把用不了的墙删了，对于那些已经施工过了不必再施工了，同时也是确保我们能跳出循环)
-        myblock.erase(myblock.begin() + randnum);
+        case down: {
 
-    for (int i = 0; i <= m + 1; i++)
-    {
-        for (int j = 0; j <= n + 1; j++)
+             y_num--;
+            break;
+        }
+        case up: {
+
+            y_num++;
+            break;
+        }
+        case left: {
+
+            x_num++;
+            break;
+        }
+
+        }
+
+        G[x_num][y_num]=1;
+        x_num=Ling[rand1].row;
+        y_num=Ling[rand1].column;
+        Ling.clear();
+        }
+         else
+         {
+             if(myblock.size())
+             {
+                 x_num=myblock[myblock.size()-1].row;
+                 y_num=myblock[myblock.size()-1].column;
+                 myblock.pop_back();
+             }
+         }
+         if (x_num + 2 <= m && G[x_num + 2][y_num] == 0) {//right
+             Ling.push_back(block(x_num + 2, y_num, right));
+         }
+         if (y_num + 2 <= n && G[x_num][y_num + 2] == 0) {//down
+             Ling.push_back(block(x_num, y_num + 2, down));
+         }
+         if (x_num - 2 >= 1 && G[x_num - 2][y_num] == 0) {//left
+             Ling.push_back(block(x_num - 2, y_num, left));
+         }
+         if (y_num - 2 >= 1 && G[x_num][y_num - 2] == 0) {//up
+             Ling.push_back(block(x_num, y_num - 2,  up));
+         }
+        }
+        for (int i = 1; i <=m; i++)
         {
-            if (G[i][j] == NOTHING&&allsquare[i][j]->type!=food_label)
+            for (int j = 1; j <= n; j++)
             {
-                allsquare[i][j]->type = ground_label;
-                allsquare[i][j]->label->clear();
-                allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
-                allsquare[i][j]->label->show();
+                if (G[i][j] ==1&&allsquare[i][j]->type!=food_label)
+                {
+                    allsquare[i][j]->type = ground_label;
+                    allsquare[i][j]->label->clear();
+                    allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                    allsquare[i][j]->label->show();
 
+                }
             }
         }
+        switch (Ling[rand1].direction)
+        {
+        case right: {
+            allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/right.png)}");
+            break;
+        }
+        case down: {
+             allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/down.png)}");
+            break;
+        }
+        case up: {
+             allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/up.png)}");
+            break;
+        }
+        case left: {
+             allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/left.png)}");
+            break;
+        }
+
+        }if(x_num==MX-2&&y_num==MY-2)
+        {
+          allsquare[MX-2][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/cheese.jpg)}");
+          allsquare[MX-2][MY-2]->label->show();}
+          if(!myblock.size()){allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");}
+
     }
-    for (int i=0;i<myblock.size();i++)
-    {
-       if(myblock[i].direction==down)
-       {
-       allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/down.png)}");
-       allsquare[myblock[i]. row][myblock[i].column]->label->show();
-       }
-       if(myblock[i].direction==up)
-       {
-       allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/up.png)}");
-       allsquare[myblock[i]. row][myblock[i].column]->label->show();
-       }
-       if(myblock[i].direction==left)
-       {
-       allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/left.png)}");
-       allsquare[myblock[i]. row][myblock[i].column]->label->show();
-       }
-       if(myblock[i].direction==right)
-       {
-       allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/right.png)}");
-       allsquare[myblock[i]. row][myblock[i].column]->label->show();
-       }
-    }
-}
 
 }
 void maze::present()
@@ -383,6 +501,8 @@ void maze::present()
 
     initgame();
     gamesta=4;
+    if(dtype==1)
+    {
     if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
         myblock.push_back(block(x_num + 1, y_num, right));
     }
@@ -394,6 +514,24 @@ void maze::present()
     }
     if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
         myblock.push_back(block(x_num, y_num - 1,  up));
+    }
+    }
+    if(dtype==2)
+    {
+
+       if (x_num + 2 <= m && G[x_num + 2][y_num] == 0) {//right
+           Ling.push_back(block(x_num + 2, y_num, right));
+       }
+       if (y_num + 2 <= n && G[x_num][y_num + 2] == 0) {//down
+           Ling.push_back(block(x_num, y_num + 2, down));
+       }
+       if (x_num - 2 >= 1 && G[x_num - 2][y_num] == 0) {//left
+           Ling.push_back(block(x_num - 2, y_num, left));
+       }
+       if (y_num - 2 >= 1 && G[x_num][y_num - 2] == 0) {//up
+           Ling.push_back(block(x_num, y_num - 2,  up));
+       }
+       flag=1;
     }
     ptimer=new QTimer(this);
     ptimer->start(500);
@@ -629,10 +767,16 @@ void maze::settingslot()//设置地图大小的函数
       W->setValue(temp);
       QObject::connect(save,SIGNAL(clicked()),setwindowsize,SLOT(accept()));
       QObject::connect(cancle,SIGNAL(clicked()),setwindowsize,SLOT(reject()));
+      QRadioButton* d1=new QRadioButton("广度优先生成迷宫",setwindowsize);
+      QRadioButton* d2=new QRadioButton("深度优先生成迷宫",setwindowsize);
+      d1->setGeometry(50,200,150,50);
+      d2->setGeometry(250,200,150,50);
       if(setwindowsize->exec()==QDialog::Accepted)
       {
           MX=2*(L->value())-1;MY=2*(W->value())-1;
           resizewindow();
+          if(d1->isChecked()){dtype=1;}
+          if(d2->isChecked()){dtype=2;}
       }
 
       delete setwindowsize;
@@ -1034,89 +1178,185 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
 }*/
 void maze::destructwall()//该函数借鉴于CSDN上用户god_speed、的函数
 {
+   if(dtype==1)
+   {
+       if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
+           myblock.push_back(block(x_num + 1, y_num, right));
+       }
+       if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//down
+           myblock.push_back(block(x_num, y_num + 1, down));
+       }
+       if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//left
+           myblock.push_back(block(x_num - 1, y_num, left));
+       }
+       if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
+           myblock.push_back(block(x_num, y_num - 1,  up));
+       }
+
+       while (myblock.size()) {
+           int BlockSize = myblock.size();
+           //随机选择一堵墙（生成0 ~ BlockSize-1之间的随机数，同时也是vector里墙的下标）
+           int randnum = rand() % BlockSize;
+           block SelectBlock = myblock[randnum];
+           x_num = SelectBlock.row;//矿工来到我们“选择的墙”这里
+           y_num = SelectBlock.column;
+           //根据当前选择的墙的方向进行后续操作
+           //此时，起始点 选择的墙 目标块 三块区域在同一直线上
+           //我们让矿工从“选择的墙”继续前进到“目标块”
+           //矿工有穿墙能力 ：)
+           switch (SelectBlock.direction) {
+           case right: {
+               x_num++;
+               break;
+           }
+           case down: {
+               y_num++;
+               break;
+           }
+           case up: {
+               y_num--;
+               break;
+           }
+           case left: {
+               x_num--;
+               break;
+           }
+           }
+           //目标块如果是墙
+           if (G[x_num][y_num] == WALL) {
+               //打通墙和目标块
+               G[SelectBlock.row][SelectBlock.column] = G[x_num][y_num] = NOTHING;
+               //再次找出与矿工当前位置相邻的墙
+               //找出与当前位置相邻的墙
+               if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
+                   myblock.push_back(block(x_num + 1, y_num, right));
+               }
+               if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//down
+                   myblock.push_back(block(x_num, y_num + 1, down));
+               }
+               if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//left
+                   myblock.push_back(block(x_num - 1, y_num, left));
+               }
+               if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
+                   myblock.push_back(block(x_num, y_num - 1,  up));
+               }
+           }
+           else {//如果不是呢？说明我们的矿工挖到了一个空旷的通路上面 休息一下就好了
+            //relax
+           }
+           //删除这堵墙(把用不了的墙删了，对于那些已经施工过了不必再施工了，同时也是确保我们能跳出循环)
+           myblock.erase(myblock.begin() + randnum);
+       }
+       G[1][1]=NOTHING;
+       for (int i = 0; i <= m + 1; i++)
+       {
+           for (int j = 0; j <= n + 1; j++)
+           {
+               if (G[i][j] == NOTHING&&allsquare[i][j]->type!=food_label)
+               {
+                   allsquare[i][j]->type = ground_label;
+                   allsquare[i][j]->label->clear();
+                   allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                   allsquare[i][j]->label->show();
+
+               }
+           }
+       }
+
+   }
+   if(dtype==2)
+   {
+             if (x_num + 2 <= m && G[x_num + 2][y_num] == 0) {//right
+                 Ling.push_back(block(x_num + 2, y_num, right));
+             }
+             if (y_num + 2 <= n && G[x_num][y_num + 2] == 0) {//down
+                 Ling.push_back(block(x_num, y_num + 2, down));
+             }
+             if (x_num - 2 >= 1 && G[x_num - 2][y_num] == 0) {//left
+                 Ling.push_back(block(x_num - 2, y_num, left));
+             }
+             if (y_num - 2 >= 1 && G[x_num][y_num - 2] == 0) {//up
+                 Ling.push_back(block(x_num, y_num - 2,  up));
+             }
+             int rand1;
+             flag=1;
+             while(myblock.size()!=0||flag==1)
+             {
+                 flag=0;
 
 
-    if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
-        myblock.push_back(block(x_num + 1, y_num, right));
-    }
-    if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//down
-        myblock.push_back(block(x_num, y_num + 1, down));
-    }
-    if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//left
-        myblock.push_back(block(x_num - 1, y_num, left));
-    }
-    if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
-        myblock.push_back(block(x_num, y_num - 1,  up));
-    }
+              if(Ling.size())
+              {
+              rand1=rand()%Ling.size();
 
-    while (myblock.size()) {
-        int BlockSize = myblock.size();
-        //随机选择一堵墙（生成0 ~ BlockSize-1之间的随机数，同时也是vector里墙的下标）
-        int randnum = rand() % BlockSize;
-        block SelectBlock = myblock[randnum];
-        x_num = SelectBlock.row;//矿工来到我们“选择的墙”这里
-        y_num = SelectBlock.column;
-        //根据当前选择的墙的方向进行后续操作
-        //此时，起始点 选择的墙 目标块 三块区域在同一直线上
-        //我们让矿工从“选择的墙”继续前进到“目标块”
-        //矿工有穿墙能力 ：)
-        switch (SelectBlock.direction) {
-        case right: {
-            x_num++;
-            break;
-        }
-        case down: {
-            y_num++;
-            break;
-        }
-        case up: {
-            y_num--;
-            break;
-        }
-        case left: {
-            x_num--;
-            break;
-        }
-        }
-        //目标块如果是墙
-        if (G[x_num][y_num] == WALL) {
-            //打通墙和目标块
-            G[SelectBlock.row][SelectBlock.column] = G[x_num][y_num] = NOTHING;
-            //再次找出与矿工当前位置相邻的墙
-            //找出与当前位置相邻的墙
-            if (x_num + 1 <= m && G[x_num + 1][y_num] == WALL) {//right
-                myblock.push_back(block(x_num + 1, y_num, right));
-            }
-            if (y_num + 1 <= n && G[x_num][y_num + 1] == WALL) {//down
-                myblock.push_back(block(x_num, y_num + 1, down));
-            }
-            if (x_num - 1 >= 1 && G[x_num - 1][y_num] == WALL) {//left
-                myblock.push_back(block(x_num - 1, y_num, left));
-            }
-            if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
-                myblock.push_back(block(x_num, y_num - 1,  up));
-            }
-        }
-        else {//如果不是呢？说明我们的矿工挖到了一个空旷的通路上面 休息一下就好了
-         //relax
-        }
-        //删除这堵墙(把用不了的墙删了，对于那些已经施工过了不必再施工了，同时也是确保我们能跳出循环)
-        myblock.erase(myblock.begin() + randnum);
-    }
-    for (int i = 0; i <= m + 1; i++)
-    {
-        for (int j = 0; j <= n + 1; j++)
-        {
-            if (G[i][j] == NOTHING&&allsquare[i][j]->type!=food_label)
-            {
-                allsquare[i][j]->type = ground_label;
-                allsquare[i][j]->label->clear();
-                allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
-                allsquare[i][j]->label->show();
+             myblock.push_back(block(x_num,y_num,0));
+             x_num=Ling[rand1].row;
+             y_num=Ling[rand1].column;
+             G[x_num][y_num]=1;
 
-            }
-        }
-    }
+             switch (Ling[rand1].direction)
+             {
+             case right: {
+                 x_num--;
+                 break;
+             }
+             case down: {
+                 y_num--;
+                 break;
+             }
+             case up: {
+                 y_num++;
+                 break;
+             }
+             case left: {
+                 x_num++;
+                 break;
+             }
+
+             }
+
+             G[x_num][y_num]=1;
+             x_num=Ling[rand1].row;
+             y_num=Ling[rand1].column;
+             Ling.clear();
+             }
+              else
+              {
+                  if(myblock.size())
+                  {
+                      x_num=myblock[myblock.size()-1].row;
+                      y_num=myblock[myblock.size()-1].column;
+                      myblock.pop_back();
+                  }
+              }
+              if (x_num + 2 <= m && G[x_num + 2][y_num] == 0) {//right
+                  Ling.push_back(block(x_num + 2, y_num, right));
+              }
+              if (y_num + 2 <= n && G[x_num][y_num + 2] == 0) {//down
+                  Ling.push_back(block(x_num, y_num + 2, down));
+              }
+              if (x_num - 2 >= 1 && G[x_num - 2][y_num] == 0) {//left
+                  Ling.push_back(block(x_num - 2, y_num, left));
+              }
+              if (y_num - 2 >= 1 && G[x_num][y_num - 2] == 0) {//up
+                  Ling.push_back(block(x_num, y_num - 2,  up));
+              }
+             }
+             for (int i = 1; i <=m; i++)
+             {
+                 for (int j = 1; j <= n; j++)
+                 {
+                     if (G[i][j] ==1&&allsquare[i][j]->type!=food_label)
+                     {
+                         allsquare[i][j]->type = ground_label;
+                         allsquare[i][j]->label->clear();
+                         allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                         allsquare[i][j]->label->show();
+
+                     }
+                 }
+             }
+   }
 
 }
 void maze::updatetimer()//主要负责显示时间
@@ -1174,10 +1414,11 @@ void maze::gameover(int a,int b)
                  delete mouse->label;
                  gametime=MX*MY*0.2;
                  counttimer->start();
-                 x_num = 1; y_num = 1;//矿工位置
-                 memset(G, WALL, sizeof(G));
+                 x_num = 2*((rand()%(m+1))/2)+1;
+                 y_num = 2*((rand()%(n+1))/2)+1;//矿工位置
+                 if(dtype==1){memset(G, WALL, sizeof(G));G[x_num][y_num] = NOTHING;}
+                 if(dtype==2){memset(G,0,sizeof(G));G[x_num][y_num] =1;}
                  //定义起始点
-                 G[1][1] = NOTHING;
                  structface();
                 destructwall();
                 if(gamesta==2)

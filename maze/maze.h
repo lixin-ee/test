@@ -20,6 +20,7 @@
 #include<QSlider>
 #include<cstdlib>
 #include<ctime>
+#include<QRadioButton>
 #define Label_Size  30
 using namespace std;
 
@@ -100,6 +101,7 @@ private slots:
     QPushButton* presentation;
     QTimer* ptimer;
     QPixmap*hammer;
+    int dtype=2;
 };
 static int gamesta=0;
 static int havehammer=0;
