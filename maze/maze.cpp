@@ -124,9 +124,11 @@ void maze::initgame()//初始化游戏界面
     x_num =2*((rand()%(m+1))/2)+1;
     y_num =2*((rand()%(n+1))/2)+1;
     if(dtype==1)
-    {G[x_num][y_num] = NOTHING;memset(G, WALL, sizeof(G));}
+    {memset(G, WALL, sizeof(G));
+        G[x_num][y_num] = NOTHING;}
     if(dtype==2)
-    {G[x_num][y_num]=1;memset(G, 0, sizeof(G));}
+    {memset(G, 0, sizeof(G));
+    G[x_num][y_num]=1;}
 
    //定义起始点
 }
@@ -1271,10 +1273,9 @@ void maze::destructwall()//该函数借鉴于CSDN上用户god_speed、的函数
            //删除这堵墙(把用不了的墙删了，对于那些已经施工过了不必再施工了，同时也是确保我们能跳出循环)
            myblock.erase(myblock.begin() + randnum);
        }
-       G[1][1]=NOTHING;
-       for (int i = 0; i <= m + 1; i++)
+       for (int i = 1; i <= m; i++)
        {
-           for (int j = 0; j <= n + 1; j++)
+           for (int j = 1; j <= n; j++)
            {
                if (G[i][j] == NOTHING&&allsquare[i][j]->type!=food_label)
                {
