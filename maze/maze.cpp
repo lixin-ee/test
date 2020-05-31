@@ -704,34 +704,58 @@ void maze::movecat()//响应键盘的移动函数，要有必要的判断，判�
 void maze::structface()
 {
     allsquare=new square**[MX];
-    for(int i=0;i<MX;i++)
-    {
-        allsquare[i]=new square*[MY];
-        for (int j=0;j<MY;j++)
+        for(int i=0;i<MX;i++)
         {
-            allsquare[i][j]=new square;
-            allsquare[i][j]->X=i;
-            allsquare[i][j]->Y=j;
-            allsquare[i][j]->label=new QLabel(this);
-            allsquare[i][j]->label->setGeometry(i*Label_Size,j*Label_Size,Label_Size,Label_Size);
-            allsquare[i][j]->type=wall_label;
-            allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-            allsquare[i][j]->label->show();
+            allsquare[i]=new square*[MY];
+            for (int j=0;j<MY;j++)
+            {
+                allsquare[i][j]=new square;
+                allsquare[i][j]->X=i;
+                allsquare[i][j]->Y=j;
+                allsquare[i][j]->label=new QLabel(this);
+                allsquare[i][j]->label->setGeometry(i*Label_Size,j*Label_Size,Label_Size,Label_Size);
+                allsquare[i][j]->type=wall_label;
+            }
         }
-    }
-    srand(time(0));
-    mouse=new square;
-    mouse->label=new QLabel(this);
-    food=allsquare[MX-2][MY-2];
-    mouse->X=1;
-    mouse->Y=1;
-    mouse->label->setGeometry(Label_Size,Label_Size,Label_Size,Label_Size);
-    mouse->label->setMovie(mousegif);
-    mousegif->start();
-    mouse->label->show();
-    mouse->type=mouse_label;
-    food->label->setStyleSheet("QLabel{border-image:url(:/cheese.jpg)}");
-    food->type=food_label;
+        for(int i=0;i<MX;i=i+2)
+            {
+                for(int j=0;j<MY;j=j+1)
+                {
+                    allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+                    allsquare[i][j]->label->show();
+                }
+            }
+
+        for(int i=1;i<MX;i=i+2)
+        {
+            for (int j=0;j<MY;j=j+2)
+            {
+                allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+                allsquare[i][j]->label->show();
+            }
+        }
+        for(int i=1;i<MX;i=i+2)
+        {
+            for (int j=1;j<MY;j=j+2)
+            {
+                allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/ground.jpg)}");
+                allsquare[i][j]->label->show();
+            }
+        }
+
+        srand(time(0));
+        mouse=new square;
+        mouse->label=new QLabel(this);
+        food=allsquare[MX-2][MY-2];
+        mouse->X=1;
+        mouse->Y=1;
+        mouse->label->setGeometry(Label_Size,Label_Size,Label_Size,Label_Size);
+        mouse->label->setMovie(mousegif);
+        mousegif->start();
+        mouse->label->show();
+        mouse->type=mouse_label;
+        food->label->setStyleSheet("QLabel{border-image:url(:/cheese.jpg)}");
+        food->type=food_label;
 }
 void maze::settingslot()//设置地图大小的函数
 {

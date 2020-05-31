@@ -42,5 +42,6 @@
         <file>left.png</file>
         <file>right.png</file>
         <file>up.png</file>
+        <file>ground.jpg</file>
     </qresource>
 </RCC>
