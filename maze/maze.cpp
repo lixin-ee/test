@@ -217,6 +217,7 @@ void maze::replay()//重玩
         change.clear();
         cat->label->setMovie(catgif);
         catgif->start();
+        cattimer->start(100);
     }
     if(gamesta==2&&havehammer==1)
     {
