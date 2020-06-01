@@ -43,5 +43,6 @@
         <file>right.png</file>
         <file>up.png</file>
         <file>ground.jpg</file>
+        <file>path.jpg</file>
     </qresource>
 </RCC>
