@@ -387,6 +387,7 @@ void maze::dwall()
            }
         }
     }
+        else ptimer->stop();
     }
     if(dtype==2)
     {
@@ -395,12 +396,11 @@ void maze::dwall()
         if(myblock.size()!=0||flag==1)
         {
             flag=0;
-
+            block temp(0,0,0);
          if(Ling.size())
          {
          rand1=rand()%Ling.size();
-
-        myblock.push_back(block(x_num,y_num,0));
+        myblock.push_back(block(x_num,y_num,Ling[rand1].direction));
         x_num=Ling[rand1].row;
         y_num=Ling[rand1].column;
         G[x_num][y_num]=1;
@@ -408,32 +408,27 @@ void maze::dwall()
         switch (Ling[rand1].direction)
         {
         case right: {
-
             x_num--;
             break;
         }
         case down: {
-
-             y_num--;
+             y_num--; 
             break;
         }
         case up: {
-
             y_num++;
-            break;
+             break;
         }
         case left: {
-
             x_num++;
             break;
         }
 
         }
-
+         temp={x_num,y_num,Ling[rand1].direction};
         G[x_num][y_num]=1;
         x_num=Ling[rand1].row;
         y_num=Ling[rand1].column;
-        Ling.clear();
         }
          else
          {
@@ -441,9 +436,56 @@ void maze::dwall()
              {
                  x_num=myblock[myblock.size()-1].row;
                  y_num=myblock[myblock.size()-1].column;
+                 temp={x_num,y_num,myblock[myblock.size()-1].direction};
                  myblock.pop_back();
              }
+
          }
+         for (int i = 1; i <=m; i++)
+         {
+             for (int j = 1; j <= n; j++)
+             {
+                 if (G[i][j] ==1&&allsquare[i][j]->type!=food_label)
+                 {
+                     allsquare[i][j]->type = ground_label;
+                     allsquare[i][j]->label->clear();
+                     allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                     allsquare[i][j]->label->show();
+                 }
+             }
+         }
+         switch (temp.direction)
+         {
+         case right: {
+             if(Ling.size())
+             allsquare[x_num-1][y_num]->label->setStyleSheet("QLabel{border-image:url(:/right.png)}");
+             else
+               allsquare[x_num+1][y_num]->label->setStyleSheet("QLabel{border-image:url(:/left.png)}");
+             break;
+         }
+         case down: {
+             if(Ling.size())
+                 allsquare[x_num][y_num-1]->label->setStyleSheet("QLabel{border-image:url(:/down.png)}");
+                 else
+                 allsquare[x_num][y_num+1]->label->setStyleSheet("QLabel{border-image:url(:/up.png)}");
+             break;
+         }
+         case up: {
+             if(Ling.size())
+               allsquare[x_num][y_num+1]->label->setStyleSheet("QLabel{border-image:url(:/up.png)}");
+             else
+              allsquare[x_num][y_num-1]->label->setStyleSheet("QLabel{border-image:url(:/down.png)}");
+             break;
+         }
+         case left: {
+             if(Ling.size())
+                 allsquare[x_num+1][y_num]->label->setStyleSheet("QLabel{border-image:url(:/left.png)}");
+             else
+              allsquare[x_num-1][y_num]->label->setStyleSheet("QLabel{border-image:url(:/right.png)}");
+             break;
+         }
+         }
+          Ling.clear();
          if (x_num + 2 <= m && G[x_num + 2][y_num] == 0) {//right
              Ling.push_back(block(x_num + 2, y_num, right));
          }
@@ -456,46 +498,26 @@ void maze::dwall()
          if (y_num - 2 >= 1 && G[x_num][y_num - 2] == 0) {//up
              Ling.push_back(block(x_num, y_num - 2,  up));
          }
-        }
-        for (int i = 1; i <=m; i++)
-        {
-            for (int j = 1; j <= n; j++)
-            {
-                if (G[i][j] ==1&&allsquare[i][j]->type!=food_label)
-                {
-                    allsquare[i][j]->type = ground_label;
-                    allsquare[i][j]->label->clear();
-                    allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
-                    allsquare[i][j]->label->show();
 
+        }
+        else
+        {
+            ptimer->stop();
+            for (int i = 1; i <=m; i++)
+            {
+                for (int j = 1; j <= n; j++)
+                {
+                    if (G[i][j] ==1&&allsquare[i][j]->type!=food_label)
+                    {
+                        allsquare[i][j]->type = ground_label;
+                        allsquare[i][j]->label->clear();
+                        allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                        allsquare[i][j]->label->show();
+                    }
                 }
             }
-        }
-        switch (Ling[rand1].direction)
-        {
-        case right: {
-            allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/right.png)}");
-            break;
-        }
-        case down: {
-             allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/down.png)}");
-            break;
-        }
-        case up: {
-             allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/up.png)}");
-            break;
-        }
-        case left: {
-             allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/left.png)}");
-            break;
-        }
 
-        }if(x_num==MX-2&&y_num==MY-2)
-        {
-          allsquare[MX-2][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/cheese.jpg)}");
-          allsquare[MX-2][MY-2]->label->show();}
-          if(!myblock.size()){allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");}
-
+        }
     }
 
 }
