@@ -25,6 +25,7 @@ int x_num , y_num ;//矿工位置
     vector<block> myblock;
     vector<block> Ling;
     bool flag=1;
+    bool flag1=1;
     int G[100][100];
     //将地图全部置为墙
 
@@ -175,6 +176,7 @@ void maze::returnhome()//返回主界面
     delete mouse;
     delete mouse->label;
     myblock.clear();
+    Ling.clear();
     if(gamesta==2){change.clear();havehammer=0;}
 
 }
@@ -393,7 +395,7 @@ void maze::dwall()
     {
         int rand1;
         srand(time(0));
-        if(myblock.size()!=0||flag==1)
+        if((myblock.size()!=0||flag==1)&&flag1)
         {
             flag=0;
             block temp(0,0,0);
@@ -404,7 +406,6 @@ void maze::dwall()
         x_num=Ling[rand1].row;
         y_num=Ling[rand1].column;
         G[x_num][y_num]=1;
-
         switch (Ling[rand1].direction)
         {
         case right: {
@@ -501,22 +502,81 @@ void maze::dwall()
 
         }
         else
-        {
-            ptimer->stop();
-            for (int i = 1; i <=m; i++)
+        {   flag1=0;
+
+            if(!flag)
             {
-                for (int j = 1; j <= n; j++)
+                for (int i = 1; i <=m; i++)
                 {
-                    if (G[i][j] ==1&&allsquare[i][j]->type!=food_label)
+                    for (int j = 1; j <= n; j++)
                     {
-                        allsquare[i][j]->type = ground_label;
-                        allsquare[i][j]->label->clear();
-                        allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
-                        allsquare[i][j]->label->show();
+                        if (G[i][j] ==1&&allsquare[i][j]->type!=food_label)
+                        {
+                            allsquare[i][j]->type = ground_label;
+                            allsquare[i][j]->label->clear();
+                            allsquare[i][j]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                            allsquare[i][j]->label->show();
+                        }
                     }
                 }
-            }
 
+                x_num=1;y_num=1;
+                if (x_num + 1 <= m && G[x_num + 1][y_num] == 1) {//right
+                    Ling.push_back(block(x_num + 1, y_num, right));
+                }
+                if (y_num + 1 <= n && G[x_num][y_num + 1] == 1) {//down
+                    Ling.push_back(block(x_num, y_num + 1, down));
+                }
+                if (x_num - 1 >= 1 && G[x_num - 1][y_num] == 1) {//left
+                    Ling.push_back(block(x_num - 1, y_num, left));
+                }
+                if (y_num - 1 >= 1 && G[x_num][y_num - 1] == 1) {//up
+                    Ling.push_back(block(x_num, y_num - 1,  up));
+                }
+            }
+            if(G[m][n]!=2)
+            {
+                flag=1;
+                if(Ling.size())
+                {
+                rand1=rand()%Ling.size();
+               myblock.push_back(block(x_num,y_num,Ling[rand1].direction));
+               x_num=Ling[rand1].row;
+               y_num=Ling[rand1].column;
+               G[x_num][y_num]=2;
+               }
+                else
+                {
+                    if(myblock.size())
+                    {
+                        allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                        allsquare[x_num][y_num]->label->show();
+                        x_num=myblock[myblock.size()-1].row;
+                        y_num=myblock[myblock.size()-1].column;
+                        myblock.pop_back();
+                    }
+
+                }
+                Ling.clear();
+                if (x_num + 1 <= m && G[x_num + 1][y_num] == 1) {//right
+                    Ling.push_back(block(x_num + 1, y_num, right));
+                }
+                if (y_num + 1 <= n && G[x_num][y_num + 1] == 1) {//down
+                    Ling.push_back(block(x_num, y_num + 1, down));
+                }
+                if (x_num - 1 >= 1 && G[x_num - 1][y_num] == 1) {//left
+                    Ling.push_back(block(x_num - 1, y_num, left));
+                }
+                if (y_num - 1 >= 1 && G[x_num][y_num - 1] == 1) {//up
+                    Ling.push_back(block(x_num, y_num - 1,  up));
+                }
+                for(int i=0;i<myblock.size();i++)
+                {
+                    allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/path.jpg)}");
+                    allsquare[myblock[i]. row][myblock[i].column]->label->show();
+                }
+            }
+            else ptimer->stop();
         }
     }
 
@@ -557,6 +617,7 @@ void maze::present()
            Ling.push_back(block(x_num, y_num - 2,  up));
        }
        flag=1;
+       flag1=1;
     }
     ptimer=new QTimer(this);
     ptimer->start(500);
