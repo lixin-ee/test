@@ -26,7 +26,9 @@ int x_num , y_num ;//矿工位置
     vector<block> Ling;
     bool flag=1;
     bool flag1=1;
+    int td;
     int G[100][100];
+    int ptime=500;
     //将地图全部置为墙
 
 maze::maze(QWidget *parent)
@@ -40,7 +42,7 @@ maze::maze(QWidget *parent)
     int temp1=0.7*screen_width/(Label_Size*2);
     MX=2*temp1+1;
     temp1=0.9*screen_height/(Label_Size*2);
-    MY=2*temp1+1;
+    MY=2*temp1-1;
     ui->setupUi(this);
     setWindowIcon(QIcon(":/tubiao.ico"));
     setWindowTitle("maze521");
@@ -178,7 +180,6 @@ void maze::returnhome()//返回主界面
     myblock.clear();
     Ling.clear();
     if(gamesta==2){change.clear();havehammer=0;}
-
 }
 void maze::replay()//重玩
 {
@@ -294,7 +295,7 @@ void maze::dwall()
 {
     if(dtype==1)
     {
-        if (myblock.size()) {
+        if (myblock.size()&&flag==1) {
             int BlockSize = myblock.size();
             //随机选择一堵墙（生成0 ~ BlockSize-1之间的随机数，同时也是vector里墙的下标）
             int randnum = rand() % BlockSize;
@@ -389,12 +390,129 @@ void maze::dwall()
            }
         }
     }
-        else ptimer->stop();
-    }
+
+
+        else
+        {
+           flag=0;
+           if(flag1)
+           {
+               flag1=0;
+               x_num=1;y_num=1;
+               G[1][1]=1;
+                myblock.push_back(block(x_num,y_num,0));
+               if (x_num + 1 <= m && G[x_num + 1][y_num] == NOTHING) {//right
+                   Ling.push_back(block(x_num + 1, y_num, right));
+               }
+               if (y_num + 1 <= n && G[x_num][y_num + 1] == NOTHING) {//down
+                   Ling.push_back(block(x_num, y_num + 1, down));
+               }
+               if (x_num - 1 >= 1 && G[x_num - 1][y_num] == NOTHING) {//left
+                   Ling.push_back(block(x_num - 1, y_num, left));
+               }
+               if (y_num - 1 >= 1 && G[x_num][y_num - 1] == NOTHING) {//up
+                   Ling.push_back(block(x_num, y_num - 1,  up));
+               }
+           }
+           if(G[m][n]!=1)
+           {
+               int rand2=rand()%Ling.size();
+               x_num=Ling[rand2].row;
+               y_num=Ling[rand2].column;
+               G[x_num][y_num]=1;
+               myblock.push_back(block(x_num,y_num,Ling[rand2].direction));
+               if (x_num + 1 <= m && G[x_num + 1][y_num] == NOTHING) {//right
+                   Ling.push_back(block(x_num + 1, y_num, right));
+               }
+               if (y_num + 1 <= n && G[x_num][y_num + 1] == NOTHING) {//down
+                   Ling.push_back(block(x_num, y_num + 1, down));
+               }
+               if (x_num - 1 >= 1 && G[x_num - 1][y_num] == NOTHING) {//left
+                   Ling.push_back(block(x_num - 1, y_num, left));
+               }
+               if (y_num - 1 >= 1 && G[x_num][y_num - 1] == NOTHING) {//up
+                   Ling.push_back(block(x_num, y_num - 1,  up));
+               }
+               Ling.erase(Ling.begin()+rand2);
+               for(int i=0;i<myblock.size();i++)
+               {
+                   if(allsquare[myblock[i]. row][myblock[i].column]->type!=food_label)
+                  { allsquare[myblock[i]. row][myblock[i].column]->label->setStyleSheet("QLabel{border-image:url(:/path.jpg)}");
+                   allsquare[myblock[i]. row][myblock[i].column]->label->show();}
+               }
+               td=myblock[myblock.size()-1].direction;
+           }
+           else
+           {
+               if(myblock.size())
+               {
+
+               switch (td) {
+               case right: {
+                     myblock.pop_back();
+                   if((x_num-1)==myblock[myblock.size()-1].row&&(y_num==myblock[myblock.size()-1].column))
+                   {
+                       x_num--;
+                       td=myblock[myblock.size()-1].direction;
+                   }
+                   else
+                   {
+                     allsquare[myblock[myblock.size()-1].row][myblock[myblock.size()-1].column]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                     allsquare[myblock[myblock.size()-1].row][myblock[myblock.size()-1].column]->label->show();
+                   }
+                   break;
+               }
+               case down: {
+                     myblock.pop_back();
+                   if(x_num==myblock[myblock.size()-1].row&&((y_num-1)==myblock[myblock.size()-1].column))
+                   {
+                       y_num--;
+                       td=myblock[myblock.size()-1].direction;
+                   }
+                   else
+                   {
+                     allsquare[myblock[myblock.size()-1].row][myblock[myblock.size()-1].column]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                     allsquare[myblock[myblock.size()-1].row][myblock[myblock.size()-1].column]->label->show();
+                   }
+                   break;
+               }
+               case up: {
+                     myblock.pop_back();
+                   if(x_num==myblock[myblock.size()-1].row&&((y_num+1)==myblock[myblock.size()-1].column))
+                   {
+                       y_num++;
+                       td=myblock[myblock.size()-1].direction;
+                   }
+                   else
+                   {
+                     allsquare[myblock[myblock.size()-1].row][myblock[myblock.size()-1].column]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                     allsquare[myblock[myblock.size()-1].row][myblock[myblock.size()-1].column]->label->show();
+                   }
+                   break;
+               }
+               case left: {
+                     myblock.pop_back();
+                   if((x_num+1)==myblock[myblock.size()-1].row&&(y_num==myblock[myblock.size()-1].column))
+                   {
+                       x_num++;
+                       td=myblock[myblock.size()-1].direction;
+                   }
+                   else
+                   {
+                     allsquare[myblock[myblock.size()-1].row][myblock[myblock.size()-1].column]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                     allsquare[myblock[myblock.size()-1].row][myblock[myblock.size()-1].column]->label->show();
+                   }
+                   break;
+               }
+           }
+           }
+               else ptimer->stop();
+         }
+     }
+  }
     if(dtype==2)
     {
         int rand1;
-        srand(time(0));
         if((myblock.size()!=0||flag==1)&&flag1)
         {
             flag=0;
@@ -583,7 +701,6 @@ void maze::dwall()
 }
 void maze::present()
 {
-
     initgame();
     gamesta=4;
     if(dtype==1)
@@ -600,6 +717,8 @@ void maze::present()
     if (y_num - 1 >= 1 && G[x_num][y_num - 1] == WALL) {//up
         myblock.push_back(block(x_num, y_num - 1,  up));
     }
+     flag=1;
+     flag1=1;
     }
     if(dtype==2)
     {
@@ -620,7 +739,7 @@ void maze::present()
        flag1=1;
     }
     ptimer=new QTimer(this);
-    ptimer->start(500);
+    ptimer->start(ptime);
     QObject::connect(ptimer,SIGNAL(timeout()),this,SLOT(dwall()));
 
 }
@@ -851,19 +970,25 @@ void maze::settingslot()//设置地图大小的函数
       QPushButton*cancle=new QPushButton("cancle",setwindowsize);
       QSlider* L=new QSlider (setwindowsize);
       QSlider* W=new QSlider (setwindowsize) ;
+      QSlider* S=new QSlider (setwindowsize);
       QLabel* length=new QLabel(setwindowsize);
       QLabel* width=new QLabel (setwindowsize);
+      QLabel* speed=new QLabel("生成速度:",setwindowsize);
+      speed->show();
       length->setText("长度:");
       width->setText("宽度:");
       length->setGeometry(30,50,40,40);
       width->setGeometry(30,100,40,40);
+      speed->setGeometry(10,150,80,40);
       setwindowsize->resize(400,400);
       save->setGeometry(50,300,100,50);
       cancle->setGeometry(250,300,100,50);
       L->setOrientation(Qt::Horizontal);
       W->setOrientation(Qt::Horizontal);
+      S->setOrientation(Qt::Horizontal);
       L->setGeometry(60,50,300,50);
       W->setGeometry(60,100,100,50);
+      S->setGeometry(100,150,250,50);
       int temp;
       temp=((0.9*screen_width/Label_Size+1)/2);
       L->setRange(6,temp);
@@ -875,16 +1000,22 @@ void maze::settingslot()//设置地图大小的函数
       L->setValue(temp);
       temp=((MY+1)/2);
       W->setValue(temp);
+      S->setRange(2,100);
+      S->setSingleStep(5);
+      S->setValue(1000/ptime);
       QObject::connect(save,SIGNAL(clicked()),setwindowsize,SLOT(accept()));
       QObject::connect(cancle,SIGNAL(clicked()),setwindowsize,SLOT(reject()));
       QRadioButton* d1=new QRadioButton("广度优先生成迷宫",setwindowsize);
       QRadioButton* d2=new QRadioButton("深度优先生成迷宫",setwindowsize);
       d1->setGeometry(50,200,150,50);
       d2->setGeometry(250,200,150,50);
+      if(dtype==1) d1->setChecked(true);
+      if(dtype==2) d2->setChecked(true);
       if(setwindowsize->exec()==QDialog::Accepted)
       {
           MX=2*(L->value())-1;MY=2*(W->value())-1;
           resizewindow();
+          ptime=1000/(S->value());
           if(d1->isChecked()){dtype=1;}
           if(d2->isChecked()){dtype=2;}
       }
@@ -1594,8 +1725,6 @@ void maze::gameover(int a,int b)
              }
              delete donghua;
 }
-
-
 
 void maze::resizewindow()
 {
