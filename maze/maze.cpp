@@ -205,14 +205,6 @@ void maze::replay()//重玩
     {
         cat->label->clear();
         cat->type=ground_label;
-        allsquare[1][MY-2]->type=wall_label;
-        allsquare[1][MY-2]->label->clear();
-        allsquare[1][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-        allsquare[1][MY-2]->label->show();
-        cat->X=1;
-        cat->Y=MY-2;
-        cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
-        cat->type=cat_label;
         for(square* a:change)
         {
             a->type = ground_label;
@@ -221,6 +213,32 @@ void maze::replay()//重玩
             a->label->show();
         }
         change.clear();
+        if(rand()%2==0)
+            {
+            if(allsquare[1][MY-2]->type==ground_label)
+                change.append(allsquare[1][MY-2]);
+                cat->X=1;
+                cat->Y=MY-2;
+                cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
+                allsquare[1][MY-2]->type=wall_label;
+                allsquare[1][MY-2]->label->clear();
+                allsquare[1][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+                allsquare[1][MY-2]->label->show();
+
+            }
+            else
+            {
+            if(allsquare[MX-2][1]->type==ground_label)
+                change.append(allsquare[MX-2][1]);
+                cat->X=MX-2;
+                cat->Y=1;
+                cat->label->setGeometry((MX-2)*Label_Size,Label_Size,Label_Size,Label_Size);
+                allsquare[MX-2][1]->type=wall_label;
+                allsquare[MX-2][1]->label->clear();
+                allsquare[MX-2][1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+                allsquare[MX-2][1]->label->show();
+            }
+        cat->type=cat_label;
         cat->label->setMovie(catgif);
         catgif->start();
         cattimer->start(100);
@@ -272,14 +290,33 @@ void maze::startgame3()
     updatetimer();
     cat=new square;
     cat->label=new QLabel(this);
-    cat->X=1;
-    cat->Y=MY-2;
-    cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
-    catgif=new QMovie(":/cat2.gif");
-    allsquare[1][MY-2]->type=wall_label;
-    allsquare[1][MY-2]->label->clear();
-    allsquare[1][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-    allsquare[1][MY-2]->label->show();
+    if(rand()%2==0)
+        {
+        if(allsquare[1][MY-2]->type==ground_label)
+            change.append(allsquare[1][MY-2]);
+            cat->X=1;
+            cat->Y=MY-2;
+            cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
+            catgif=new QMovie(":/cat2.gif");
+            allsquare[1][MY-2]->type=wall_label;
+            allsquare[1][MY-2]->label->clear();
+            allsquare[1][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+            allsquare[1][MY-2]->label->show();
+
+        }
+        else
+        {
+        if(allsquare[MX-2][1]->type==ground_label)
+            change.append(allsquare[MX-2][1]);
+            cat->X=MX-2;
+            cat->Y=1;
+            cat->label->setGeometry((MX-2)*Label_Size,Label_Size,Label_Size,Label_Size);
+            catgif=new QMovie(":/cat2.gif");
+            allsquare[MX-2][1]->type=wall_label;
+            allsquare[MX-2][1]->label->clear();
+            allsquare[MX-2][1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+            allsquare[MX-2][1]->label->show();
+        }
     QSize s2(Label_Size+10,Label_Size+10);
     catgif->setScaledSize(s2);
     cat->type=cat_label;
@@ -1688,14 +1725,29 @@ void maze::gameover(int a,int b)
                     delete cat;
                     cat=new square;
                     cat->label=new QLabel(this);
-                    cat->X=1;
-                    cat->Y=MY-2;
                     cattimer->start();
-                    cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
-                    allsquare[1][MY-2]->type=wall_label;
-                    allsquare[1][MY-2]->label->clear();
-                    allsquare[1][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
-                    allsquare[1][MY-2]->label->show();
+                    if(rand()%2==0)
+                        {
+                            cat->X=1;
+                            cat->Y=MY-2;
+                            cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
+                            allsquare[1][MY-2]->type=wall_label;
+                            allsquare[1][MY-2]->label->clear();
+                            allsquare[1][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+                            allsquare[1][MY-2]->label->show();
+                            change.append(allsquare[1][MY-2]);
+                        }
+                        else
+                        {
+                            cat->X=MX-2;
+                            cat->Y=1;
+                            cat->label->setGeometry((MX-2)*Label_Size,Label_Size,Label_Size,Label_Size);
+                            allsquare[MX-2][1]->type=wall_label;
+                            allsquare[MX-2][1]->label->clear();
+                            allsquare[MX-2][1]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
+                            allsquare[MX-2][1]->label->show();
+                            change.append(allsquare[MX-2][1]);
+                        }
                     cat->type=cat_label;
                     cat->label->setMovie(catgif);
                     catgif->start();
