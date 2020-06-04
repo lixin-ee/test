@@ -60,7 +60,10 @@ maze::maze(QWidget *parent)
     QObject::connect(presentation,SIGNAL(clicked()),this,SLOT(present()));
     mousegif=new QMovie(":/mouse1.gif");
     QSize s1(Label_Size+5,Label_Size+5);
+    catgif=new QMovie(":/cat2.gif");
+    QSize s2(Label_Size+10,Label_Size+10);
     mousegif->setScaledSize(s1);
+    catgif->setScaledSize(s2);
     hammer=new QPixmap(":/hammer.png");
 }
 void maze::startgame1()
@@ -1180,10 +1183,14 @@ void maze::movemouse3()//响应键盘的移动函数，要有必要的判断，�
                 {
 
                 }
+                if(tempMouse->type==cat_label)//如果老鼠撞到了猫
+                {
+                    gameover(0,1);
+                }
                 else//如果老鼠没有撞到墙
                 {
                     if(tempMouse->type==food_label)
-                        gameover(1,0);
+                    gameover(1,1);
                     if(tempMouse->type==ground_label)
                         {
                         mouse->label->move(mouse->label->x()+3*dx,mouse->label->y()+3*dy);
@@ -1685,13 +1692,10 @@ void maze::gameover(int a,int b)
                     cat->Y=MY-2;
                     cattimer->start();
                     cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
-                    catgif=new QMovie(":/cat2.gif");
                     allsquare[1][MY-2]->type=wall_label;
                     allsquare[1][MY-2]->label->clear();
                     allsquare[1][MY-2]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
                     allsquare[1][MY-2]->label->show();
-                    QSize s2(Label_Size+10,Label_Size+10);
-                    catgif->setScaledSize(s2);
                     cat->type=cat_label;
                     cat->label->setMovie(catgif);
                     catgif->start();
@@ -1712,10 +1716,6 @@ void maze::gameover(int a,int b)
                     cat->X=1;
                     cat->Y=MY-2;
                     cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
-                    catgif=new QMovie(":/cat2.gif");
-
-                    QSize s2(Label_Size+10,Label_Size+10);
-                    catgif->setScaledSize(s2);
                     cat->type=cat_label;
                     cat->label->setMovie(catgif);
                     catgif->start();
