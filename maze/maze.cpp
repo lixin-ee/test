@@ -703,6 +703,7 @@ void maze::dwall()
                 }
 
                 x_num=1;y_num=1;
+                G[x_num][y_num]=2;
                 if (x_num + 1 <= m && G[x_num + 1][y_num] == 1) {//right
                     Ling.push_back(block(x_num + 1, y_num, right));
                 }
