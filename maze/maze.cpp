@@ -26,7 +26,8 @@ int x_num , y_num ;//矿工位置
     vector<block> Ling;
     bool flag=1;
     bool flag1=1;
-    int td;
+    block temp2(0,0,0);
+    int td=0;
     int G[100][100];
     int ptime=500;
     //将地图全部置为墙
@@ -481,17 +482,31 @@ void maze::dwall()
                    allsquare[myblock[i]. row][myblock[i].column]->label->show();}
                }
                td=myblock[myblock.size()-1].direction;
+               temp2={x_num,y_num,0};
            }
            else
            {
                if(myblock.size())
                {
+                   if(temp2.row==m&&temp2.column==n)
+                   {
+                       allsquare[temp2.row][temp2.column]->label->setStyleSheet("QLabel{border-image:url(:/cheese.jpg)}");
+                       allsquare[temp2.row][temp2.column]->label->show();
+                   }
+                   else
+                   {
+                       allsquare[temp2.row][temp2.column]->label->setStyleSheet("QLabel{border-image:url(:/path.jpg)}");
+                       allsquare[temp2.row][temp2.column]->label->show();
+                   }
 
                switch (td) {
                case right: {
                      myblock.pop_back();
+                     allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/right.png)}");
+                     allsquare[x_num][y_num]->label->show();
                    if((x_num-1)==myblock[myblock.size()-1].row&&(y_num==myblock[myblock.size()-1].column))
                    {
+                       temp2={x_num,y_num,td};
                        x_num--;
                        td=myblock[myblock.size()-1].direction;
                    }
@@ -504,8 +519,11 @@ void maze::dwall()
                }
                case down: {
                      myblock.pop_back();
+                     allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/down.png)}");
+                     allsquare[x_num][y_num]->label->show();
                    if(x_num==myblock[myblock.size()-1].row&&((y_num-1)==myblock[myblock.size()-1].column))
                    {
+                       temp2={x_num,y_num,td};
                        y_num--;
                        td=myblock[myblock.size()-1].direction;
                    }
@@ -518,8 +536,11 @@ void maze::dwall()
                }
                case up: {
                      myblock.pop_back();
+                     allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/up.png)}");
+                     allsquare[x_num][y_num]->label->show();
                    if(x_num==myblock[myblock.size()-1].row&&((y_num+1)==myblock[myblock.size()-1].column))
                    {
+                      temp2={x_num,y_num,td};
                        y_num++;
                        td=myblock[myblock.size()-1].direction;
                    }
@@ -532,8 +553,11 @@ void maze::dwall()
                }
                case left: {
                      myblock.pop_back();
+                     allsquare[x_num][y_num]->label->setStyleSheet("QLabel{border-image:url(:/left.png)}");
+                     allsquare[x_num][y_num]->label->show();
                    if((x_num+1)==myblock[myblock.size()-1].row&&(y_num==myblock[myblock.size()-1].column))
                    {
+                       temp2={x_num,y_num,td};
                        x_num++;
                        td=myblock[myblock.size()-1].direction;
                    }
