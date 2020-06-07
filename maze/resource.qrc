@@ -44,5 +44,8 @@
         <file>up.png</file>
         <file>ground.jpg</file>
         <file>path.jpg</file>
+        <file>chenming.jpg</file>
+        <file>caidan.png</file>
+        <file>jia.png</file>
     </qresource>
 </RCC>

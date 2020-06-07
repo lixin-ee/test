@@ -30,6 +30,7 @@ int x_num , y_num ;//矿工位置
     int td=0;
     int G[100][100];
     int ptime=500;
+    square* tempegg=nullptr;
     //将地图全部置为墙
 
 maze::maze(QWidget *parent)
@@ -66,6 +67,8 @@ maze::maze(QWidget *parent)
     mousegif->setScaledSize(s1);
     catgif->setScaledSize(s2);
     hammer=new QPixmap(":/hammer.png");
+    egg=new QPixmap(":/caidan.png");
+    jia=new QPixmap(":/jia.png");
 }
 void maze::startgame1()
 {
@@ -183,7 +186,9 @@ void maze::returnhome()//返回主界面
     delete mouse->label;
     myblock.clear();
     Ling.clear();
-    if(gamesta==2){change.clear();havehammer=0;}
+    if(gamesta==2){
+        change.clear();havehammer=0;seekegg=0;
+    }
 }
 void maze::replay()//重玩
 {
@@ -255,10 +260,20 @@ void maze::replay()//重玩
            a->label->show();
        }
        change[0]->type=hammer_label;
+       change[0]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
        change[0]->label->setPixmap(*hammer);
        change[0]->label->setScaledContents(true);
        change[0]->label->show();
        change.clear();
+    }
+    if(gamesta==2&&seekegg==1)
+    {
+       seekegg=0;
+       tempegg->type=egg_label;
+       tempegg->label->setPixmap(*egg);
+       tempegg->label->setScaledContents(true);
+       tempegg->label->show();
+
     }
     }
 }
@@ -270,10 +285,28 @@ void maze::startgame2()
     srand(time(0));
     int hamX=(rand()%(MX-5))+2;
     int hamY=(rand()%(MY-5))+2;
+    while(allsquare[hamX][hamY]->type!=ground_label)
+    {hamX+=1;hamY+=1;}
     allsquare[hamX][hamY]->type=hammer_label;
     allsquare[hamX][hamY]->label->setPixmap(*hammer);
     allsquare[hamX][hamY]->label->setScaledContents(true);
     allsquare[hamX][hamY]->label->show();
+    int eggX=(rand()%(MX-5))+2;
+    int eggY=(rand()%(MY-5))+2;
+    while(allsquare[eggX][eggY]->type!=ground_label)
+    {eggX+=1;eggY+=1;}
+    allsquare[eggX][eggY]->type=egg_label;
+    allsquare[eggX][eggY]->label->setPixmap(*egg);
+    allsquare[eggX][eggY]->label->setScaledContents(true);
+    allsquare[eggX][eggY]->label->show();
+    int jiaX=(rand()%(MX-5))+2;
+    int jiaY=(rand()%(MY-5))+2;
+    while(allsquare[jiaX][jiaY]->type!=ground_label)
+    {jiaX+=1;jiaY+=1;}
+    allsquare[jiaX][jiaY]->type=jia_label;
+    allsquare[jiaX][jiaY]->label->setPixmap(*jia);
+    allsquare[jiaX][jiaY]->label->setScaledContents(true);
+    allsquare[jiaX][jiaY]->label->show();
     gametime =MX*MY*0.2;
     updatetimer();
     counttimer=new QTimer(this);
@@ -966,9 +999,6 @@ void maze::movecat()//响应键盘的移动函数，要有必要的判断，判�
          allsquare[cat->X+1][cat->Y]->label->setStyleSheet("QLabel{border-image:url(:/wall.jpg)}");
          allsquare[cat->X+1][cat->Y]->label->show();
          change.append( allsquare[cat->X+1][cat->Y]);}
-
-
-
 }
 
 void maze::structface()
@@ -1289,6 +1319,21 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
                 tempMouse->label->show();
                havehammer=1;
             change.append(tempMouse);}
+
+            if(tempMouse->type==egg_label)
+           {
+               tempMouse->type=ground_label;
+               tempMouse->label->clear();
+               tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                tempMouse->label->show();
+               seekegg=1;
+               tempegg=tempMouse;
+           }
+
+          if(tempMouse->type==jia_label)
+          {
+          gameover(0,0);
+           }
             if(tempMouse->type==wall_label)//如果老鼠撞到了墙
                 {if(havehammer==1&&tempMouse->X!=MX-1&&tempMouse->X!=0&&tempMouse->Y!=MY-1&&tempMouse->Y!=0)
                     {tempMouse->type=ground_label;
@@ -1320,6 +1365,22 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
                 tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
                havehammer=1;change.append(tempMouse);}
+
+            if(tempMouse->type==egg_label)
+           {
+               tempMouse->type=ground_label;
+               tempMouse->label->clear();
+               tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                tempMouse->label->show();
+               seekegg=1;
+               tempegg=tempMouse;
+            }
+
+            if(tempMouse->type==jia_label)
+            {
+            gameover(0,0);
+            }
+
             if(tempMouse->type==wall_label)//如果老鼠撞到了墙
                 {if(havehammer==1&&tempMouse->X!=MX-1&&tempMouse->X!=0&&tempMouse->Y!=MY-1&&tempMouse->Y!=0)
                     {tempMouse->type=ground_label;
@@ -1690,19 +1751,29 @@ void maze::gameover(int a,int b)
              donghua->setWindowTitle("游戏结束");
              donghua->resize(400,400);
              QLabel* image=new QLabel(donghua);
+             QLabel* temptext1=new QLabel("翻译：彩蛋都拿到了还能输？f 🤯 w，(╯▔皿▔)╯",donghua);
+             QLabel* temptext2=new QLabel("To find it, you did not even have to win.",donghua);
+             QLabel* temptext3=new QLabel("You just had to play searching around…",donghua);
+
                   if(a==1)
                   {
                     image->setStyleSheet("QLabel{border-image:url(:/mousewin.jpg);}");
                   }
                   else
-                  {
+                  {if(seekegg==0)
                     image->setStyleSheet("QLabel{border-image:url(:/catwin2.jpg);}");
+                    else {
+                          image->setStyleSheet("QLabel{border-image:url(:/chenming.jpg);}");
+                          temptext2->setGeometry(30,335,400,20);
+                          temptext1->setGeometry(30,375,400,20);
+                          temptext3->setGeometry(30,355,400,20);
+                      }
                   }
                   image->setGeometry(0,0,400,300);
              QPushButton *ok=new QPushButton("OK",donghua);
              QPushButton *cancle=new QPushButton("Cancle",donghua);
-             ok->setGeometry(50,300,100,50);
-             cancle->setGeometry(250,300,100,50);
+             ok->setGeometry(50,300,100,30);
+             cancle->setGeometry(250,300,100,30);
              QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
              QObject::connect(cancle,SIGNAL(clicked()),donghua,SLOT(reject()));
              if(donghua->exec()==QDialog::Accepted)
@@ -1737,10 +1808,30 @@ void maze::gameover(int a,int b)
                     havehammer=0;srand(time(0));
                     int hamX=(rand()%(MX-5))+2;
                     int hamY=(rand()%(MY-5))+2;
+                    while(allsquare[hamX][hamY]->type!=ground_label)
+                    {hamX+=1;hamY+=1;}
                     allsquare[hamX][hamY]->type=hammer_label;
                     allsquare[hamX][hamY]->label->setPixmap(*hammer);
                     allsquare[hamX][hamY]->label->setScaledContents(true);
                     allsquare[hamX][hamY]->label->show();
+                    seekegg=0;srand(time(0));
+                    int eggX=(rand()%(MX-5))+2;
+                    int eggY=(rand()%(MY-5))+2;
+                    while(allsquare[eggX][eggY]->type!=ground_label)
+                    {eggX+=1;eggY+=1;}
+                    allsquare[eggX][eggY]->type=egg_label;
+                    allsquare[eggX][eggY]->label->setPixmap(*egg);
+                    allsquare[eggX][eggY]->label->setScaledContents(true);
+                    allsquare[eggX][eggY]->label->show();
+                    int jiaX=(rand()%(MX-5))+2;
+                    int jiaY=(rand()%(MY-5))+2;
+                    while(allsquare[jiaX][jiaY]->type!=ground_label)
+                    {jiaX+=1;jiaY+=1;}
+                    allsquare[jiaX][jiaY]->type=jia_label;
+                    allsquare[jiaX][jiaY]->label->setPixmap(*jia);
+                    allsquare[jiaX][jiaY]->label->setScaledContents(true);
+                    allsquare[jiaX][jiaY]->label->show();
+
                 }
 
                 if(b==1)
