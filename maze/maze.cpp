@@ -286,7 +286,13 @@ void maze::startgame2()
     int hamX=(rand()%(MX-5))+2;
     int hamY=(rand()%(MY-5))+2;
     while(allsquare[hamX][hamY]->type!=ground_label)
-    {hamX+=1;hamY+=1;}
+    {hamX+=1;hamY+=1;
+    if (hamX==MX-1||hamY==MY-1)
+    {
+        hamX=(rand()%(MX-5))+2;
+        hamY=(rand()%(MY-5))+2;
+    }
+    }
     allsquare[hamX][hamY]->type=hammer_label;
     allsquare[hamX][hamY]->label->setPixmap(*hammer);
     allsquare[hamX][hamY]->label->setScaledContents(true);
@@ -294,7 +300,12 @@ void maze::startgame2()
     int eggX=(rand()%(MX-5))+2;
     int eggY=(rand()%(MY-5))+2;
     while(allsquare[eggX][eggY]->type!=ground_label)
-    {eggX+=1;eggY+=1;}
+    {eggX+=1;eggY+=1;
+        if (eggX==MX-1||eggY==MY-1)
+        {
+            eggX=(rand()%(MX-5))+2;
+            eggY=(rand()%(MY-5))+2;
+        }}
     allsquare[eggX][eggY]->type=egg_label;
     allsquare[eggX][eggY]->label->setPixmap(*egg);
     allsquare[eggX][eggY]->label->setScaledContents(true);
@@ -302,7 +313,12 @@ void maze::startgame2()
     int jiaX=(rand()%(MX-5))+2;
     int jiaY=(rand()%(MY-5))+2;
     while(allsquare[jiaX][jiaY]->type!=ground_label)
-    {jiaX+=1;jiaY+=1;}
+    {jiaX+=1;jiaY+=1;
+        if (jiaX==MX-1||jiaY==MY-1)
+        {
+            jiaX=(rand()%(MX-5))+2;
+            jiaY=(rand()%(MY-5))+2;
+        }}
     allsquare[jiaX][jiaY]->type=jia_label;
     allsquare[jiaX][jiaY]->label->setPixmap(*jia);
     allsquare[jiaX][jiaY]->label->setScaledContents(true);
@@ -1751,9 +1767,6 @@ void maze::gameover(int a,int b)
              donghua->setWindowTitle("游戏结束");
              donghua->resize(400,400);
              QLabel* image=new QLabel(donghua);
-             QLabel* temptext1=new QLabel("翻译：彩蛋都拿到了还能输？f 🤯 w，(╯▔皿▔)╯",donghua);
-             QLabel* temptext2=new QLabel("To find it, you did not even have to win.",donghua);
-             QLabel* temptext3=new QLabel("You just had to play searching around…",donghua);
 
                   if(a==1)
                   {
@@ -1763,6 +1776,9 @@ void maze::gameover(int a,int b)
                   {if(seekegg==0)
                     image->setStyleSheet("QLabel{border-image:url(:/catwin2.jpg);}");
                     else {
+                          QLabel* temptext1=new QLabel("翻译：彩蛋都拿到了还能输？f 🤯 w，(╯▔皿▔)╯",donghua);
+                          QLabel* temptext2=new QLabel("To find it, you did not even have to win.",donghua);
+                          QLabel* temptext3=new QLabel("You just had to play searching around…",donghua);
                           image->setStyleSheet("QLabel{border-image:url(:/chenming.jpg);}");
                           temptext2->setGeometry(30,335,400,20);
                           temptext1->setGeometry(30,375,400,20);
