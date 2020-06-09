@@ -10,6 +10,7 @@
 #define up 8
 #define WALL -1
 #define NOTHING 2
+
 struct block
 {
         int row, column, direction;
@@ -20,7 +21,6 @@ struct block
             direction = _direction;
         }
  };
-
 int x_num , y_num ;//矿工位置
     vector<block> myblock;
     vector<block> Ling;
@@ -30,6 +30,12 @@ int x_num , y_num ;//矿工位置
     int td=0;
     int G[100][100];
     int ptime=500;
+    int xtime=5000;
+    int xcount=1;
+    int xx;
+    int xy;
+    QLabel* xlabel;
+    QPropertyAnimation *animation;
     square* tempegg=nullptr;
     //将地图全部置为墙
 
@@ -69,6 +75,82 @@ maze::maze(QWidget *parent)
     hammer=new QPixmap(":/hammer.png");
     egg=new QPixmap(":/caidan.png");
     jia=new QPixmap(":/jia.png");
+    animation = new QPropertyAnimation(this,"windowOpacity");
+    xtimer=new QTimer(this);
+    QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
+}
+void maze::aboutus()
+{
+
+    switch(xcount)
+    {
+    case 1:
+        xlabel=new QLabel(this);
+        xlabel->setStyleSheet("QLabel{border-image:url(:/t3.jpg);}");
+        xlabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+         xlabel->show();
+        animation->setDuration(xtime-3000);
+        animation->setStartValue(0);
+        animation->setEndValue(1);
+        animation->start();
+        for(int i=0;i<MX;i++)
+        {
+            for (int j=0;j<MY;j++)
+            {
+             allsquare[i][j]->label->hide();
+            }
+        }
+        mouse->label->hide();
+        xcount++;
+        break;
+    case 2:
+        xlabel->setStyleSheet("QLabel{border-image:url(:/t1.png);}");
+        xlabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+
+        animation->setDuration(xtime-3000);
+        animation->setStartValue(0);
+        animation->setEndValue(1);
+        animation->start();
+        xcount++;
+        break;
+    case 3:
+        xlabel->setStyleSheet("QLabel{border-image:url(:/t2.png);}");
+        xlabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+         xlabel->show();
+        animation->setDuration(xtime-3000);
+        animation->setStartValue(0);
+        animation->setEndValue(1);
+        animation->start();
+        xcount++;
+        break;
+    case 4:
+        xlabel->setStyleSheet("QLabel{border-image:url(:/t4.jpg);}");
+        xlabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+         xlabel->show();
+        animation->setDuration(xtime-3000);
+        animation->setStartValue(0);
+        animation->setEndValue(1);
+        animation->start();
+        xcount++;
+        break;
+    case 5:
+        xcount=1;
+        animation->setDuration(xtime-3000);
+        animation->setStartValue(0);
+        animation->setEndValue(1);
+        for(int i=0;i<MX;i++)
+        {
+            for (int j=0;j<MY;j++)
+            {
+             allsquare[i][j]->label->show();
+            }
+        }
+        mouse->label->show();
+        xtimer->stop();
+        counttimer->start(1000);
+        delete xlabel;
+        break;
+    }
 }
 void maze::startgame1()
 {
@@ -198,15 +280,12 @@ void maze::replay()//重玩
     updatetimer();
     counttimer->start(1000);
     mouse->label->clear();
-    mouse->type=ground_label;
-    allsquare[1][1]->type=mouse_label;
     mouse->X=1;
     mouse->Y=1;
     mouse->label->setGeometry(Label_Size,Label_Size,Label_Size,Label_Size);
     mouse->label->setMovie(mousegif);
     mousegif->start();
     mouse->label->show();
-    mouse->type=mouse_label;
     if(gamesta==3)
     {
         cat->label->clear();
@@ -275,6 +354,22 @@ void maze::replay()//重玩
        tempegg->label->show();
 
     }
+    if(gamesta==2)
+    {
+        allsquare[xx][xy]->label->clear();
+        allsquare[xx][xy]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+        allsquare[xx][xy]->type=ground_label;
+        if(xx==1&&xy==MY-2)
+        {
+            xx=MX-2;
+            xy=1;
+        }
+        else
+        {
+            xx=1;xy=MY-2;
+        }
+        allsquare[xx][xy]->type=x_label;
+    }
     }
 }
 void maze::startgame2()
@@ -323,6 +418,9 @@ void maze::startgame2()
     allsquare[jiaX][jiaY]->label->setPixmap(*jia);
     allsquare[jiaX][jiaY]->label->setScaledContents(true);
     allsquare[jiaX][jiaY]->label->show();
+    xx=1;
+    xy=MY-2;
+    allsquare[xx][xy]->type=x_label;
     gametime =MX*MY*0.2;
     updatetimer();
     counttimer=new QTimer(this);
@@ -1350,6 +1448,13 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
           {
           gameover(0,0);
            }
+          if(tempMouse->type==x_label)
+          {
+              if(xcount==1)
+              {aboutus();
+              xtimer->start(xtime);
+              counttimer->stop();}
+          }
             if(tempMouse->type==wall_label)//如果老鼠撞到了墙
                 {if(havehammer==1&&tempMouse->X!=MX-1&&tempMouse->X!=0&&tempMouse->Y!=MY-1&&tempMouse->Y!=0)
                     {tempMouse->type=ground_label;
@@ -1396,6 +1501,14 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
             {
             gameover(0,0);
             }
+            if(tempMouse->type==x_label)
+            {
+                if(xcount==1)
+                {aboutus();
+                xtimer->start(xtime);
+                counttimer->stop();}
+
+            }
 
             if(tempMouse->type==wall_label)//如果老鼠撞到了墙
                 {if(havehammer==1&&tempMouse->X!=MX-1&&tempMouse->X!=0&&tempMouse->Y!=MY-1&&tempMouse->Y!=0)
@@ -1415,7 +1528,27 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
                 }
         }
     }
-
+   int mx=mouse->X;int my=mouse->Y;
+if((mx-xx)<=2&&(xx-mx)<=2&&(xy-my)<=2&&(my-xy)<=2)
+{
+    if(xl==nullptr)
+    {
+       xl=new QPixmap(":/xuanwo.png");
+       allsquare[xx][xy]->label->setPixmap(*xl);
+       allsquare[xx][xy]->label->setScaledContents(true);
+       allsquare[xx][xy]->label->show();
+    }
+}
+else
+{
+    if(xl!=nullptr)
+    {
+        delete xl;
+        xl=nullptr;
+     allsquare[xx][xy]->label->clear();
+     allsquare[xx][xy]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+    }
+}
 
 }
 
@@ -1863,7 +1996,16 @@ void maze::gameover(int a,int b)
                     allsquare[jiaX][jiaY]->label->setPixmap(*jia);
                     allsquare[jiaX][jiaY]->label->setScaledContents(true);
                     allsquare[jiaX][jiaY]->label->show();
-
+                    if(xx==1&&xy==MY-2)
+                    {
+                        xx=MX-2;
+                        xy=1;
+                    }
+                    else
+                    {
+                        xx=1;xy=MY-2;
+                    }
+                    allsquare[xx][xy]->type=x_label;
                 }
 
                 if(b==1)

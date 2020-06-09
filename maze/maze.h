@@ -21,6 +21,7 @@
 #include<cstdlib>
 #include<ctime>
 #include<QRadioButton>
+#include<QPropertyAnimation>
 #define Label_Size  30
 using namespace std;
 
@@ -28,7 +29,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class maze; }
 QT_END_NAMESPACE
 enum Label{
-    wall_label,cat_label,mouse_label,food_label,ground_label,hammer_label,egg_label,jia_label
+    wall_label,cat_label,mouse_label,food_label,ground_label,hammer_label,egg_label,jia_label,x_label
 };
 struct square
 {
@@ -68,6 +69,7 @@ private slots:
     void walk();
     void present();
     void dwall();
+    void aboutus();
   private:
     Ui::maze *ui;
     QPushButton* setting;
@@ -103,7 +105,9 @@ private slots:
     QPixmap*hammer;
     QPixmap*egg;
     QPixmap*jia;
+    QPixmap* xl=nullptr;
     int dtype=2;
+    QTimer* xtimer;
 };
 static int gamesta=0;
 static int havehammer=0;
