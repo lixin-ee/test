@@ -22,6 +22,7 @@
 #include<ctime>
 #include<QRadioButton>
 #include<QPropertyAnimation>
+#include<QSound>
 #define Label_Size  30
 using namespace std;
 
@@ -106,6 +107,7 @@ private slots:
     QPixmap*egg;
     QPixmap*jia;
     QPixmap* xl=nullptr;
+    QSound* so;
     int dtype=2;
     QTimer* xtimer;
 };

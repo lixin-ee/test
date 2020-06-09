@@ -1,6 +1,7 @@
 #include "maze.h"
 #include "ui_maze.h"
 #include<QScreen>
+#include<QSound>
 #include <QApplication>
 #define m (MX-2)//row
 #define n (MY-2)
@@ -81,10 +82,11 @@ maze::maze(QWidget *parent)
 }
 void maze::aboutus()
 {
-
     switch(xcount)
     {
     case 1:
+        so=new QSound(":/heirentaiguan.wav");
+        so->play();
         xlabel=new QLabel(this);
         xlabel->setStyleSheet("QLabel{border-image:url(:/t3.jpg);}");
         xlabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
@@ -124,32 +126,43 @@ void maze::aboutus()
         xcount++;
         break;
     case 4:
-        xlabel->setStyleSheet("QLabel{border-image:url(:/t4.jpg);}");
-        xlabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
-         xlabel->show();
-        animation->setDuration(xtime-3000);
-        animation->setStartValue(0);
-        animation->setEndValue(1);
-        animation->start();
-        xcount++;
-        break;
-    case 5:
-        xcount=1;
-        animation->setDuration(xtime-3000);
-        animation->setStartValue(0);
-        animation->setEndValue(1);
-        for(int i=0;i<MX;i++)
-        {
-            for (int j=0;j<MY;j++)
-            {
-             allsquare[i][j]->label->show();
-            }
-        }
-        mouse->label->show();
-        xtimer->stop();
-        counttimer->start(1000);
-        delete xlabel;
-        break;
+           xlabel->setStyleSheet("QLabel{border-image:url(:/t4.jpg);}");
+           xlabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+            xlabel->show();
+           animation->setDuration(xtime-4500);
+           animation->setStartValue(0);
+           animation->setEndValue(1);
+           animation->start();
+           xcount++;
+           break;
+       case 5:
+           xlabel->setStyleSheet("QLabel{border-image:url(:/t4.jpg);}");
+           xlabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+            xlabel->show();
+           animation->setDuration(0);
+           animation->setStartValue(0);
+           animation->setEndValue(1);
+           animation->start();
+           xcount++;
+           break;
+       case 6:
+           xcount=1;
+           animation->setDuration(xtime-3000);
+           animation->setStartValue(0);
+           animation->setEndValue(1);
+           for(int i=0;i<MX;i++)
+           {
+               for (int j=0;j<MY;j++)
+               {
+                allsquare[i][j]->label->show();
+               }
+           }
+           mouse->label->show();
+           xtimer->stop();
+           counttimer->start(1000);
+           delete xlabel;
+           delete so;
+           break;
     }
 }
 void maze::startgame1()
