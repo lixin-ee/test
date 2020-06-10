@@ -1317,8 +1317,25 @@ void maze::movemouse()//mainly written by jiashenghao 响应键盘的移动函�
     }
     if(dy==0)
     {
-        if(mouse->label->y()%Label_Size==0)
+        if(mouse->label->y()%Label_Size==0||(mouse->label->y()+3)%Label_Size==0||(mouse->label->y()-3)%Label_Size==0
+                        ||(mouse->label->y()+6)%Label_Size==0||(mouse->label->y()-6)%Label_Size==0)
         {
+            if((mouse->label->y()+3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()+3);
+                        }
+                        if((mouse->label->y()-3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()-3);
+                        }
+                        if((mouse->label->y()+6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()+6);
+                        }
+                        if((mouse->label->y()-6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()-6);
+                        }
             square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
                 if(tempMouse->type==wall_label)//如果老鼠撞到了墙
@@ -1338,8 +1355,25 @@ void maze::movemouse()//mainly written by jiashenghao 响应键盘的移动函�
     }
     if(dx==0)
     {
-        if(mouse->label->x()%Label_Size==0)
+        if(mouse->label->x()%Label_Size==0||(mouse->label->x()+3)%Label_Size==0||(mouse->label->x()-3)%Label_Size==0
+                        ||(mouse->label->x()+6)%Label_Size==0||(mouse->label->x()-6)%Label_Size==0)
         {
+            if((mouse->label->x()+3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()+3,mouse->label->y());
+                        }
+                        if((mouse->label->x()-3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()-3,mouse->label->y());
+                        }
+                        if((mouse->label->x()+6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()+6,mouse->label->y());
+                        }
+                        if((mouse->label->x()-6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()-6,mouse->label->y());
+                        }
             square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
                 if(tempMouse->type==wall_label)//如果老鼠撞到了墙
@@ -1373,8 +1407,25 @@ void maze::movemouse3()//mainly written by houyujie 响应键盘的移动函数�
     }
     if(dy==0)
     {
-        if(mouse->label->y()%Label_Size==0)
+        if(mouse->label->y()%Label_Size==0||(mouse->label->y()+3)%Label_Size==0||(mouse->label->y()-3)%Label_Size==0
+                        ||(mouse->label->y()+6)%Label_Size==0||(mouse->label->y()-6)%Label_Size==0)
         {
+            if((mouse->label->y()+3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()+3);
+                        }
+                        if((mouse->label->y()-3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()-3);
+                        }
+                        if((mouse->label->y()+6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()+6);
+                        }
+                        if((mouse->label->y()-6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()-6);
+                        }
             square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
                 if(tempMouse->type==wall_label)//如果老鼠撞到了墙
@@ -1398,8 +1449,25 @@ void maze::movemouse3()//mainly written by houyujie 响应键盘的移动函数�
     }
     if(dx==0)
     {
-        if(mouse->label->x()%Label_Size==0)
+        if(mouse->label->x()%Label_Size==0||(mouse->label->x()+3)%Label_Size==0||(mouse->label->x()-3)%Label_Size==0
+                        ||(mouse->label->x()+6)%Label_Size==0||(mouse->label->x()-6)%Label_Size==0)
         {
+            if((mouse->label->x()+3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()+3,mouse->label->y());
+                        }
+                        if((mouse->label->x()-3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()-3,mouse->label->y());
+                        }
+                        if((mouse->label->x()+6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()+6,mouse->label->y());
+                        }
+                        if((mouse->label->x()-6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()-6,mouse->label->y());
+                        }
             square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
                 if(tempMouse->type==wall_label)//如果老鼠撞到了墙
@@ -1438,8 +1506,25 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
     }
     if(dy==0)
     {
-        if(mouse->label->y()%Label_Size==0)
+        if(mouse->label->y()%Label_Size==0||(mouse->label->y()+3)%Label_Size==0||(mouse->label->y()-3)%Label_Size==0
+                        ||(mouse->label->y()+6)%Label_Size==0||(mouse->label->y()-6)%Label_Size==0)
         {
+            if((mouse->label->y()+3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()+3);
+                        }
+                        if((mouse->label->y()-3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()-3);
+                        }
+                        if((mouse->label->y()+6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()+6);
+                        }
+                        if((mouse->label->y()-6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x(),mouse->label->y()-6);
+                        }
             square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
             if(tempMouse->type==hammer_label)
@@ -1512,8 +1597,25 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
     }
     if(dx==0)
     {
-        if(mouse->label->x()%Label_Size==0)
+        if(mouse->label->x()%Label_Size==0||(mouse->label->x()+3)%Label_Size==0||(mouse->label->x()-3)%Label_Size==0
+                        ||(mouse->label->x()+6)%Label_Size==0||(mouse->label->x()-6)%Label_Size==0)
         {
+            if((mouse->label->x()+3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()+3,mouse->label->y());
+                        }
+                        if((mouse->label->x()-3)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()-3,mouse->label->y());
+                        }
+                        if((mouse->label->x()+6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()+6,mouse->label->y());
+                        }
+                        if((mouse->label->x()-6)%Label_Size==0)
+                        {
+                            mouse->label->move(mouse->label->x()-6,mouse->label->y());
+                        }
             square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
             if(tempMouse->type==hammer_label)
