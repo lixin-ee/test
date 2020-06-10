@@ -35,6 +35,7 @@ int x_num , y_num ;//矿工位置
     int xcount=1;
     int xx;
     int xy;
+    int warning=0;
     QLabel* xlabel;
     QPropertyAnimation *animation;
     square* tempegg=nullptr;
@@ -235,6 +236,7 @@ void maze::initgame()//mainly written by lixin 初始化游戏界面
     {memset(G, 0, sizeof(G));
     G[x_num][y_num]=1;}
 
+    warning=0;
    //定义起始点
 }
 void maze::returnhome()//mainly written by lixin  返回主界面
@@ -284,6 +286,7 @@ void maze::returnhome()//mainly written by lixin  返回主界面
     if(gamesta==2){
         change.clear();havehammer=0;seekegg=0;
     }
+    warning=0;
 }
 void maze::replay()//mainly written by 
 {
@@ -384,6 +387,7 @@ void maze::replay()//mainly written by
         allsquare[xx][xy]->type=x_label;
     }
     }
+    warning=0;
 }
 void maze::startgame2()//mainly written by huanghaoxiang
 {
@@ -1504,6 +1508,38 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
        mouse->X=((mouse->label->x()+dx)/Label_Size)-dx;
        mouse->Y=((mouse->label->y()+dy)/Label_Size)-dy;
     }
+    if(
+            ((mouse->X+2<=MX-1&&allsquare[mouse->X+2][mouse->Y]->type==jia_label)
+             ||(mouse->X-2>=0&&allsquare[mouse->X-2][mouse->Y]->type==jia_label)
+            ||(mouse->Y+2<=MY-1&&allsquare[mouse->X][mouse->Y+2]->type==jia_label)
+             ||(mouse->Y-2>=0&&allsquare[mouse->X][mouse->Y-2]->type==jia_label)
+            ||((mouse->X+1<=MX-1&&allsquare[mouse->X+1][mouse->Y]->type==jia_label)
+               ||(mouse->X-1>=0&&allsquare[mouse->X-1][mouse->Y]->type==jia_label)
+              ||(mouse->Y+1<=MY-1&&allsquare[mouse->X][mouse->Y+1]->type==jia_label)
+               ||(mouse->Y-1>=0&&allsquare[mouse->X][mouse->Y-1]->type==jia_label)))
+            &&warning==0)
+    {
+        QDialog* donghua=new QDialog(this);
+        donghua->setWindowTitle("游戏提示");
+        donghua->resize(400,400);
+        QLabel* image=new QLabel(donghua);
+        image->setStyleSheet("QLabel{border-image:url(:/jia2.jpg)}");
+        QLabel* text=new QLabel("小心老鼠夹！它会让你输掉游戏！",donghua);
+        text->setGeometry(30,300,400,20);
+        image->setGeometry(0,0,400,300);
+        QPushButton* ok=new QPushButton("OK",donghua);
+        ok->setGeometry(150,350,100,30);
+        QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
+        image->show();
+        counttimer->stop();
+        if(donghua->exec()==QDialog::Accepted)
+        {
+            counttimer->start();
+            image->clear();
+        }
+        delete image;
+        warning=1;
+    }
     if(dy==0)
     {
         if(mouse->label->y()%Label_Size==0||(mouse->label->y()+3)%Label_Size==0||(mouse->label->y()-3)%Label_Size==0
@@ -2240,6 +2276,7 @@ void maze::gameover(int a,int b)//mainly written by lixin
                 }
              }
              delete donghua;
+             warning=0;
 }
 
 void maze::generateham()//mainly written by huanghaoxiang
