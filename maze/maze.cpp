@@ -391,7 +391,6 @@ void maze::startgame2()
     initgame();
     destructwall();
     srand(time(0));
-    //generateham();
     int hamX=(rand()%(MX-5))+2;
     int hamY=(rand()%(MY-5))+2;
     while(allsquare[hamX][hamY]->type!=ground_label)
@@ -406,7 +405,6 @@ void maze::startgame2()
     allsquare[hamX][hamY]->label->setPixmap(*hammer);
     allsquare[hamX][hamY]->label->setScaledContents(true);
     allsquare[hamX][hamY]->label->show();
-   //generateegg();
     int eggX=(rand()%(MX-5))+2;
     int eggY=(rand()%(MY-5))+2;
     while(allsquare[eggX][eggY]->type!=ground_label)
@@ -420,7 +418,6 @@ void maze::startgame2()
     allsquare[eggX][eggY]->label->setPixmap(*egg);
     allsquare[eggX][eggY]->label->setScaledContents(true);
     allsquare[eggX][eggY]->label->show();
-   //generatejia();
     int jiaX=(rand()%(MX-5))+2;
     int jiaY=(rand()%(MY-5))+2;
     while(allsquare[jiaX][jiaY]->type!=ground_label)
@@ -434,7 +431,6 @@ void maze::startgame2()
     allsquare[jiaX][jiaY]->label->setPixmap(*jia);
     allsquare[jiaX][jiaY]->label->setScaledContents(true);
     allsquare[jiaX][jiaY]->label->show();
-
     xx=1;
     xy=MY-2;
     allsquare[xx][xy]->type=x_label;
@@ -2007,8 +2003,7 @@ void maze::gameover(int a,int b)
                 {
                     change.clear();
                     havehammer=0;srand(time(0));
-                    generateham();
-                    /*int hamX=(rand()%(MX-5))+2;
+                    int hamX=(rand()%(MX-5))+2;
                     int hamY=(rand()%(MY-5))+2;
                     while(allsquare[hamX][hamY]->type!=ground_label)
                     {hamX+=1;hamY+=1;
@@ -2021,10 +2016,9 @@ void maze::gameover(int a,int b)
                     allsquare[hamX][hamY]->type=hammer_label;
                     allsquare[hamX][hamY]->label->setPixmap(*hammer);
                     allsquare[hamX][hamY]->label->setScaledContents(true);
-                    allsquare[hamX][hamY]->label->show();*/
+                    allsquare[hamX][hamY]->label->show();
                     seekegg=0;srand(time(0));
-                    generateegg();
-                    /*int eggX=(rand()%(MX-5))+2;
+                    int eggX=(rand()%(MX-5))+2;
                     int eggY=(rand()%(MY-5))+2;
                     while(allsquare[eggX][eggY]->type!=ground_label)
                     {eggX+=1;eggY+=1;
@@ -2036,9 +2030,8 @@ void maze::gameover(int a,int b)
                     allsquare[eggX][eggY]->type=egg_label;
                     allsquare[eggX][eggY]->label->setPixmap(*egg);
                     allsquare[eggX][eggY]->label->setScaledContents(true);
-                    allsquare[eggX][eggY]->label->show();*/
-                    generatejia();
-                    /*int jiaX=(rand()%(MX-5))+2;
+                    allsquare[eggX][eggY]->label->show();
+                    int jiaX=(rand()%(MX-5))+2;
                     int jiaY=(rand()%(MY-5))+2;
                     while(allsquare[jiaX][jiaY]->type!=ground_label)
                     {jiaX+=1;jiaY+=1;
@@ -2050,8 +2043,7 @@ void maze::gameover(int a,int b)
                     allsquare[jiaX][jiaY]->type=jia_label;
                     allsquare[jiaX][jiaY]->label->setPixmap(*jia);
                     allsquare[jiaX][jiaY]->label->setScaledContents(true);
-                    allsquare[jiaX][jiaY]->label->show();*/
-
+                    allsquare[jiaX][jiaY]->label->show();
                     if(xx==1&&xy==MY-2)
                     {
                         xx=MX-2;
@@ -2122,60 +2114,6 @@ void maze::gameover(int a,int b)
                 }
              }
              delete donghua;
-}
-
-void maze::generateham()
-{
-    int hamX=(rand()%(MX-5))+2;
-    int hamY=(rand()%(MY-5))+2;
-    while(allsquare[hamX][hamY]->type!=ground_label)
-    {hamX+=1;hamY+=1;
-    if (hamX==MX-1||hamY==MY-1)
-    {
-        hamX=(rand()%(MX-5))+2;
-        hamY=(rand()%(MY-5))+2;
-    }
-    }
-    allsquare[hamX][hamY]->type=hammer_label;
-    allsquare[hamX][hamY]->label->setPixmap(*hammer);
-    allsquare[hamX][hamY]->label->setScaledContents(true);
-    allsquare[hamX][hamY]->label->show();
-
-}
-void maze::generateegg()
-{
-    int eggX=(rand()%(MX-5))+2;
-    int eggY=(rand()%(MY-5))+2;
-    while(allsquare[eggX][eggY]->type!=ground_label)
-    {eggX+=1;eggY+=1;
-        if (eggX==MX-1||eggY==MY-1)
-        {
-            eggX=(rand()%(MX-5))+2;
-            eggY=(rand()%(MY-5))+2;
-        }}
-    allsquare[eggX][eggY]->type=egg_label;
-    allsquare[eggX][eggY]->label->setPixmap(*egg);
-    allsquare[eggX][eggY]->label->setScaledContents(true);
-    allsquare[eggX][eggY]->label->show();
-
-}
-void maze::generatejia()
-{
-    int jiaX=(rand()%(MX-5))+2;
-    int jiaY=(rand()%(MY-5))+2;
-    while(allsquare[jiaX][jiaY]->type!=ground_label)
-    {jiaX+=1;jiaY+=1;
-        if (jiaX==MX-1||jiaY==MY-1)
-        {
-            jiaX=(rand()%(MX-5))+2;
-            jiaY=(rand()%(MY-5))+2;
-        }}
-    allsquare[jiaX][jiaY]->type=jia_label;
-    allsquare[jiaX][jiaY]->label->setPixmap(*jia);
-    allsquare[jiaX][jiaY]->label->setScaledContents(true);
-    allsquare[jiaX][jiaY]->label->show();
-
-
 }
 
 void maze::resizewindow()

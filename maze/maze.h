@@ -67,9 +67,6 @@ private slots:
     void movemouse();
     void movemouse2();
     void movemouse3();
-    void generateham();
-    void generateegg();
-    void generatejia();
     void walk();
     void present();
     void dwall();
