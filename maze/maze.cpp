@@ -1547,6 +1547,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
                     counttimer->start();
                     image->clear();
                 }
+                delete image;
 
                tempMouse->type=ground_label;
                tempMouse->label->clear();
@@ -1557,6 +1558,25 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
 
             if(tempMouse->type==egg_label)
            {
+                QDialog* donghua=new QDialog(this);
+                donghua->setWindowTitle("游戏提示");
+                donghua->resize(400,400);
+                QLabel* image=new QLabel(donghua);
+                image->setStyleSheet("QLabel{border-image:url(:/caidan2.jpg)}");
+                QLabel* text=new QLabel("你捡到了一个彩蛋！一些变化发生了！",donghua);
+                text->setGeometry(30,300,400,20);
+                image->setGeometry(0,0,400,300);
+                QPushButton* ok=new QPushButton("OK",donghua);
+                ok->setGeometry(150,350,100,30);
+                QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
+                image->show();
+                counttimer->stop();
+                if(donghua->exec()==QDialog::Accepted)
+                {
+                    counttimer->start();
+                    image->clear();
+                }
+                delete image;
                tempMouse->type=ground_label;
                tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
@@ -1638,6 +1658,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
                     counttimer->start();
                     image->clear();
                 }
+                delete image;
                tempMouse->type=ground_label;
                 tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
@@ -1645,6 +1666,25 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
 
             if(tempMouse->type==egg_label)
            {
+                QDialog* donghua=new QDialog(this);
+                donghua->setWindowTitle("游戏提示");
+                donghua->resize(400,400);
+                QLabel* image=new QLabel(donghua);
+                image->setStyleSheet("QLabel{border-image:url(:/caidan2.jpg)}");
+                QLabel* text=new QLabel("你捡到了一个彩蛋！一些变化发生了！",donghua);
+                text->setGeometry(30,300,400,20);
+                image->setGeometry(0,0,400,300);
+                QPushButton* ok=new QPushButton("OK",donghua);
+                ok->setGeometry(150,350,100,30);
+                QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
+                image->show();
+                counttimer->stop();
+                if(donghua->exec()==QDialog::Accepted)
+                {
+                    counttimer->start();
+                    image->clear();
+                }
+                delete image;
                tempMouse->type=ground_label;
                tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
