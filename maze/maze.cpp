@@ -40,7 +40,7 @@ int x_num , y_num ;//矿工位置
     square* tempegg=nullptr;
     //将地图全部置为墙
 
-maze::maze(QWidget *parent)
+maze::maze(QWidget *parent)//mainly written by lixin
     : QWidget(parent)
     , ui(new Ui::maze)
 {
@@ -80,7 +80,7 @@ maze::maze(QWidget *parent)
     xtimer=new QTimer(this);
     QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
 }
-void maze::aboutus()
+void maze::aboutus()//mainly written by lixin
 {
     switch(xcount)
     {
@@ -91,7 +91,7 @@ void maze::aboutus()
         xlabel->setStyleSheet("QLabel{border-image:url(:/t3.jpg);}");
         xlabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
          xlabel->show();
-        animation->setDuration(xtime-4800);
+        animation->setDuration(xtime-3000);
         animation->setStartValue(0);
         animation->setEndValue(1);
         animation->start();
@@ -162,23 +162,10 @@ void maze::aboutus()
            counttimer->start(1000);
            delete xlabel;
            delete so;
-           allsquare[xx][xy]->label->clear();
-           allsquare[xx][xy]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
-           allsquare[xx][xy]->type=ground_label;
-           if(xx==1&&xy==MY-2)
-           {
-               xx=MX-2;
-               xy=1;
-           }
-           else
-           {
-               xx=1;xy=MY-2;
-           }
-           allsquare[xx][xy]->type=x_label;
            break;
     }
 }
-void maze::startgame1()
+void maze::startgame1()//mainly written by lixin
 {
 
     gamesta=1;
@@ -191,7 +178,7 @@ void maze::startgame1()
     counttimer->start(1000);
     printtime->show();
 }
-void maze::initgame()//初始化游戏界面
+void maze::initgame()//mainly written by lixin 初始化游戏界面
 {
 
     Clabel->hide();
@@ -250,7 +237,7 @@ void maze::initgame()//初始化游戏界面
 
    //定义起始点
 }
-void maze::returnhome()//返回主界面
+void maze::returnhome()//mainly written by lixin  返回主界面
 {
     for(int i=0;i<MX;i++)
     {
@@ -298,7 +285,7 @@ void maze::returnhome()//返回主界面
         change.clear();havehammer=0;seekegg=0;
     }
 }
-void maze::replay()//重玩
+void maze::replay()//mainly written by 
 {
     if(gamesta!=4)
      {
@@ -398,7 +385,7 @@ void maze::replay()//重玩
     }
     }
 }
-void maze::startgame2()
+void maze::startgame2()//mainly written by huanghaoxiang
 {
     gamesta=2;
     initgame();
@@ -459,7 +446,7 @@ void maze::startgame2()
     printtime->show();
 
 }
-void maze::startgame3()
+void maze::startgame3()//mainly written by houyujie
 {
     gamesta=3;
     initgame();
@@ -509,7 +496,7 @@ void maze::startgame3()
     cattimer->start(100);
     printtime->show();
 }
-void maze::dwall()
+void maze::dwall()//mainly written by lixin
 {
     if(dtype==1)
     {
@@ -941,7 +928,7 @@ void maze::dwall()
     }
 
 }
-void maze::present()
+void maze::present()//mainly written by lixin
 {
     initgame();
     gamesta=4;
@@ -985,7 +972,7 @@ void maze::present()
     QObject::connect(ptimer,SIGNAL(timeout()),this,SLOT(dwall()));
 
 }
-void maze::walk()
+void maze::walk()//mainly written by houyujie
 {
     movecat();
     if(cat->label->x()==mouse->label->x()&&cat->label->y()==mouse->label->y())
@@ -998,7 +985,7 @@ void maze::walk()
         gameover(0,1);
     }
 }
-void maze::movecat()//响应键盘的移动函数，要有必要的判断，判断是否有墙
+void maze::movecat()//mainly written by houyujie响应键盘的移动函数，要有必要的判断，判断是否有墙
 {
     if(allsquare[mouse->X][mouse->Y]->type==wall_label)
     {
@@ -1145,7 +1132,7 @@ void maze::movecat()//响应键盘的移动函数，要有必要的判断，判�
          change.append( allsquare[cat->X+1][cat->Y]);}
 }
 
-void maze::structface()
+void maze::structface()//mainly written by lixin and jiashenghao
 {
     allsquare=new square**[MX];
         for(int i=0;i<MX;i++)
@@ -1201,7 +1188,7 @@ void maze::structface()
         food->label->setStyleSheet("QLabel{border-image:url(:/cheese.jpg)}");
         food->type=food_label;
 }
-void maze::settingslot()//设置地图大小的函数
+void maze::settingslot()//mainly written by lixin 设置地图大小的函数
 {
     QDialog* setwindowsize=new QDialog(this);
       setwindowsize->setWindowTitle("修改难度");
@@ -1261,7 +1248,7 @@ void maze::settingslot()//设置地图大小的函数
 
       delete setwindowsize;
 }
-void maze::keyPressEvent(QKeyEvent *event)//键盘控制部分
+void maze::keyPressEvent(QKeyEvent *event)//mainly wroten by jiashenghao 键盘控制部分
 {
     switch (event->key())
     {
@@ -1316,7 +1303,7 @@ void maze::keyPressEvent(QKeyEvent *event)//键盘控制部分
 
     }
 }
-void maze::movemouse()//响应键盘的移动函数，要有必要的判断，判断是否有墙
+void maze::movemouse()//mainly written by jiashenghao 响应键盘的移动函数，要有必要的判断，判断是否有墙
 {
     if(dx==1||dy==1)
    {
@@ -1325,31 +1312,13 @@ void maze::movemouse()//响应键盘的移动函数，要有必要的判断，�
    }
     if(dx==-1||dy==-1)
     {
-        mouse->X=((mouse->label->x()+dx)/Label_Size)-dx;
-        mouse->Y=((mouse->label->y()+dy)/Label_Size)-dy;
+       mouse->X=((mouse->label->x()+dx)/Label_Size)-dx;
+       mouse->Y=((mouse->label->y()+dy)/Label_Size)-dy;
     }
     if(dy==0)
     {
-
-        if(mouse->label->y()%Label_Size==0||(mouse->label->y()+3)%Label_Size==0||(mouse->label->y()-3)%Label_Size==0
-                ||(mouse->label->y()+6)%Label_Size==0||(mouse->label->y()-6)%Label_Size==0)
+        if(mouse->label->y()%Label_Size==0)
         {
-            if((mouse->label->y()+3)%Label_Size==0)
-            {
-                mouse->label->move(mouse->label->x(),mouse->label->y()+3);
-            }
-            if((mouse->label->y()-3)%Label_Size==0)
-            {
-                mouse->label->move(mouse->label->x(),mouse->label->y()-3);
-            }
-            if((mouse->label->y()+6)%Label_Size==0)
-            {
-                mouse->label->move(mouse->label->x(),mouse->label->y()+6);
-            }
-            if((mouse->label->y()-6)%Label_Size==0)
-            {
-                mouse->label->move(mouse->label->x(),mouse->label->y()-6);
-            }
             square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
                 if(tempMouse->type==wall_label)//如果老鼠撞到了墙
@@ -1369,25 +1338,8 @@ void maze::movemouse()//响应键盘的移动函数，要有必要的判断，�
     }
     if(dx==0)
     {
-        if(mouse->label->x()%Label_Size==0||(mouse->label->x()+3)%Label_Size==0||(mouse->label->x()-3)%Label_Size==0
-                ||(mouse->label->x()+6)%Label_Size==0||(mouse->label->x()-6)%Label_Size==0)
+        if(mouse->label->x()%Label_Size==0)
         {
-            if((mouse->label->x()+3)%Label_Size==0)
-            {
-                mouse->label->move(mouse->label->x()+3,mouse->label->y());
-            }
-            if((mouse->label->x()-3)%Label_Size==0)
-            {
-                mouse->label->move(mouse->label->x()-3,mouse->label->y());
-            }
-            if((mouse->label->x()+6)%Label_Size==0)
-            {
-                mouse->label->move(mouse->label->x()+6,mouse->label->y());
-            }
-            if((mouse->label->x()-6)%Label_Size==0)
-            {
-                mouse->label->move(mouse->label->x()-6,mouse->label->y());
-            }
             square* tempMouse=allsquare[mouse->X+dx][mouse->Y+dy];//设置临时的指针，先让老鼠移动在判断是否有墙
 
                 if(tempMouse->type==wall_label)//如果老鼠撞到了墙
@@ -1407,7 +1359,7 @@ void maze::movemouse()//响应键盘的移动函数，要有必要的判断，�
     }
 
 }
-void maze::movemouse3()//响应键盘的移动函数，要有必要的判断，判断是否有墙
+void maze::movemouse3()//mainly written by houyujie 响应键盘的移动函数，要有必要的判断，判断是否有墙
 {
     if(dx==1||dy==1)
    {
@@ -1472,7 +1424,7 @@ void maze::movemouse3()//响应键盘的移动函数，要有必要的判断，�
 
 }
 
-void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，判断是否有墙
+void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动函数，要有必要的判断，判断是否有墙
 {
     if(dx==1||dy==1)
    {
@@ -1492,6 +1444,25 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
 
             if(tempMouse->type==hammer_label)
            {
+                QDialog* donghua=new QDialog(this);
+                donghua->setWindowTitle("游戏提示");
+                donghua->resize(400,400);
+                QLabel* image=new QLabel(donghua);
+                image->setStyleSheet("QLabel{border-image:url(:/HAMMER.jpg)}");
+                QLabel* text=new QLabel("你获得了一把锤子！你可以用它凿穿墙壁！",donghua);
+                text->setGeometry(30,300,400,20);
+                image->setGeometry(0,0,400,300);
+                QPushButton* ok=new QPushButton("OK",donghua);
+                ok->setGeometry(150,350,100,30);
+                QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
+                image->show();
+                counttimer->stop();
+                if(donghua->exec()==QDialog::Accepted)
+                {
+                    counttimer->start();
+                    image->clear();
+                }
+
                tempMouse->type=ground_label;
                tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
@@ -1547,6 +1518,24 @@ void maze::movemouse2()//响应键盘的移动函数，要有必要的判断，�
 
             if(tempMouse->type==hammer_label)
            {
+                QDialog* donghua=new QDialog(this);
+                donghua->setWindowTitle("游戏提示");
+                donghua->resize(400,400);
+                QLabel* image=new QLabel(donghua);
+                image->setStyleSheet("QLabel{border-image:url(:/HAMMER.jpg)}");
+                QLabel* text=new QLabel("你获得了一把锤子！你可以用它凿穿墙壁！",donghua);
+                text->setGeometry(30,300,400,20);
+                image->setGeometry(0,0,400,300);
+                QPushButton* ok=new QPushButton("OK",donghua);
+                ok->setGeometry(150,350,100,30);
+                QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
+                image->show();
+                counttimer->stop();
+                if(donghua->exec()==QDialog::Accepted)
+                {
+                    counttimer->start();
+                    image->clear();
+                }
                tempMouse->type=ground_label;
                 tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
@@ -1657,7 +1646,7 @@ else
     }
 }*/
 
-/*void maze::destructwall()//打通前往终点路线的函数，未使用prim算法，重写的时候可以整个函数注释掉，然后再重新写一遍destructwall
+/*void maze::destructwall0()//打通前往终点路线的函数，未使用prim算法，重写的时候可以整个函数注释掉，然后再重新写一遍destructwall
 {
     int temp_x = MX - 2;
         int temp_y = MY - 2;
@@ -1761,7 +1750,22 @@ else
         }
         RandestructWall();
 }*/
-void maze::destructwall()//该函数借鉴于CSDN上用户god_speed、的函数
+void maze::destructwall()//mainly written by jiashenghao   该函数借鉴于CSDN上用户god_speed、的函数
+/*由于自己做出来的地图效果不是很理想，因此在网上搜了有关随机构造地图的好的算法，该函数引自CSDN上用户god_speed、的函数，在此基础上做了一定的修改，使其能够配套这个迷宫来使用。其原理如下：
+1.通过宏来定义各种各样的标签，在构造地图的时候清楚地知道数组的每一个元素分别代表了什么，注意到把m和n即长和宽分别定义了MX-2和MY-2是因为在砸墙的过程中要保证边缘的墙不会被砸掉。
+2.定义一个结构体block，共有三个数据成员分别是行，列，方向，表示这堵墙所在的行数和列数以及它相对于定位到他的空地的方向。
+3.定义一个结构体point，有两个数据成员x和y，以及两个对象start和end，用来指示开始和结束时的方格坐标。
+4.用矢量vector，用block作为其类型，之后在砸墙和补墙中用。
+5.定义两个int型数作为“矿工”的位置—即我们在不断移动寻找通路时的位置，定义一个足够大数组G用来表示整个迷宫里每个方块的状态，并将其全部初始化为墙。将起始位置的位置定义在（1，1）。
+6.接下来出现一个小函数①，即四个if语句，这个模块的功能是以矿工所在位置为中心，观察上下左右四个方块，如果有方块是墙并且没有越过边界的话，就把这个墙的坐标以及关于矿工的位置放到一个block块中并放入之前定义的矢量之中。
+7.下面进入一个循环，如果vector内还有元素就会一直循环直到vector中的元素全部被清空为止。
+8.随机找到vector里一个元素的下标，创建临时变量将该元素对应的墙的信息复制一份，以防对原来的地图状态产生影响。让“矿工”来到我们定位到的这堵墙中。
+9.根据墙的方向来确定矿工的操作，如果墙的方向相对于之前空地向下，就让矿工再向下走一格，其余方向均同理，使矿工原来在的空地、选中的墙以及矿工现在的位置在同一条直线上。
+10.如果矿工现在所在的位置是一堵墙的话，表明原先的空地和这里并不联通，就把从原来空地到这里直线经过的两个格子全部打通，并且再次调用模块①，观察矿工现在所在位置四周的方格状态；如果矿工所在位置是一个空地的话，那么矿工就没有必要打通原来的空地和现在的空地，并且这个空地周围的墙一定都被勘探过了，也就是说都已经在vector里了，就不需要再勘探一遍了，此时矿工就可以原地“休息”一下。
+11.无论如何，夹在中间的墙都不再需要再次勘探了，因此把它从原先的vector中删除就可以了，如果这堵墙是vector中的最后一个元素，由于矿工走的过程中始终能保证他到达过的地方都是相连的，那么表示整个迷宫都已经被打通了，砸墙过程也就结束了，就可以跳出循环了。
+12.此时二维数组G中就储存了全部的地图信息，只需要把其一一对应地赋给相应地地图块即可，这样就做出了一个全连通的地图。
+*/
+
 {
    if(dtype==1)
    {
@@ -1943,7 +1947,7 @@ void maze::destructwall()//该函数借鉴于CSDN上用户god_speed、的函数
    }
 
 }
-void maze::updatetimer()//主要负责显示时间
+void maze::updatetimer()//mainly written by lixin 主要负责显示时间
 {
     gametime--;
     QString str;
@@ -1955,7 +1959,7 @@ void maze::updatetimer()//主要负责显示时间
    if(gametime==0&&gamesta==2){gameover(0,0);}
    if(gametime==0&&gamesta==3){gameover(0,1);}
 }
-void maze::gameover(int a,int b)
+void maze::gameover(int a,int b)//mainly written by lixin
 {
 
     //接下来可以做游戏结束界面，记得，先删除当前界面,除了下方栏；
@@ -2021,51 +2025,10 @@ void maze::gameover(int a,int b)
                     change.clear();
                     havehammer=0;srand(time(0));
                     generateham();
-                    /*int hamX=(rand()%(MX-5))+2;
-                    int hamY=(rand()%(MY-5))+2;
-                    while(allsquare[hamX][hamY]->type!=ground_label)
-                    {hamX+=1;hamY+=1;
-                    if (hamX==MX-1||hamY==MY-1)
-                    {
-                        hamX=(rand()%(MX-5))+2;
-                        hamY=(rand()%(MY-5))+2;
-                    }
-                    }
-                    allsquare[hamX][hamY]->type=hammer_label;
-                    allsquare[hamX][hamY]->label->setPixmap(*hammer);
-                    allsquare[hamX][hamY]->label->setScaledContents(true);
-                    allsquare[hamX][hamY]->label->show();*/
                     seekegg=0;srand(time(0));
                     generateegg();
-                    /*int eggX=(rand()%(MX-5))+2;
-                    int eggY=(rand()%(MY-5))+2;
-                    while(allsquare[eggX][eggY]->type!=ground_label)
-                    {eggX+=1;eggY+=1;
-                        if (eggX==MX-1||eggY==MY-1)
-                        {
-                            eggX=(rand()%(MX-5))+2;
-                            eggY=(rand()%(MY-5))+2;
-                        }}
-                    allsquare[eggX][eggY]->type=egg_label;
-                    allsquare[eggX][eggY]->label->setPixmap(*egg);
-                    allsquare[eggX][eggY]->label->setScaledContents(true);
-                    allsquare[eggX][eggY]->label->show();*/
                     generatejia();
-                    /*int jiaX=(rand()%(MX-5))+2;
-                    int jiaY=(rand()%(MY-5))+2;
-                    while(allsquare[jiaX][jiaY]->type!=ground_label)
-                    {jiaX+=1;jiaY+=1;
-                        if (jiaX==MX-1||jiaY==MY-1)
-                        {
-                            jiaX=(rand()%(MX-5))+2;
-                            jiaY=(rand()%(MY-5))+2;
-                        }}
-                    allsquare[jiaX][jiaY]->type=jia_label;
-                    allsquare[jiaX][jiaY]->label->setPixmap(*jia);
-                    allsquare[jiaX][jiaY]->label->setScaledContents(true);
-                    allsquare[jiaX][jiaY]->label->show();*/
-
-                    if(xx==1&&xy==MY-2)
+                     if(xx==1&&xy==MY-2)
                     {
                         xx=MX-2;
                         xy=1;
@@ -2137,7 +2100,7 @@ void maze::gameover(int a,int b)
              delete donghua;
 }
 
-void maze::generateham()
+void maze::generateham()//mainly written by huanghaoxiang
 {
     int hamX=(rand()%(MX-5))+2;
     int hamY=(rand()%(MY-5))+2;
@@ -2155,7 +2118,7 @@ void maze::generateham()
     allsquare[hamX][hamY]->label->show();
 
 }
-void maze::generateegg()
+void maze::generateegg()//mainly written by huanghaoxiang
 {
     int eggX=(rand()%(MX-5))+2;
     int eggY=(rand()%(MY-5))+2;
@@ -2172,7 +2135,7 @@ void maze::generateegg()
     allsquare[eggX][eggY]->label->show();
 
 }
-void maze::generatejia()
+void maze::generatejia()//mainly written by huanghaoxiang
 {
     int jiaX=(rand()%(MX-5))+2;
     int jiaY=(rand()%(MY-5))+2;
@@ -2191,7 +2154,7 @@ void maze::generatejia()
 
 }
 
-void maze::resizewindow()
+void maze::resizewindow()//mainly written by lixin
 {
 
     resize((MX)*Label_Size,(MY+2)*Label_Size);
@@ -2218,7 +2181,7 @@ void maze::resizewindow()
                                 "QPushButton:hover{border-image:url(:/present2.png);}"
                                  "QPushButton:pressed{border-image:url(:/present1.png);}");
 }
-maze::~maze()
+maze::~maze()//mainly written by lixin
 {
     if(allsquare==nullptr){;}
     else {for(int i=0;i<MX;i++)
