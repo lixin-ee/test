@@ -33,8 +33,8 @@ int x_num , y_num ;//矿工位置
     int ptime=500;
     int xtime=5000;
     int xcount=1;
-    int xx;
-    int xy;
+    int xx=0;
+    int xy=0;
     int warning=0;
     int needHamHin=1;
     int needCdHint=1;
@@ -89,13 +89,15 @@ void maze::aboutus()//mainly written by lixin
     switch(xcount)
     {
     case 1:
+        Return->setDisabled(true);
+        Replay->setDisabled(true);
         so=new QSound(":/heirentaiguan.wav");
         so->play();
         xlabel=new QLabel(this);
         xlabel->setStyleSheet("QLabel{border-image:url(:/t3.jpg);}");
         xlabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
          xlabel->show();
-        animation->setDuration(xtime-3000);
+        animation->setDuration(xtime-4800);
         animation->setStartValue(0);
         animation->setEndValue(1);
         animation->start();
@@ -151,6 +153,8 @@ void maze::aboutus()//mainly written by lixin
            break;
        case 6:
            xcount=1;
+           Return->setDisabled(false);
+           Replay->setDisabled(false);
            animation->setDuration(xtime-3000);
            animation->setStartValue(0);
            animation->setEndValue(1);
@@ -166,6 +170,19 @@ void maze::aboutus()//mainly written by lixin
            counttimer->start(1000);
            delete xlabel;
            delete so;
+           allsquare[xx][xy]->label->clear();
+                     allsquare[xx][xy]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+                     allsquare[xx][xy]->type=ground_label;
+                     if(xx==1&&xy==MY-2)
+                     {
+                         xx=MX-2;
+                         xy=1;
+                     }
+                     else
+                     {
+                         xx=1;xy=MY-2;
+                     }
+                     allsquare[xx][xy]->type=x_label;
            break;
     }
 }
@@ -442,8 +459,15 @@ void maze::startgame2()//mainly written by huanghaoxiang
     allsquare[jiaX][jiaY]->label->setScaledContents(true);
     allsquare[jiaX][jiaY]->label->show();
 
-    xx=1;
-    xy=MY-2;
+    if(xx==1&&xy==MY-2)
+    {
+        xx=MX-2;
+        xy=1;
+    }
+    else
+    {
+        xx=1;xy=MY-2;
+    }
     allsquare[xx][xy]->type=x_label;
     gametime =MX*MY*0.2;
     updatetimer();
