@@ -23,6 +23,7 @@
 #include<QRadioButton>
 #include<QPropertyAnimation>
 #include<QSound>
+#include<QCheckBox>
 #define Label_Size  30
 using namespace std;
 
@@ -74,9 +75,9 @@ private slots:
     void present();
     void dwall();
     void aboutus();
-    void jiaHint();
-    void hamHint();
-    void cdHint();
+    void jiaHint(int);
+    void hamHint(int);
+    void cdHint(int);
   private:
     Ui::maze *ui;
     QPushButton* setting;
