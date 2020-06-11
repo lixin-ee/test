@@ -74,6 +74,9 @@ private slots:
     void present();
     void dwall();
     void aboutus();
+    void jiaHint();
+    void hamHint();
+    void cdHint();
   private:
     Ui::maze *ui;
     QPushButton* setting;
