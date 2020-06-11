@@ -36,6 +36,9 @@ int x_num , y_num ;//矿工位置
     int xx;
     int xy;
     int warning=0;
+    int needHamHin=1;
+    int needCdHint=1;
+    int needJiaHint=1;
     QLabel* xlabel;
     QPropertyAnimation *animation;
     square* tempegg=nullptr;
@@ -1508,7 +1511,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
        mouse->X=((mouse->label->x()+dx)/Label_Size)-dx;
        mouse->Y=((mouse->label->y()+dy)/Label_Size)-dy;
     }
-    jiaHint();
+    jiaHint(needJiaHint);
     if(dy==0)
     {
         if(mouse->label->y()%Label_Size==0||(mouse->label->y()+3)%Label_Size==0||(mouse->label->y()-3)%Label_Size==0
@@ -1534,7 +1537,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
 
             if(tempMouse->type==hammer_label)
            {
-                hamHint();
+                hamHint(needHamHin);
 
                tempMouse->type=ground_label;
                tempMouse->label->clear();
@@ -1545,7 +1548,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
 
             if(tempMouse->type==egg_label)
            {
-                cdHint();
+                cdHint(needCdHint);
 
                tempMouse->type=ground_label;
                tempMouse->label->clear();
@@ -1610,7 +1613,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
 
             if(tempMouse->type==hammer_label)
            {
-                hamHint();
+                hamHint(needHamHin);
                tempMouse->type=ground_label;
                 tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
@@ -1618,7 +1621,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
 
             if(tempMouse->type==egg_label)
            {
-                cdHint();
+                cdHint(needCdHint);
                tempMouse->type=ground_label;
                tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
@@ -2231,86 +2234,118 @@ void maze::generatejia()//mainly written by huanghaoxiang
 
 }
 
-void maze::hamHint()
+void maze::hamHint(int isneed)
 {
-    QDialog* donghua=new QDialog(this);
-    donghua->setWindowTitle("游戏提示");
-    donghua->resize(400,400);
-    QLabel* image=new QLabel(donghua);
-    image->setStyleSheet("QLabel{border-image:url(:/HAMMER.jpg)}");
-    QLabel* text=new QLabel("你获得了一把锤子！你可以用它凿穿墙壁！",donghua);
-    text->setGeometry(30,300,400,20);
-    image->setGeometry(0,0,400,300);
-    QPushButton* ok=new QPushButton("OK",donghua);
-    ok->setGeometry(150,350,100,30);
-    QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
-    image->show();
-    counttimer->stop();
-    if(donghua->exec()==QDialog::Accepted)
-    {
-        counttimer->start();
-        image->clear();
-    }
-    delete image;
-}
-
-void maze::cdHint()
-{
-    QDialog* donghua=new QDialog(this);
-    donghua->setWindowTitle("游戏提示");
-    donghua->resize(400,400);
-    QLabel* image=new QLabel(donghua);
-    image->setStyleSheet("QLabel{border-image:url(:/caidan2.jpg)}");
-    QLabel* text=new QLabel("你捡到了一个彩蛋！一些变化发生了！",donghua);
-    text->setGeometry(30,300,400,20);
-    image->setGeometry(0,0,400,300);
-    QPushButton* ok=new QPushButton("OK",donghua);
-    ok->setGeometry(150,350,100,30);
-    QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
-    image->show();
-    counttimer->stop();
-    if(donghua->exec()==QDialog::Accepted)
-    {
-        counttimer->start();
-        image->clear();
-    }
-    delete image;
-}
-
-void maze::jiaHint()
-{
-    if(
-            ((mouse->X+2<=MX-1&&allsquare[mouse->X+2][mouse->Y]->type==jia_label)
-             ||(mouse->X-2>=0&&allsquare[mouse->X-2][mouse->Y]->type==jia_label)
-            ||(mouse->Y+2<=MY-1&&allsquare[mouse->X][mouse->Y+2]->type==jia_label)
-             ||(mouse->Y-2>=0&&allsquare[mouse->X][mouse->Y-2]->type==jia_label)
-            ||((mouse->X+1<=MX-1&&allsquare[mouse->X+1][mouse->Y]->type==jia_label)
-               ||(mouse->X-1>=0&&allsquare[mouse->X-1][mouse->Y]->type==jia_label)
-              ||(mouse->Y+1<=MY-1&&allsquare[mouse->X][mouse->Y+1]->type==jia_label)
-               ||(mouse->Y-1>=0&&allsquare[mouse->X][mouse->Y-1]->type==jia_label)))
-            &&warning==0)
+    if(isneed)
     {
         QDialog* donghua=new QDialog(this);
         donghua->setWindowTitle("游戏提示");
         donghua->resize(400,400);
         QLabel* image=new QLabel(donghua);
-        image->setStyleSheet("QLabel{border-image:url(:/jia2.jpg)}");
-        QLabel* text=new QLabel("小心老鼠夹！它会让你输掉游戏！",donghua);
+        image->setStyleSheet("QLabel{border-image:url(:/HAMMER.jpg)}");
+        QLabel* text=new QLabel("你获得了一把锤子！你可以用它凿穿墙壁！",donghua);
         text->setGeometry(30,300,400,20);
         image->setGeometry(0,0,400,300);
         QPushButton* ok=new QPushButton("OK",donghua);
         ok->setGeometry(150,350,100,30);
+        QCheckBox* need=new QCheckBox("之后不再显示",donghua);
+        need->setGeometry(30,325,400,20);
         QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
         image->show();
         counttimer->stop();
         if(donghua->exec()==QDialog::Accepted)
         {
+            if(need->isChecked()==true)
+            {
+                needHamHin=0;
+            }
+
             counttimer->start();
             image->clear();
         }
         delete image;
-        warning=1;
     }
+
+}
+
+void maze::cdHint(int isneed)
+{
+    if(isneed)
+    {
+        QDialog* donghua=new QDialog(this);
+        donghua->setWindowTitle("游戏提示");
+        donghua->resize(400,400);
+        QLabel* image=new QLabel(donghua);
+        image->setStyleSheet("QLabel{border-image:url(:/caidan2.jpg)}");
+        QLabel* text=new QLabel("你捡到了一个彩蛋！一些变化发生了！",donghua);
+        text->setGeometry(30,300,400,20);
+        image->setGeometry(0,0,400,300);
+        QPushButton* ok=new QPushButton("OK",donghua);
+        ok->setGeometry(150,350,100,30);
+        QCheckBox* need=new QCheckBox("之后不再显示",donghua);
+        need->setGeometry(30,325,400,20);
+        QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
+        image->show();
+        counttimer->stop();
+        if(donghua->exec()==QDialog::Accepted)
+        {
+            if(need->isChecked()==true)
+            {
+                needCdHint=0;
+            }
+            counttimer->start();
+            image->clear();
+        }
+        delete image;
+    }
+
+}
+
+void maze::jiaHint(int isneed)
+{
+    if(isneed)
+    {
+        if(
+                ((mouse->X+2<=MX-1&&allsquare[mouse->X+2][mouse->Y]->type==jia_label)
+                 ||(mouse->X-2>=0&&allsquare[mouse->X-2][mouse->Y]->type==jia_label)
+                ||(mouse->Y+2<=MY-1&&allsquare[mouse->X][mouse->Y+2]->type==jia_label)
+                 ||(mouse->Y-2>=0&&allsquare[mouse->X][mouse->Y-2]->type==jia_label)
+                ||((mouse->X+1<=MX-1&&allsquare[mouse->X+1][mouse->Y]->type==jia_label)
+                   ||(mouse->X-1>=0&&allsquare[mouse->X-1][mouse->Y]->type==jia_label)
+                  ||(mouse->Y+1<=MY-1&&allsquare[mouse->X][mouse->Y+1]->type==jia_label)
+                   ||(mouse->Y-1>=0&&allsquare[mouse->X][mouse->Y-1]->type==jia_label)))
+                &&warning==0)
+        {
+            QDialog* donghua=new QDialog(this);
+            donghua->setWindowTitle("游戏提示");
+            donghua->resize(400,400);
+            QLabel* image=new QLabel(donghua);
+            image->setStyleSheet("QLabel{border-image:url(:/jia2.jpg)}");
+            QLabel* text=new QLabel("小心老鼠夹！它会让你输掉游戏！",donghua);
+            text->setGeometry(30,300,400,20);
+            image->setGeometry(0,0,400,300);
+            QPushButton* ok=new QPushButton("OK",donghua);
+            ok->setGeometry(150,350,100,30);
+            QCheckBox* need=new QCheckBox("之后不再显示",donghua);
+            need->setGeometry(30,325,400,20);
+
+            QObject::connect(ok,SIGNAL(clicked()),donghua,SLOT(accept()));
+            image->show();
+            counttimer->stop();
+            if(donghua->exec()==QDialog::Accepted)
+            {
+                if(need->isChecked()==true)
+                {
+                    needJiaHint=0;
+                }
+                counttimer->start();
+                image->clear();
+            }
+            delete image;
+            warning=1;
+        }
+    }
+
 }
 void maze::resizewindow()//mainly written by lixin
 {
