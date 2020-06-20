@@ -107,6 +107,7 @@ void maze::sign()
 }
 void maze::mainscreen()
 {
+    ui->label_2->hide();
     ui->label->setDisabled(true);
     ui->label->hide();
     ui->lineEdit->hide();
