@@ -34,7 +34,7 @@ struct player
        {
         name[i]=_name[i];
        }
-         name[5]='\0';
+         name[_name.size()]='\0';
          calssic_number=_calssic_number;entertain_number=_entertain_number;devil_number=_devil_number;
          entertain_egg=_entertain_egg;classic_rate=_classic_rate;devil_rate=_devil_rate;
     }
