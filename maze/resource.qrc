@@ -56,5 +56,11 @@
         <file>HAMMER.jpg</file>
         <file>caidan2.jpg</file>
         <file>jia2.jpg</file>
+        <file>aboutme.png</file>
+        <file>aboutme1.png</file>
+        <file>aboutme2.png</file>
+        <file>rank.png</file>
+        <file>rank1.png</file>
+        <file>rank2.png</file>
     </qresource>
 </RCC>

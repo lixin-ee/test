@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1264</width>
-    <height>658</height>
+    <height>814</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -22,8 +22,8 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>640</x>
-     <y>590</y>
+     <x>110</x>
+     <y>740</y>
      <width>211</width>
      <height>61</height>
     </rect>
@@ -35,8 +35,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>480</x>
-     <y>470</y>
+     <x>20</x>
+     <y>620</y>
      <width>111</width>
      <height>61</height>
     </rect>
@@ -52,8 +52,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QLineEdit" name="lineEdit">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>470</y>
+     <x>140</x>
+     <y>620</y>
      <width>261</width>
      <height>51</height>
     </rect>
@@ -62,17 +62,17 @@ p, li { white-space: pre-wrap; }
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>520</x>
-     <y>620</y>
-     <width>93</width>
-     <height>28</height>
+     <x>30</x>
+     <y>660</y>
+     <width>391</width>
+     <height>101</height>
     </rect>
    </property>
    <property name="text">
-    <string>注册</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:22pt;&quot;&gt;（昵称字数在五个以内）&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
  </widget>

@@ -91,6 +91,8 @@ private slots:
     QLabel* Clabel;
     QPushButton* Return;
     QPushButton* Replay;
+    QPushButton* rank;
+    QPushButton* aboutme;
     QLCDNumber* printtime;
     QLabel* clock1;
     QLabel* clock2;

@@ -25,16 +25,18 @@ struct block
  };
 struct player
 {
-    QChar name[30];int victory,total_number;
-    player(QString _name,int _victory,int _total_number)
+    QChar name[6];int calssic_number,entertain_number,devil_number,entertain_egg;
+    double classic_rate,devil_rate;
+    player(QString _name,int _calssic_number,int _entertain_number,int _devil_number,
+           int _entertain_egg,double _classic_rate,double _devil_rate)
     {
-       for(int i=0;i<30;i++)
+       for(int i=0;i<_name.size();i++)
        {
         name[i]=_name[i];
        }
-         name[29]='\0';
-         victory=_victory;
-         total_number=_total_number;
+         name[5]='\0';
+         calssic_number=_calssic_number;entertain_number=_entertain_number;devil_number=_devil_number;
+         entertain_egg=_entertain_egg;classic_rate=_classic_rate;devil_rate=_devil_rate;
     }
 };
 int x_num , y_num ;//矿工位置
@@ -83,6 +85,8 @@ maze::maze(QWidget *parent)//mainly written by lixin
         start3=new QPushButton(this);
         setting=new QPushButton(this);
         presentation=new QPushButton(this);
+        rank=new QPushButton(this);
+        aboutme=new QPushButton(this);
         mousegif=new QMovie(":/mouse1.gif");
         QSize s1(Label_Size+5,Label_Size+5);
         catgif=new QMovie(":/cat2.gif");
@@ -108,8 +112,6 @@ void maze::mainscreen()
     ui->lineEdit->hide();
     ui->pushButton->hide();
     ui->pushButton->setDisabled(true);
-    ui->pushButton_2->hide();
-    ui->pushButton_2->setDisabled(true);
     resizewindow();
     QObject::connect(start1,SIGNAL(clicked()),this,SLOT(startgame1()));
     QObject::connect(start2,SIGNAL(clicked()),this,SLOT(startgame2()));
@@ -235,6 +237,10 @@ void maze::startgame1()//mainly written by lixin
 void maze::initgame()//mainly written by lixin 初始化游戏界面
 {
 
+    rank->hide();
+    rank->setDisabled(true);
+    aboutme->hide();
+    aboutme->setDisabled(true);
     Clabel->hide();
     Clabel->setDisabled(true);
     setting->hide();
@@ -313,6 +319,10 @@ void maze::returnhome()//mainly written by lixin  返回主界面
         delete cat;
         delete cattimer;
     }
+    rank->show();
+    rank->setDisabled(false);
+    aboutme->show();
+    aboutme->setDisabled(false);
     Clabel->show();
     Clabel->setDisabled(false);
     setting->show();
@@ -2406,8 +2416,14 @@ void maze::jiaHint(int isneed)
 }
 void maze::resizewindow()//mainly written by lixin
 {
-
-
+    rank->setGeometry(MX*Label_Size-2*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
+    rank->setStyleSheet("QPushButton{border-image:url(:/rank.png);}"
+                        "QPushButton:hover{border-image:url(:/rank1.png);}"
+                         "QPushButton:pressed{border-image:url(:/rank2.png);}");
+    aboutme->setGeometry(1,MY*Label_Size,2*Label_Size,2*Label_Size);
+    aboutme->setStyleSheet("QPushButton{border-image:url(:/aboutme.png);}"
+                        "QPushButton:hover{border-image:url(:/aboutme1.png);}"
+                         "QPushButton:pressed{border-image:url(:/aboutme2.png);}");
     start1->setGeometry(MX * Label_Size / 2-width()/10 ,MY * Label_Size / 2,width()/5,2*height()/15);
     start1->setStyleSheet("QPushButton{border-image:url(:/m1.png);}"
                           "QPushButton:hover{border-image:url(:/m12.png);}"
