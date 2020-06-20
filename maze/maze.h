@@ -1,6 +1,7 @@
 #ifndef MAZE_H
 #define MAZE_H
 
+#include<QLineEdit>
 #include <QWidget>
 #include<QMovie>
 #include<QLabel>
@@ -78,6 +79,8 @@ private slots:
     void jiaHint(int);
     void hamHint(int);
     void cdHint(int);
+    void mainscreen();
+    void sign();
   private:
     Ui::maze *ui;
     QPushButton* setting;

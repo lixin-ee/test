@@ -3,6 +3,7 @@
 #include<QScreen>
 #include<QSound>
 #include <QApplication>
+#include<QChar>
 #define m (MX-2)//row
 #define n (MY-2)
 #define down 1
@@ -22,6 +23,20 @@ struct block
             direction = _direction;
         }
  };
+struct player
+{
+    QChar name[30];int victory,total_number;
+    player(QString _name,int _victory,int _total_number)
+    {
+       for(int i=0;i<30;i++)
+       {
+        name[i]=_name[i];
+       }
+         name[29]='\0';
+         victory=_victory;
+         total_number=_total_number;
+    }
+};
 int x_num , y_num ;//矿工位置
     vector<block> myblock;
     vector<block> Ling;
@@ -49,40 +64,58 @@ maze::maze(QWidget *parent)//mainly written by lixin
     , ui(new Ui::maze)
 {
     QScreen *screen=QGuiApplication::primaryScreen ();
-    QRect mm=screen->availableGeometry() ;
-    screen_width = mm.width();
-    screen_height = mm.height();
-    int temp1=0.7*screen_width/(Label_Size*2);
-    MX=2*temp1+1;
-    temp1=0.9*screen_height/(Label_Size*2);
-    MY=2*temp1-1;
-    ui->setupUi(this);
-    setWindowIcon(QIcon(":/tubiao.ico"));
-    setWindowTitle("maze521");
-    Clabel=new QLabel(this);
-    start1=new QPushButton(this);
-    start2=new QPushButton(this);
-    start3=new QPushButton(this);
-    setting=new QPushButton(this);
-    presentation=new QPushButton(this);
+        QRect mm=screen->availableGeometry() ;
+        screen_width = mm.width();
+        screen_height = mm.height();
+        int temp1=0.7*screen_width/(Label_Size*2);
+        MX=2*temp1+1;
+        temp1=0.9*screen_height/(Label_Size*2);
+        MY=2*temp1-1;
+        Clabel=new QLabel(this);
+        Clabel->setStyleSheet("QLabel{border-image:url(:/cover.jpg);}");
+        Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+        ui->setupUi(this);
+         resize((MX)*Label_Size,(MY+2)*Label_Size);
+        setWindowIcon(QIcon(":/tubiao.ico"));
+        setWindowTitle("maze521");
+        start1=new QPushButton(this);
+        start2=new QPushButton(this);
+        start3=new QPushButton(this);
+        setting=new QPushButton(this);
+        presentation=new QPushButton(this);
+        mousegif=new QMovie(":/mouse1.gif");
+        QSize s1(Label_Size+5,Label_Size+5);
+        catgif=new QMovie(":/cat2.gif");
+        QSize s2(Label_Size+10,Label_Size+10);
+        mousegif->setScaledSize(s1);
+        catgif->setScaledSize(s2);
+        hammer=new QPixmap(":/hammer.png");
+        egg=new QPixmap(":/caidan.png");
+        jia=new QPixmap(":/jia.png");
+        animation = new QPropertyAnimation(this,"windowOpacity");
+        xtimer=new QTimer(this);
+        QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
+    QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
+}
+void maze::sign()
+{
+
+}
+void maze::mainscreen()
+{
+    ui->label->setDisabled(true);
+    ui->label->hide();
+    ui->lineEdit->hide();
+    ui->pushButton->hide();
+    ui->pushButton->setDisabled(true);
+    ui->pushButton_2->hide();
+    ui->pushButton_2->setDisabled(true);
     resizewindow();
     QObject::connect(start1,SIGNAL(clicked()),this,SLOT(startgame1()));
     QObject::connect(start2,SIGNAL(clicked()),this,SLOT(startgame2()));
     QObject::connect(start3,SIGNAL(clicked()),this,SLOT(startgame3()));
     QObject::connect(setting,SIGNAL(clicked()),this,SLOT(settingslot()));
     QObject::connect(presentation,SIGNAL(clicked()),this,SLOT(present()));
-    mousegif=new QMovie(":/mouse1.gif");
-    QSize s1(Label_Size+5,Label_Size+5);
-    catgif=new QMovie(":/cat2.gif");
-    QSize s2(Label_Size+10,Label_Size+10);
-    mousegif->setScaledSize(s1);
-    catgif->setScaledSize(s2);
-    hammer=new QPixmap(":/hammer.png");
-    egg=new QPixmap(":/caidan.png");
-    jia=new QPixmap(":/jia.png");
-    animation = new QPropertyAnimation(this,"windowOpacity");
-    xtimer=new QTimer(this);
-    QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
 }
 void maze::aboutus()//mainly written by lixin
 {
@@ -2374,9 +2407,7 @@ void maze::jiaHint(int isneed)
 void maze::resizewindow()//mainly written by lixin
 {
 
-    resize((MX)*Label_Size,(MY+2)*Label_Size);
-    Clabel->setStyleSheet("QLabel{border-image:url(:/cover.jpg);}");
-    Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+
     start1->setGeometry(MX * Label_Size / 2-width()/10 ,MY * Label_Size / 2,width()/5,2*height()/15);
     start1->setStyleSheet("QPushButton{border-image:url(:/m1.png);}"
                           "QPushButton:hover{border-image:url(:/m12.png);}"
