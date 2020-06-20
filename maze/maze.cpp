@@ -80,13 +80,7 @@ maze::maze(QWidget *parent)//mainly written by lixin
          resize((MX)*Label_Size,(MY+2)*Label_Size);
         setWindowIcon(QIcon(":/tubiao.ico"));
         setWindowTitle("maze521");
-        start1=new QPushButton(this);
-        start2=new QPushButton(this);
-        start3=new QPushButton(this);
-        setting=new QPushButton(this);
-        presentation=new QPushButton(this);
-        rank=new QPushButton(this);
-        aboutme=new QPushButton(this);
+
         mousegif=new QMovie(":/mouse1.gif");
         QSize s1(Label_Size+5,Label_Size+5);
         catgif=new QMovie(":/cat2.gif");
@@ -101,12 +95,35 @@ maze::maze(QWidget *parent)//mainly written by lixin
         QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
     QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
 }
-void maze::sign()
+void maze::exit()
 {
-
+    denglu=1;
+    delete back;
+    delete rank;
+    delete aboutme;
+    delete setting;
+    delete start1;
+    delete start2;
+    delete start3;
+    delete presentation;
+    ui->label_2->show();
+    ui->label->setDisabled(false);
+    ui->label->show();
+    ui->lineEdit->show();
+    ui->pushButton->show();
+    ui->pushButton->setDisabled(false);
+    name="";
 }
 void maze::mainscreen()
 {
+    start1=new QPushButton(this);
+    start2=new QPushButton(this);
+    start3=new QPushButton(this);
+    setting=new QPushButton(this);
+    back=new QPushButton(this);
+    presentation=new QPushButton(this);
+    rank=new QPushButton(this);
+    aboutme=new QPushButton(this);
     ui->label_2->hide();
     ui->label->setDisabled(true);
     ui->label->hide();
@@ -114,6 +131,23 @@ void maze::mainscreen()
     ui->pushButton->hide();
     ui->pushButton->setDisabled(true);
     resizewindow();
+    rank->show();
+    rank->setDisabled(false);
+    aboutme->show();
+    aboutme->setDisabled(false);
+    setting->show();
+    setting->setDisabled(false);
+    start1->show();
+    start1->setDisabled(false);
+    start2->show();
+    start2->setDisabled(false);
+    start3->show();
+    start3->setDisabled(false);
+    presentation->show();
+    presentation->setDisabled(false);
+    back->show();
+    back->setDisabled(false);
+    QObject::connect(back,SIGNAL(clicked()),this,SLOT(exit()));
     QObject::connect(start1,SIGNAL(clicked()),this,SLOT(startgame1()));
     QObject::connect(start2,SIGNAL(clicked()),this,SLOT(startgame2()));
     QObject::connect(start3,SIGNAL(clicked()),this,SLOT(startgame3()));
@@ -237,7 +271,8 @@ void maze::startgame1()//mainly written by lixin
 }
 void maze::initgame()//mainly written by lixin 初始化游戏界面
 {
-
+    back->hide();
+    back->setDisabled(true);
     rank->hide();
     rank->setDisabled(true);
     aboutme->hide();
@@ -320,22 +355,7 @@ void maze::returnhome()//mainly written by lixin  返回主界面
         delete cat;
         delete cattimer;
     }
-    rank->show();
-    rank->setDisabled(false);
-    aboutme->show();
-    aboutme->setDisabled(false);
-    Clabel->show();
-    Clabel->setDisabled(false);
-    setting->show();
-    setting->setDisabled(false);
-    start1->show();
-    start1->setDisabled(false);
-    start2->show();
-    start2->setDisabled(false);
-    start3->show();
-    start3->setDisabled(false);
-    presentation->show();
-    presentation->setDisabled(false);
+
    if(gamesta==4){delete ptimer;}
     else delete counttimer;
     delete Return;
@@ -345,6 +365,24 @@ void maze::returnhome()//mainly written by lixin  返回主界面
     delete clock2;
     delete mouse;
     delete mouse->label;
+   Clabel->show();
+   Clabel->setDisabled(false);
+   setting->show();
+   setting->setDisabled(false);
+   start1->show();
+   start1->setDisabled(false);
+   start2->show();
+   start2->setDisabled(false);
+   start3->show();
+   start3->setDisabled(false);
+   presentation->show();
+   presentation->setDisabled(false);
+   rank->show();
+   rank->setDisabled(false);
+   aboutme->show();
+   aboutme->setDisabled(false);
+   back->setDisabled(false);
+   back->show();
     myblock.clear();
     Ling.clear();
     if(gamesta==2){
@@ -2417,6 +2455,8 @@ void maze::jiaHint(int isneed)
 }
 void maze::resizewindow()//mainly written by lixin
 {
+    back->setStyleSheet("QPushButton{border-image:url(:/exit.jpg);}");
+    back->setGeometry(MX*Label_Size-2*Label_Size,Label_Size,2*Label_Size,2*Label_Size);
     rank->setGeometry(MX*Label_Size-2*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
     rank->setStyleSheet("QPushButton{border-image:url(:/rank.png);}"
                         "QPushButton:hover{border-image:url(:/rank1.png);}"

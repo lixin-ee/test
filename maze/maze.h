@@ -80,7 +80,7 @@ private slots:
     void hamHint(int);
     void cdHint(int);
     void mainscreen();
-    void sign();
+    void exit();
   private:
     Ui::maze *ui;
     QPushButton* setting;
@@ -88,6 +88,7 @@ private slots:
     QPushButton* start1;
     QPushButton* start2;
     QPushButton* start3;
+    QPushButton* back;
     QLabel* Clabel;
     QPushButton* Return;
     QPushButton* Replay;
@@ -121,7 +122,9 @@ private slots:
     QPixmap* xl=nullptr;
     QSound* so;
     int dtype=2;
+    int denglu=0;
     QTimer* xtimer;
+    QString name;
 };
 static int gamesta=0;
 static int havehammer=0;

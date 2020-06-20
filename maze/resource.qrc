@@ -62,5 +62,6 @@
         <file>rank.png</file>
         <file>rank1.png</file>
         <file>rank2.png</file>
+        <file>exit.jpg</file>
     </qresource>
 </RCC>
