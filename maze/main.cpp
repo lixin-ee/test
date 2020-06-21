@@ -8,8 +8,6 @@ int main(int argc, char *argv[])
 
 
 
-
-
     maze w;
     w.show();
     return a.exec();
