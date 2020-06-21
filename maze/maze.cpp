@@ -3,7 +3,6 @@
 #include<QScreen>
 #include<QSound>
 #include <QApplication>
-#include<QChar>
 #include<QFile>
 #define m (MX-2)//row
 #define n (MY-2)
@@ -95,6 +94,12 @@ maze::maze(QWidget *parent)//mainly written by lixin
 }
 void maze::exit()
 {
+    int temp1=0.7*screen_width/(Label_Size*2);
+    MX=2*temp1+1;
+    temp1=0.9*screen_height/(Label_Size*2);
+    MY=2*temp1-1;
+    resize(MX*Label_Size,(MY+2)*Label_Size);
+    Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
     denglu=1;
     delete back;
     delete rank;
