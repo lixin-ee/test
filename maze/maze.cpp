@@ -25,7 +25,7 @@ struct block
  };
 struct player
 {
-     char name[10];int classic_number,entertain_number,devil_number,classic_vic,entertain_egg,
+     char name[20];int classic_number,entertain_number,devil_number,classic_vic,entertain_egg,
     devil_vic;double classic_rate,devil_rate;
     player(QString _name="",int _calssic_number=0,int _entertain_number=0,int _devil_number=0,int _classic_vic=0,
            int _entertain_egg=0,int _devil_vic=0,double _classic_rate=0,double _devil_rate=0)
@@ -35,13 +35,24 @@ struct player
          classic_vic=_classic_vic;entertain_egg=_entertain_egg;devil_vic=_devil_vic;classic_rate=_classic_rate;
          devil_rate=_devil_rate;
     }
-    void turn()
+    bool determine()
     {
-        classic_number=0;entertain_number=0;devil_number=0;
-        classic_vic=0;entertain_egg=0;devil_vic=0;classic_rate=0;
-        devil_rate=0;
+        bool e=true;
+        for(int i=0;name[i]!='\0';i++)
+        {
+            if(name[i]!=' ')
+            {
+                e=false;
+            }
+        }
+        return e;
     }
-
+    bool determine2()
+    {
+       if(name[0]=='\0')
+           return true;
+       return false;
+    }
 };
     QFile file("record.dat");
     player player1;
@@ -97,9 +108,22 @@ maze::maze(QWidget *parent)//mainly written by lixin
         animation = new QPropertyAnimation(this,"windowOpacity");
         xtimer=new QTimer(this);
         QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
-    QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
+        QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
+        if(file.open(QIODevice::ReadOnly))
+        {
+            file.read(reinterpret_cast<char*>(&player1),sizeof(player));
+            file.close();
+            if(player1.determine2())
+            {
+            }
+            else
+            {
+                denglu=1;
+                mainscreen();
+            }
+        }
 }
-void maze::exit()
+/*void maze::exit()
 {
     int temp1=0.7*screen_width/(Label_Size*2);
     MX=2*temp1+1;
@@ -129,17 +153,23 @@ void maze::exit()
         file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
         file.close();
     }
-}
+}*/
 void maze::mainscreen()
 {
-    name=ui->lineEdit->text();
-    qstrcpy(player1.name,name.toStdString().c_str());
-    player1.turn();
+    if(denglu==0)
+    {
+        name=ui->lineEdit->text();
+        qstrcpy(player1.name,name.toStdString().c_str());
+        if(file.open(QIODevice::WriteOnly))
+        {
+            file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
+            file.close();
+        }
+    }
     start1=new QPushButton(this);
     start2=new QPushButton(this);
     start3=new QPushButton(this);
     setting=new QPushButton(this);
-    back=new QPushButton(this);
     presentation=new QPushButton(this);
     rank=new QPushButton(this);
     aboutme=new QPushButton(this);
@@ -164,9 +194,6 @@ void maze::mainscreen()
     start3->setDisabled(false);
     presentation->show();
     presentation->setDisabled(false);
-    back->show();
-    back->setDisabled(false);
-    QObject::connect(back,SIGNAL(clicked()),this,SLOT(exit()));
     QObject::connect(start1,SIGNAL(clicked()),this,SLOT(startgame1()));
     QObject::connect(start2,SIGNAL(clicked()),this,SLOT(startgame2()));
     QObject::connect(start3,SIGNAL(clicked()),this,SLOT(startgame3()));
@@ -290,8 +317,6 @@ void maze::startgame1()//mainly written by lixin
 }
 void maze::initgame()//mainly written by lixin 初始化游戏界面
 {
-    back->hide();
-    back->setDisabled(true);
     rank->hide();
     rank->setDisabled(true);
     aboutme->hide();
@@ -400,8 +425,14 @@ void maze::returnhome()//mainly written by lixin  返回主界面
    rank->setDisabled(false);
    aboutme->show();
    aboutme->setDisabled(false);
-   back->setDisabled(false);
-   back->show();
+   player1.classic_rate=double(player1.classic_vic)/double(player1.classic_number);
+   player1.devil_rate=double(player1.devil_vic)/double(player1.devil_number);
+   if(file.open(QIODevice::WriteOnly))
+   {
+       file.seek(file.size());
+       file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
+   }
+   file.close();
     myblock.clear();
     Ling.clear();
     if(gamesta==2){
@@ -512,11 +543,11 @@ void maze::replay()//mainly written by
     switch(gamesta)
     {
      case 1:
-        player1.classic_number++;
+        player1.classic_number=player1.classic_number+1;
      case 2:
-        player1.entertain_number++;
+        player1.entertain_number=player1.entertain_number+1;
      case 3:
-        player1.devil_number++;
+        player1.devil_number=player1.devil_number+1;
     }
 }
 void maze::startgame2()//mainly written by huanghaoxiang
@@ -1278,11 +1309,11 @@ void maze::structface()//mainly written by lixin and jiashenghao
     switch(gamesta)
     {
      case 1:
-        player1.classic_number++;
+        player1.classic_number=player1.classic_number+1;
      case 2:
-        player1.entertain_number++;
+        player1.entertain_number=player1.entertain_number+1;
      case 3:
-        player1.devil_number++;
+        player1.devil_number=player1.devil_number+1;
     }
     allsquare=new square**[MX];
         for(int i=0;i<MX;i++)
@@ -1699,6 +1730,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
                 tempMouse->label->show();
                seekegg=1;
                tempegg=tempMouse;
+               player1.entertain_egg++;
            }
 
           if(tempMouse->type==jia_label)
@@ -2315,6 +2347,7 @@ void maze::gameover(int a,int b)//mainly written by lixin
              }
              else
              {
+                 allsquare[MX-2][MY-2]->type=wall_label;
                 if(b==1)
                 {
                     delete cat->label;
@@ -2507,8 +2540,6 @@ void maze::resizewindow()//mainly written by lixin
         resize((MX)*Label_Size,(MY+2)*Label_Size);
     Clabel->setStyleSheet("QLabel{border-image:url(:/cover.jpg);}");
     Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
-    back->setStyleSheet("QPushButton{border-image:url(:/exit.jpg);}");
-    back->setGeometry(MX*Label_Size-2*Label_Size,Label_Size,2*Label_Size,2*Label_Size);
     rank->setGeometry(MX*Label_Size-2*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
     rank->setStyleSheet("QPushButton{border-image:url(:/rank.png);}"
                         "QPushButton:hover{border-image:url(:/rank1.png);}"
@@ -2540,8 +2571,6 @@ void maze::resizewindow()//mainly written by lixin
 }
 maze::~maze()//mainly written by lixin
 {
-    if(name!="")
-    {
         player1.classic_rate=double(player1.classic_vic)/double(player1.classic_number);
         player1.devil_rate=double(player1.devil_vic)/double(player1.devil_number);
         if(file.open(QIODevice::WriteOnly))
@@ -2550,7 +2579,6 @@ maze::~maze()//mainly written by lixin
             file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
         }
         file.close();
-    }
     if(allsquare==nullptr){;}
     else {for(int i=0;i<MX;i++)
      {

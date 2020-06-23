@@ -80,7 +80,7 @@ private slots:
     void hamHint(int);
     void cdHint(int);
     void mainscreen();
-    void exit();
+    //void exit();
   private:
     Ui::maze *ui;
     QPushButton* setting;
