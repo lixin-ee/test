@@ -107,6 +107,10 @@ maze::maze(QWidget *parent)//mainly written by lixin
         jia=new QPixmap(":/jia.png");
         animation = new QPropertyAnimation(this,"windowOpacity");
         xtimer=new QTimer(this);
+        if(file.open(QIODevice::WriteOnly))
+        {
+            file.close();
+        }
         QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
         QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
         if(file.open(QIODevice::ReadOnly))
