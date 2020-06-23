@@ -35,6 +35,12 @@ struct player
          classic_vic=_classic_vic;entertain_egg=_entertain_egg;devil_vic=_devil_vic;classic_rate=_classic_rate;
          devil_rate=_devil_rate;
     }
+    void turn()
+    {
+        classic_number=0;entertain_number=0;devil_number=0;
+        classic_vic=0;entertain_egg=0;devil_vic=0;classic_rate=0;
+        devil_rate=0;
+    }
 
 };
     QFile file("record.dat");
@@ -127,7 +133,8 @@ void maze::exit()
 void maze::mainscreen()
 {
     name=ui->lineEdit->text();
-    player1.name=name;
+    qstrcpy(player1.name,name.toStdString().c_str());
+    player1.turn();
     start1=new QPushButton(this);
     start2=new QPushButton(this);
     start3=new QPushButton(this);
