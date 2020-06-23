@@ -25,16 +25,17 @@ struct block
  };
 struct player
 {
-    QString name;int classic_number,entertain_number,devil_number,classic_vic,entertain_egg,
+     char name[10];int classic_number,entertain_number,devil_number,classic_vic,entertain_egg,
     devil_vic;double classic_rate,devil_rate;
     player(QString _name="",int _calssic_number=0,int _entertain_number=0,int _devil_number=0,int _classic_vic=0,
            int _entertain_egg=0,int _devil_vic=0,double _classic_rate=0,double _devil_rate=0)
     {
-         name=_name;
+         qstrcpy(name,_name.toStdString().c_str());
          classic_number=_calssic_number;entertain_number=_entertain_number;devil_number=_devil_number;
          classic_vic=_classic_vic;entertain_egg=_entertain_egg;devil_vic=_devil_vic;classic_rate=_classic_rate;
          devil_rate=_devil_rate;
     }
+
 };
     QFile file("record.dat");
     player player1;
