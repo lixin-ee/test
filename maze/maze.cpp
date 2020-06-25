@@ -107,13 +107,12 @@ maze::maze(QWidget *parent)//mainly written by lixin
         jia=new QPixmap(":/jia.png");
         animation = new QPropertyAnimation(this,"windowOpacity");
         xtimer=new QTimer(this);
-        if(file.open(QIODevice::WriteOnly))
-        {
-            file.close();
-        }
-        QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
-        QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
-        if(file.open(QIODevice::ReadOnly))
+        if(!file.open(QIODevice::ReadOnly))
+                {
+                    file.open(QIODevice::WriteOnly);
+                    file.close();
+                }
+        else
         {
             file.read(reinterpret_cast<char*>(&player1),sizeof(player));
             file.close();
@@ -126,6 +125,8 @@ maze::maze(QWidget *parent)//mainly written by lixin
                 mainscreen();
             }
         }
+        QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
+        QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
 }
 /*void maze::exit()
 {
@@ -318,6 +319,14 @@ void maze::startgame1()//mainly written by lixin
     QObject::connect(counttimer,SIGNAL(timeout()),this,SLOT(updatetimer()));
     counttimer->start(1000);
     printtime->show();
+}
+void maze::aboutme_()
+{
+
+}
+void maze::rank_()
+{
+
 }
 void maze::initgame()//mainly written by lixin 初始化游戏界面
 {

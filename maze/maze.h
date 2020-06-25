@@ -80,6 +80,8 @@ private slots:
     void hamHint(int);
     void cdHint(int);
     void mainscreen();
+    void rank_();
+    void aboutme_();
     //void exit();
   private:
     Ui::maze *ui;
