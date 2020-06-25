@@ -25,6 +25,7 @@
 #include<QPropertyAnimation>
 #include<QSound>
 #include<QCheckBox>
+#include<QTcpSocket>
 #define Label_Size  30
 using namespace std;
 
@@ -124,9 +125,12 @@ private slots:
     QPixmap* xl=nullptr;
     QSound* so;
     int dtype=2;
-    int denglu=0;
+    bool denglu=0;
     QTimer* xtimer;
     QString name;
+    QTcpSocket* mysocket;
+    int pace=0;
+    QPushButton* xiugai;
 };
 static int gamesta=0;
 static int havehammer=0;

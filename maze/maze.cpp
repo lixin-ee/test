@@ -12,7 +12,8 @@
 #define up 8
 #define WALL -1
 #define NOTHING 2
-
+#define ip "127.0.0.1"
+#define port 24798
 struct block
 {
         int row, column, direction;
@@ -34,24 +35,6 @@ struct player
          classic_number=_calssic_number;entertain_number=_entertain_number;devil_number=_devil_number;
          classic_vic=_classic_vic;entertain_egg=_entertain_egg;devil_vic=_devil_vic;classic_rate=_classic_rate;
          devil_rate=_devil_rate;
-    }
-    bool determine()
-    {
-        bool e=true;
-        for(int i=0;name[i]!='\0';i++)
-        {
-            if(name[i]!=' ')
-            {
-                e=false;
-            }
-        }
-        return e;
-    }
-    bool determine2()
-    {
-       if(name[0]=='\0')
-           return true;
-       return false;
     }
 };
     QFile file("record.dat");
@@ -82,7 +65,8 @@ maze::maze(QWidget *parent)//mainly written by lixin
     : QWidget(parent)
     , ui(new Ui::maze)
 {
-    QScreen *screen=QGuiApplication::primaryScreen ();
+        mysocket=new QTcpSocket(this);
+        QScreen *screen=QGuiApplication::primaryScreen ();
         QRect mm=screen->availableGeometry() ;
         screen_width = mm.width();
         screen_height = mm.height();
@@ -116,17 +100,13 @@ maze::maze(QWidget *parent)//mainly written by lixin
         {
             file.read(reinterpret_cast<char*>(&player1),sizeof(player));
             file.close();
-            if(player1.determine2())
-            {
-            }
-            else
-            {
-                denglu=1;
-                mainscreen();
-            }
+            denglu=1;
+            mainscreen();
         }
         QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
         QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
+        QObject::connect(aboutme,SIGNAL(clicked()),this,SLOT( aboutme_()));
+        QObject::connect(rank,SIGNAL(clicked()),this, SLOT(rank_()));
 }
 /*void maze::exit()
 {
@@ -161,16 +141,38 @@ maze::maze(QWidget *parent)//mainly written by lixin
 }*/
 void maze::mainscreen()
 {
-    if(denglu==0)
+    if(!denglu)
     {
-        name=ui->lineEdit->text();
-        qstrcpy(player1.name,name.toStdString().c_str());
-        if(file.open(QIODevice::WriteOnly))
+        if(ui->lineEdit->text()!=NULL)
         {
-            file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
-            file.close();
+            //提示不能为空，messagebox怎么用，去看expclient里面我用过
         }
-    }
+        else
+        {
+            mysocket->connectToHost(ip,port);
+            QString tempstr='<'+ui->lineEdit->text()+'>';
+            mysocket->write(tempstr.toUtf8());
+            QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
+            {
+                QByteArray tempbyte=mysocket->readAll();
+                //报服务器检查是否可注册
+                if(tempbyte=="注册失败")
+                {
+                    //提示名称重复
+                }//失败
+                if(tempbyte=="注册成功")
+                {
+                  qstrcpy(player1.name,ui->lineEdit->text().toStdString().c_str());
+                  denglu=1;
+                }//成功
+                QString info="结束";
+                mysocket->write(info.toUtf8());//服务器主动断开
+            });
+
+        }
+    }    
+    if(denglu)
+    {
     start1=new QPushButton(this);
     start2=new QPushButton(this);
     start3=new QPushButton(this);
@@ -204,6 +206,7 @@ void maze::mainscreen()
     QObject::connect(start3,SIGNAL(clicked()),this,SLOT(startgame3()));
     QObject::connect(setting,SIGNAL(clicked()),this,SLOT(settingslot()));
     QObject::connect(presentation,SIGNAL(clicked()),this,SLOT(present()));
+    }
 }
 void maze::aboutus()//mainly written by lixin
 {
@@ -321,11 +324,132 @@ void maze::startgame1()//mainly written by lixin
     printtime->show();
 }
 void maze::aboutme_()
-{
+{ 
+    gamesta=5;
+    rank->hide();
+    rank->setDisabled(true);
+    aboutme->hide();
+    aboutme->setDisabled(true);
+    Clabel->hide();
+    Clabel->setDisabled(true);
+    setting->hide();
+    setting->setDisabled(true);
+    presentation->hide();
+    presentation->setDisabled(true);
+    Return=new QPushButton(this);
+    Return->setFocusPolicy(Qt::NoFocus);
+    Return->setGeometry(0,MY*Label_Size,2*Label_Size,2*Label_Size);
+    Return->setStyleSheet("QPushButton{border-image:url(:/return.png);}"
+                          "QPushButton:hover{border-image:url(:/return2.png);}"
+                           );
+    QObject::connect(Return,SIGNAL(clicked()),this,SLOT(returnhome()));
+    Return->show();
+    start1->hide();
+    start1->setDisabled(true);
+    start2->hide();
+    start2->setDisabled(true);
+    start3->hide();
+    start3->setDisabled(true);
+    xiugai=new QPushButton("修改昵称",this);
+    xiugai->setGeometry(0,0,100,40);//位置之后自己调节；
+    xiugai->show();
+    QObject::connect(xiugai,&QPushButton::clicked,[=]()
+    {
+        bool issuc=false; //是否成功
+        while(!issuc)
+        {
+          QString tempstr1;//存储修改后的昵称
+        //创建标准对话框获取修改后的昵称,怎么做？还是看ecpclient,同时用messagebox提示是否为空，后面不做是否为空的判断,默认不考虑是否为空，
+        if(strcmp(tempstr1.toUtf8().data(),player1.name)==0)
+        {
+          issuc=true;
+        }//修改不变，自然成功
+        else
+         {
+        mysocket->connectToHost(ip,port);
+        QString tempstr="修改昵称#"+QString(player1.name)+'#'+tempstr1;
+        mysocket->write(tempstr.toUtf8());
+        QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
+        {
+            QByteArray tempbyte=mysocket->readAll();
+            //报服务器检查是否可注册
+            if(tempbyte=="修改失败")
+            {
 
+                //提示名称重复
+            }//失败
+            if(tempbyte=="修改成功")
+            {
+              qstrcpy(player1.name,tempstr1.toStdString().c_str());
+              denglu=1;
+            }//成功
+            QString info="结束";
+            mysocket->write(info.toUtf8());//服务器主动断开
+        });
+        }
+        }
+    });
 }
 void maze::rank_()
 {
+    gamesta=6;
+    rank->hide();
+    rank->setDisabled(true);
+    aboutme->hide();
+    aboutme->setDisabled(true);
+    Clabel->hide();
+    Clabel->setDisabled(true);
+    setting->hide();
+    setting->setDisabled(true);
+    presentation->hide();
+    presentation->setDisabled(true);
+    start1->hide();
+    start1->setDisabled(true);
+    start2->hide();
+    start2->setDisabled(true);
+    start3->hide();
+    start3->setDisabled(true);
+    Return=new QPushButton(this);
+    Return->setFocusPolicy(Qt::NoFocus);
+    Return->setGeometry(0,MY*Label_Size,2*Label_Size,2*Label_Size);
+    Return->setStyleSheet("QPushButton{border-image:url(:/return.png);}"
+                          "QPushButton:hover{border-image:url(:/return2.png);}"
+                           );
+    QObject::connect(Return,SIGNAL(clicked()),this,SLOT(returnhome()));
+    Return->show();
+    mysocket->connectToHost(ip,port);
+    QString info="发送结构体";
+    mysocket->write(info.toUtf8());
+    QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
+    {
+        QByteArray tempbyte=mysocket->readAll();
+        if(pace==0&&tempbyte=="准备接收")//第一步
+        {
+            mysocket->write((char*)&player1,sizeof(player));
+             pace++;
+        }
+        if(pace==1)//第二步
+        {
+            QString tempstr3=tempbyte;
+            //接收包头，处理包头，
+
+
+            QString info="接收包头成功";
+            mysocket->write(info.toUtf8());
+            pace++;
+        }
+        if(pace==2)//第三步
+        {
+            //接收文件,循环直至接收文件大小与包头描述一致；
+
+
+            QString info1="文件接收完毕";
+            mysocket->write(info.toUtf8());
+            pace=0;
+        }
+
+    });
+    //表格视图，qtableview,qstandardmodel,
 
 }
 void maze::initgame()//mainly written by lixin 初始化游戏界面
@@ -393,35 +517,52 @@ void maze::initgame()//mainly written by lixin 初始化游戏界面
 }
 void maze::returnhome()//mainly written by lixin  返回主界面
 {
-    for(int i=0;i<MX;i++)
-    {
-        for (int j=0;j<MY;j++)
+    if(gamesta<5)
+ {
+        for(int i=0;i<MX;i++)
         {
-           delete allsquare[i][j]->label;
-           delete allsquare[i][j];
-           allsquare[i][j]=nullptr;
+            for (int j=0;j<MY;j++)
+            {
+               delete allsquare[i][j]->label;
+               delete allsquare[i][j];
+               allsquare[i][j]=nullptr;
+            }
+            delete allsquare[i];
         }
-        delete allsquare[i];
-    } 
-    delete allsquare;
-    allsquare=nullptr;
-    if(gamesta==3)
-    {
-        change.clear();
-        delete cat->label;
-        delete cat;
-        delete cattimer;
-    }
-
-   if(gamesta==4){delete ptimer;}
-    else delete counttimer;
-    delete Return;
-    delete Replay;
-    delete printtime;
-    delete clock1;
-    delete clock2;
-    delete mouse;
-    delete mouse->label;
+        delete allsquare;
+        allsquare=nullptr;
+        delete mouse;
+        delete mouse->label;
+        delete Replay;
+        delete printtime;
+        delete clock1;
+        delete clock2;
+        if(gamesta==4)
+        {delete ptimer;}
+         else delete counttimer;
+        if(gamesta==3)
+        {
+            change.clear();
+            delete cat->label;
+            delete cat;
+            delete cattimer;
+        }
+        myblock.clear();
+        Ling.clear();
+        if(gamesta==2){
+            change.clear();havehammer=0;seekegg=0;
+        }
+        warning=0;
+        player1.classic_rate=double(player1.classic_vic)/double(player1.classic_number);
+        player1.devil_rate=double(player1.devil_vic)/double(player1.devil_number);
+        if(file.open(QIODevice::WriteOnly))
+        {
+            file.seek(file.size());
+            file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
+        }
+        file.close();
+ }
+   delete Return;
    Clabel->show();
    Clabel->setDisabled(false);
    setting->show();
@@ -438,20 +579,10 @@ void maze::returnhome()//mainly written by lixin  返回主界面
    rank->setDisabled(false);
    aboutme->show();
    aboutme->setDisabled(false);
-   player1.classic_rate=double(player1.classic_vic)/double(player1.classic_number);
-   player1.devil_rate=double(player1.devil_vic)/double(player1.devil_number);
-   if(file.open(QIODevice::WriteOnly))
+   if(gamesta==5)
    {
-       file.seek(file.size());
-       file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
+       delete xiugai;
    }
-   file.close();
-    myblock.clear();
-    Ling.clear();
-    if(gamesta==2){
-        change.clear();havehammer=0;seekegg=0;
-    }
-    warning=0;
 }
 void maze::replay()//mainly written by 
 {
