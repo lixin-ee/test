@@ -4,6 +4,10 @@
 #include<QSound>
 #include <QApplication>
 #include<QFile>
+#include<QMessageBox>
+#include<QInputDialog>
+#include<QString>
+#include <QStandardItemModel>
 #define m (MX-2)//row
 #define n (MY-2)
 #define down 1
@@ -38,7 +42,7 @@ struct player
     }
 };
     QFile file("record.dat");
-    player player1;
+    player player1,player2;
     int x_num , y_num ;//矿工位置
     vector<block> myblock;
     vector<block> Ling;
@@ -65,6 +69,7 @@ maze::maze(QWidget *parent)//mainly written by lixin
     : QWidget(parent)
     , ui(new Ui::maze)
 {
+
         mysocket=new QTcpSocket(this);
         QScreen *screen=QGuiApplication::primaryScreen ();
         QRect mm=screen->availableGeometry() ;
@@ -79,6 +84,7 @@ maze::maze(QWidget *parent)//mainly written by lixin
         Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
         ui->setupUi(this);
         setWindowIcon(QIcon(":/tubiao.ico"));
+        ui->tableWidget->hide();
         setWindowTitle("maze521");
         mousegif=new QMovie(":/mouse1.gif");
         QSize s1(Label_Size+5,Label_Size+5);
@@ -145,7 +151,7 @@ void maze::mainscreen()
     {
         if(ui->lineEdit->text()!=NULL)
         {
-            //提示不能为空，messagebox怎么用，去看expclient里面我用过
+            QMessageBox::information(NULL,"注册","昵称不能为空");//提示不能为空，messagebox怎么用，去看expclient里面我用过
         }
         else
         {
@@ -158,7 +164,7 @@ void maze::mainscreen()
                 //报服务器检查是否可注册
                 if(tempbyte=="注册失败")
                 {
-                    //提示名称重复
+                    QMessageBox::information(NULL,"注册","昵称重复，请重新定义你的用户名");//提示名称重复
                 }//失败
                 if(tempbyte=="注册成功")
                 {
@@ -170,7 +176,7 @@ void maze::mainscreen()
             });
 
         }
-    }    
+    }
     if(denglu)
     {
     start1=new QPushButton(this);
@@ -324,7 +330,7 @@ void maze::startgame1()//mainly written by lixin
     printtime->show();
 }
 void maze::aboutme_()
-{ 
+{
     gamesta=5;
     rank->hide();
     rank->setDisabled(true);
@@ -351,45 +357,58 @@ void maze::aboutme_()
     start3->hide();
     start3->setDisabled(true);
     xiugai=new QPushButton("修改昵称",this);
-    xiugai->setGeometry(0,0,100,40);//位置之后自己调节；
+    xiugai->setGeometry(MX*Label_Size/2-50,MY*Label_Size/2-20,100,40);//位置之后自己调节；
     xiugai->show();
     QObject::connect(xiugai,&QPushButton::clicked,[=]()
     {
         bool issuc=false; //是否成功
+        QString tempstr1;//存储修改后的昵称
         while(!issuc)
         {
-          QString tempstr1;//存储修改后的昵称
-        //创建标准对话框获取修改后的昵称,怎么做？还是看ecpclient,同时用messagebox提示是否为空，后面不做是否为空的判断,默认不考虑是否为空，
-        if(strcmp(tempstr1.toUtf8().data(),player1.name)==0)
-        {
-          issuc=true;
-        }//修改不变，自然成功
-        else
-         {
-        mysocket->connectToHost(ip,port);
-        QString tempstr="修改昵称#"+QString(player1.name)+'#'+tempstr1;
-        mysocket->write(tempstr.toUtf8());
-        QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
-        {
-            QByteArray tempbyte=mysocket->readAll();
-            //报服务器检查是否可注册
-            if(tempbyte=="修改失败")
-            {
+          tempstr1 = QInputDialog::getText(NULL, "修改昵称", "Please input your name", QLineEdit::Normal,NULL, &issuc);
+          if(issuc)
+           {
+             if(tempstr1==NULL)
+             {
+                 QMessageBox::information(NULL,"提示","昵称不能为空");
+                 issuc=false;
+             }
+             if(strcmp(tempstr1.toUtf8().data(),player1.name)==0)
+             {
+               issuc=true;
+             }//修改不变，自然成功
+             mysocket->connectToHost(ip,port);
+             QString tempstr="修改昵称#"+QString(player1.name)+'#'+tempstr1;
+             mysocket->write(tempstr.toUtf8());
+             QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
+             {
+                 QByteArray tempbyte=mysocket->readAll();
+                 //报服务器检查是否可注册
+                 if(tempbyte=="修改失败")
+                 {
+                    QMessageBox::information(NULL,"修改昵称","昵称重复，请重新定义你的用户名");
+                     //提示名称重复
+                 }//失败
+                 if(tempbyte=="修改成功")
+                 {
+                   qstrcpy(player1.name,tempstr1.toStdString().c_str());
+                   denglu=1;
+                   QMessageBox::information(NULL,"修改昵称","修改成功！");
+                 }//成功
+                 QString info="结束";
+                 mysocket->write(info.toUtf8());//服务器主动断开
+             });
+             }
+             }
+         });
+           }
+//创建标准对话框获取修改后的昵称,怎么做？还是看ecpclient,同时用messagebox提示是否为空，后面不做是否为空的判断,默认不考虑是否为空，
 
-                //提示名称重复
-            }//失败
-            if(tempbyte=="修改成功")
-            {
-              qstrcpy(player1.name,tempstr1.toStdString().c_str());
-              denglu=1;
-            }//成功
-            QString info="结束";
-            mysocket->write(info.toUtf8());//服务器主动断开
-        });
-        }
-        }
-    });
-}
+
+
+
+
+
 void maze::rank_()
 {
     gamesta=6;
@@ -420,6 +439,10 @@ void maze::rank_()
     mysocket->connectToHost(ip,port);
     QString info="发送结构体";
     mysocket->write(info.toUtf8());
+    int* filesize;
+    QString* filename;
+    int* receivesize;
+    *receivesize=0;
     QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
     {
         QByteArray tempbyte=mysocket->readAll();
@@ -430,17 +453,28 @@ void maze::rank_()
         }
         if(pace==1)//第二步
         {
+            //tempbyte=mysocket->readAll();
             QString tempstr3=tempbyte;
+            *filename=tempstr3.section("#",0,0);
+            *filesize=tempstr3.section("#",1,1).toInt();
             //接收包头，处理包头，
-
-
             QString info="接收包头成功";
             mysocket->write(info.toUtf8());
             pace++;
         }
+         QFile rankfile(*filename);
         if(pace==2)//第三步
         {
-            //接收文件,循环直至接收文件大小与包头描述一致；
+            rankfile.open(QIODevice::WriteOnly);
+            rankfile.close();
+            rankfile.open(QIODevice::ReadWrite);
+            while(*receivesize<*filesize)
+            {
+                tempbyte=mysocket->readAll();
+                rankfile.write(tempbyte);
+                *receivesize+=tempbyte.size();
+            }
+            file.close();                   //接收文件,循环直至接收文件大小与包头描述一致；
 
 
             QString info1="文件接收完毕";
@@ -449,7 +483,44 @@ void maze::rank_()
         }
 
     });
+        QFile rankfile(*filename);
+        /*ui->tableWidget->setColumnCount(9);
+        QStringList m_Header;
+
+        m_Header<<QString("昵称")<<QString("经典场次")<<QString("经典胜场")<<QString("经典胜率")<<
+                  QString("娱乐场次")<<QString("彩蛋数")<<QString("魔鬼场次")<<QString("魔鬼胜场")<<
+                  QString("魔鬼胜率");
+        ui->tableWidget->setHorizontalHeaderLabels(m_Header);*/
+       /* ui->tableWidget->setHeaderData(0,Qt::Horizontal, "昵称");
+        ui->tableWidget->setHeaderData(1,Qt::Horizontal, "经典场次");
+        ui->tableWidget->setHeaderData(2,Qt::Horizontal, "经典胜场");
+        ui->tableWidget->setHeaderData(3,Qt::Horizontal, "经典胜率");
+        ui->tableWidget->setHeaderData(4,Qt::Horizontal, "娱乐场次");
+        ui->tableWidget->setHeaderData(5,Qt::Horizontal, "彩蛋数");
+        ui->tableWidget->setHeaderData(6,Qt::Horizontal, "魔鬼场次");
+        ui->tableWidget->setHeaderData(7,Qt::Horizontal, "魔鬼胜场");
+        ui->tableWidget->setHeaderData(8,Qt::Horizontal, "魔鬼胜率");
     //表格视图，qtableview,qstandardmodel,
+        ui->tableWidget->setRowCount(10);
+        for(int i=0;i<10;i++)
+        {
+            ui->tableWidget->setHeaderData(0,Qt::Vertical, i+1);
+        }
+        rankfile.open(QIODevice::ReadWrite);
+        for(int i=0;i<10;i++)
+        {
+            rankfile.read(reinterpret_cast<char*>(&player2),sizeof(player2));
+            ui->tableWidget->setItem(0, 0, new QStandardItem(player2.name));
+            ui->tableWidget->setItem(0, 1, new QStandardItem(player2.classic_number));
+            ui->tableWidget->setItem(0, 2, new QStandardItem(player2.classic_vic));
+            ui->tableWidget->setItem(0, 3, new QStandardItem(player2.classic_rate));
+            ui->tableWidget->setItem(0, 4, new QStandardItem(player2.entertain_number));
+            ui->tableWidget->setItem(0, 5, new QStandardItem(player2.entertain_egg));
+            ui->tableWidget->setItem(0, 6, new QStandardItem(player2.devil_number));
+            ui->tableWidget->setItem(0, 7, new QStandardItem(player2.devil_vic));
+            ui->tableWidget->setItem(0, 8, new QStandardItem(player2.devil_rate));
+        }
+        file.close();*/
 
 }
 void maze::initgame()//mainly written by lixin 初始化游戏界面
@@ -584,7 +655,7 @@ void maze::returnhome()//mainly written by lixin  返回主界面
        delete xiugai;
    }
 }
-void maze::replay()//mainly written by 
+void maze::replay()//mainly written by
 {
     if(gamesta!=4)
      {
@@ -1075,7 +1146,7 @@ void maze::dwall()//mainly written by lixin
             break;
         }
         case down: {
-             y_num--; 
+             y_num--;
             break;
         }
         case up: {

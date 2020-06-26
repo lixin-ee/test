@@ -26,6 +26,8 @@
 #include<QSound>
 #include<QCheckBox>
 #include<QTcpSocket>
+#include <QTableView>
+#include <QStandardItemModel>
 #define Label_Size  30
 using namespace std;
 
@@ -131,6 +133,7 @@ private slots:
     QTcpSocket* mysocket;
     int pace=0;
     QPushButton* xiugai;
+
 };
 static int gamesta=0;
 static int havehammer=0;
