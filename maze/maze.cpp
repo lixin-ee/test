@@ -76,8 +76,6 @@ maze::maze(QWidget *parent)//mainly written by lixin
     : QWidget(parent)
     , ui(new Ui::maze)
 {
-
-        mysocket=new QTcpSocket(this);
         QScreen *screen=QGuiApplication::primaryScreen ();
         QRect mm=screen->availableGeometry() ;
         screen_width = mm.width();
@@ -179,16 +177,20 @@ void maze::mainscreen()
         }
         else
         {
+            mysocket=new QTcpSocket(this);
             mysocket->connectToHost(ip,port);
             QString tempstr='<'+ui->lineEdit->text()+'>';
             mysocket->write(tempstr.toUtf8());
-            QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
+            QObject::connect(mysocket,&QTcpSocket::readyRead,[&]()
             {
                 QByteArray tempbyte=mysocket->readAll();
                 //报服务器检查是否可注册
                 if(tempbyte=="注册失败")
                 {
                     QMessageBox::information(NULL,"注册","昵称重复，请重新定义你的用户名");//提示名称重复
+                    QString info="结束";
+                    mysocket->write(info.toUtf8());//服务器主动断开
+                    mysocket->deleteLater();
                 }//失败
                 if(tempbyte=="注册成功")
                 {
@@ -196,14 +198,18 @@ void maze::mainscreen()
                   file.open(QIODevice::WriteOnly);
                   file.write((char*)&player1,sizeof(player));
                   file.close();
+                  QString info="结束";
+                  mysocket->write(info.toUtf8());//服务器主动断开
                   denglu=1;
+                  mainscreen();
+                  mysocket->deleteLater();
                 }//成功
-                QString info="结束";
-                mysocket->write(info.toUtf8());//服务器主动断开
+
             });
 
         }
     }
+
     if(denglu)
     {
     start1=new QPushButton(this);
@@ -389,55 +395,71 @@ void maze::aboutme_()
     xiugai=new QPushButton("修改昵称",this);
     xiugai->setGeometry(MX*Label_Size/2-50,MY*Label_Size/2-20,100,40);//位置之后自己调节；
     xiugai->show();
-    QObject::connect(xiugai,&QPushButton::clicked,[=]()
-    {
-        bool issuc=false; //是否成功
-        QString tempstr1;//存储修改后的昵称
-        while(!issuc)
-        {
-          tempstr1 = QInputDialog::getText(NULL, "修改昵称", "Please input your name", QLineEdit::Normal,NULL, &issuc);
-          if(issuc)
+    QObject::connect(xiugai,&QPushButton::clicked,[&]()
+       {
+           bool issuc=false; //是否成功
+           QString tempstr1;//存储修改后的昵称
+           while(!issuc)
            {
-             if(tempstr1==NULL)
+             tempstr1 = QInputDialog::getText(NULL, "修改昵称", "Please input your name", QLineEdit::Normal,NULL, &issuc);
+             qDebug()<<"1"<<tempstr1;
+             if(issuc)
+              {
+                if(tempstr1==NULL)
+                {
+                    QMessageBox::information(NULL,"提示","昵称不能为空");
+                    issuc=false;
+                    continue;
+                }
+                if(strcmp(tempstr1.toStdString().c_str(),player1.name)==0)
+                {
+                  QMessageBox::information(NULL,"修改昵称","修改成功！");
+                  issuc=true;
+                  break;
+                }//修改不变，自然成功
+                else
+                {
+                    qDebug()<<"2"<<"lianji";
+                    mysocket=new QTcpSocket(this);
+                    mysocket->connectToHost(ip,port);
+                    mysocket->open(QIODevice::ReadWrite);
+                    QString tempstr="修改昵称#"+QString(player1.name)+'#'+tempstr1;
+                    mysocket->write(tempstr.toUtf8());
+                    QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
+                    {
+                        QByteArray tempbyte=mysocket->readAll();
+                        qDebug()<<"3"<<QString(tempbyte);
+                        //报服务器检查是否可注册
+                        if(tempbyte=="修改失败")
+                        {
+                           QMessageBox::information(NULL,"修改昵称","昵称重复，请重新定义你的用户名");
+                           QString info="结束";
+                           mysocket->write(info.toUtf8());//服务器主动断开
+                           mysocket->deleteLater();
+                            //提示名称重复
+                        }//失败
+                        if(tempbyte=="修改成功")
+                        {
+                          qstrcpy(player1.name,tempstr1.toStdString().c_str());
+                          qDebug()<<"4"<<player1.name;
+                          QMessageBox::information(NULL,"修改昵称","修改成功！");
+                          QString info="结束";
+                          mysocket->write(info.toUtf8());//服务器主动断开
+                          mysocket->deleteLater();
+                        }//成功
+
+                    });
+                }
+
+                }
+             else
              {
-                 QMessageBox::information(NULL,"提示","昵称不能为空");
-                 issuc=false;
+                 break;
              }
-             if(strcmp(tempstr1.toUtf8().data(),player1.name)==0)
-             {
-               issuc=true;
-             }//修改不变，自然成功
-             mysocket->connectToHost(ip,port);
-             QString tempstr="修改昵称#"+QString(player1.name)+'#'+tempstr1;
-             mysocket->write(tempstr.toUtf8());
-             QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
-             {
-                 QByteArray tempbyte=mysocket->readAll();
-                 //报服务器检查是否可注册
-                 if(tempbyte=="修改失败")
-                 {
-                    QMessageBox::information(NULL,"修改昵称","昵称重复，请重新定义你的用户名");
-                     //提示名称重复
-                 }//失败
-                 if(tempbyte=="修改成功")
-                 {
-                   qstrcpy(player1.name,tempstr1.toStdString().c_str());
-                   denglu=1;
-                   QMessageBox::information(NULL,"修改昵称","修改成功！");
-                 }//成功
-                 QString info="结束";
-                 mysocket->write(info.toUtf8());//服务器主动断开
-             });
-             }
-             }
-         });
+                }
+            });
            }
 //创建标准对话框获取修改后的昵称,怎么做？还是看ecpclient,同时用messagebox提示是否为空，后面不做是否为空的判断,默认不考虑是否为空，
-
-
-
-
-
 
 void maze::rank_()
 {
