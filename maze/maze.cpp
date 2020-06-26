@@ -17,7 +17,7 @@
 #define WALL -1
 #define NOTHING 2
 #define ip "127.0.0.1"
-#define port 24798
+#define port 25565
 struct block
 {
         int row, column, direction;
@@ -40,6 +40,12 @@ struct player
          classic_vic=_classic_vic;entertain_egg=_entertain_egg;devil_vic=_devil_vic;classic_rate=_classic_rate;
          devil_rate=_devil_rate;
     }
+    bool determine2()
+       {
+          if(name[0]=='\0')
+              return true;
+          return false;
+       }
 };
     QFile file("record.dat");
     player player1,player2;
@@ -104,15 +110,32 @@ maze::maze(QWidget *parent)//mainly written by lixin
                 }
         else
         {
-            file.read(reinterpret_cast<char*>(&player1),sizeof(player));
+            /*file.read(reinterpret_cast<char*>(&player1),sizeof(player));
             file.close();
-            denglu=1;
-            mainscreen();
+            if(player1.determine2())
+            {
+
+            }
+            else
+            {
+                denglu=1;
+                mainscreen();
+            }*/
+            if(file.read(reinterpret_cast<char*>(&player1),sizeof(player)))
+            {
+                file.close();
+                denglu=1;
+                mainscreen();
+            }
+            else
+            {
+                file.close();
+            }
+
         }
         QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
         QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
-        QObject::connect(aboutme,SIGNAL(clicked()),this,SLOT( aboutme_()));
-        QObject::connect(rank,SIGNAL(clicked()),this, SLOT(rank_()));
+
 }
 /*void maze::exit()
 {
@@ -149,7 +172,7 @@ void maze::mainscreen()
 {
     if(!denglu)
     {
-        if(ui->lineEdit->text()!=NULL)
+        if(ui->lineEdit->text()==NULL)
         {
             QMessageBox::information(NULL,"注册","昵称不能为空");//提示不能为空，messagebox怎么用，去看expclient里面我用过
         }
@@ -169,6 +192,9 @@ void maze::mainscreen()
                 if(tempbyte=="注册成功")
                 {
                   qstrcpy(player1.name,ui->lineEdit->text().toStdString().c_str());
+                  file.open(QIODevice::WriteOnly);
+                  file.write((char*)&player1,sizeof(player));
+                  file.close();
                   denglu=1;
                 }//成功
                 QString info="结束";
@@ -212,6 +238,8 @@ void maze::mainscreen()
     QObject::connect(start3,SIGNAL(clicked()),this,SLOT(startgame3()));
     QObject::connect(setting,SIGNAL(clicked()),this,SLOT(settingslot()));
     QObject::connect(presentation,SIGNAL(clicked()),this,SLOT(present()));
+    QObject::connect(aboutme,SIGNAL(clicked()),this,SLOT(aboutme_()));
+    QObject::connect(rank,SIGNAL(clicked()),this, SLOT(rank_()));
     }
 }
 void maze::aboutus()//mainly written by lixin
@@ -624,14 +652,15 @@ void maze::returnhome()//mainly written by lixin  返回主界面
             change.clear();havehammer=0;seekegg=0;
         }
         warning=0;
-        player1.classic_rate=double(player1.classic_vic)/double(player1.classic_number);
-        player1.devil_rate=double(player1.devil_vic)/double(player1.devil_number);
+        if(player1.classic_number!=0)
+        {player1.classic_rate=double(player1.classic_vic)/double(player1.classic_number);}
+        if(player1.devil_number!=0)
+        {player1.devil_rate=double(player1.devil_vic)/double(player1.devil_number);}
         if(file.open(QIODevice::WriteOnly))
         {
-            file.seek(file.size());
             file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
+            file.close();
         }
-        file.close();
  }
    delete Return;
    Clabel->show();
@@ -756,14 +785,25 @@ void maze::replay()//mainly written by
     }
     warning=0;
     switch(gamesta)
-    {
-     case 1:
-        player1.classic_number=player1.classic_number+1;
-     case 2:
-        player1.entertain_number=player1.entertain_number+1;
-     case 3:
-        player1.devil_number=player1.devil_number+1;
-    }
+       {
+        case 1:
+       {
+           player1.classic_number=player1.classic_number+1;
+           break;
+       }
+        case 2:
+       {
+           player1.entertain_number=player1.entertain_number+1;
+           break;
+       }
+
+        case 3:
+       {
+           player1.devil_number=player1.devil_number+1;
+           break;
+       }
+
+       }
 }
 void maze::startgame2()//mainly written by huanghaoxiang
 {
@@ -1522,14 +1562,25 @@ void maze::movecat()//mainly written by houyujie响应键盘的移动函数，�
 void maze::structface()//mainly written by lixin and jiashenghao
 {
     switch(gamesta)
-    {
-     case 1:
-        player1.classic_number=player1.classic_number+1;
-     case 2:
-        player1.entertain_number=player1.entertain_number+1;
-     case 3:
-        player1.devil_number=player1.devil_number+1;
-    }
+       {
+        case 1:
+       {
+           player1.classic_number=player1.classic_number+1;
+           break;
+       }
+        case 2:
+       {
+           player1.entertain_number=player1.entertain_number+1;
+           break;
+       }
+
+        case 3:
+       {
+           player1.devil_number=player1.devil_number+1;
+           break;
+       }
+
+       }
     allsquare=new square**[MX];
         for(int i=0;i<MX;i++)
         {
@@ -2786,14 +2837,25 @@ void maze::resizewindow()//mainly written by lixin
 }
 maze::~maze()//mainly written by lixin
 {
-        player1.classic_rate=double(player1.classic_vic)/double(player1.classic_number);
-        player1.devil_rate=double(player1.devil_vic)/double(player1.devil_number);
-        if(file.open(QIODevice::WriteOnly))
+    if(file.size()!=0)
         {
-            file.seek(file.size());
-            file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
+            if(player1.classic_number!=0)
+            {
+            player1.classic_rate=double(player1.classic_vic)/double(player1.classic_number);
+            }
+            if(player1.devil_number!=0)
+            {
+            player1.devil_rate=double(player1.devil_vic)/double(player1.devil_number);
+            }
+            if(file.open(QIODevice::WriteOnly))
+            {
+                file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
+                file.close();
+            }
+
+
         }
-        file.close();
+
     if(allsquare==nullptr){;}
     else {for(int i=0;i<MX;i++)
      {
