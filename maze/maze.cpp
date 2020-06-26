@@ -245,6 +245,7 @@ void maze::mainscreen()
 }
 void maze::aboutus()//mainly written by lixin
 {
+    player1.entertain_egg=player1.entertain_egg+1;
     switch(xcount)
     {
     case 1:
@@ -1997,7 +1998,6 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
                 tempMouse->label->show();
                seekegg=1;
                tempegg=tempMouse;
-               player1.entertain_egg++;
            }
 
           if(tempMouse->type==jia_label)
