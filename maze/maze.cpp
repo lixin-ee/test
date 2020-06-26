@@ -8,6 +8,7 @@
 #include<QInputDialog>
 #include<QString>
 #include <QStandardItemModel>
+#include<QDebug>
 #define m (MX-2)//row
 #define n (MY-2)
 #define down 1
@@ -2488,9 +2489,10 @@ void maze::gameover(int a,int b)//mainly written by lixin
         switch(gamesta)
         {
             case 1:
-                player1.classic_vic++;
+                {player1.classic_vic++;
+            break;}
             case 3:
-                player1.devil_vic++;
+                {player1.devil_vic++;break;}
         }
     }
     player1.classic_rate=double(player1.classic_vic)/double(player1.classic_number);
@@ -2852,9 +2854,11 @@ maze::~maze()//mainly written by lixin
                 file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
                 file.close();
             }
-
-
         }
+    qDebug()<<"昵称"<<player1.name<<"classic_num"<<player1.classic_number<<"classic_vic"<<
+              player1.classic_vic<<"classic_rate"<<player1.classic_rate<<"entertain-num"<<
+              player1.entertain_number<<"entertain_egg"<<player1.entertain_egg<<"devil_num"<<player1.devil_number<<"devil_vic"<<
+              player1.devil_vic<<"devil_rate"<<player1.devil_rate;
 
     if(allsquare==nullptr){;}
     else {for(int i=0;i<MX;i++)
