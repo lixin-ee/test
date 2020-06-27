@@ -107,6 +107,7 @@ private slots:
     square*food;
     QMovie* mousegif;
     QMovie* catgif;
+    QMovie* jiazaigif;
     int dx=1;
     int dy=0;
     int dx1=0;

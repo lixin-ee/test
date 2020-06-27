@@ -97,6 +97,7 @@ maze::maze(QWidget *parent)//mainly written by lixin
         QSize s2(Label_Size+10,Label_Size+10);
         mousegif->setScaledSize(s1);
         catgif->setScaledSize(s2);
+        jiazaigif=new QMovie(":/jiazai.gif");
         hammer=new QPixmap(":/hammer.png");
         egg=new QPixmap(":/caidan.png");
         jia=new QPixmap(":/jia.png");
@@ -184,7 +185,32 @@ void maze::mainscreen()
             mysocket=new QTcpSocket(this);
             mysocket->connectToHost(ip,port);
             QString tempstr='<'+ui->lineEdit->text()+'>';
-            mysocket->waitForConnected();
+            QTimer* temptimer=new QTimer(this);
+            temptimer->start(2000);
+            QDialog* wait=new QDialog(this);
+            wait->resize(200,200);
+            wait->setWindowOpacity(0.8);
+            wait->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
+            wait->setWindowModality(Qt::WindowModal);
+            QLabel* templabel=new QLabel(wait);
+            QLabel* templabel1=new QLabel("正在加载中(*^_^*)",wait);
+            templabel->setMovie(jiazaigif);
+            templabel->setGeometry(50,50,110,110);
+            templabel1->setGeometry(50,150,150,50);
+            templabel->show();
+            templabel1->show();
+            jiazaigif->start();
+            wait->show();
+            while(mysocket->state()!=QAbstractSocket::ConnectedState)
+            {
+                if(temptimer->remainingTime()==0)
+                {
+                    break;
+                }
+                QCoreApplication::processEvents();
+            }
+            wait->close();
+            delete wait;
             if(mysocket->state()==QAbstractSocket::ConnectedState)
             {
                 mysocket->write(tempstr.toUtf8());
@@ -216,7 +242,7 @@ void maze::mainscreen()
             }
             else
             {
-                QMessageBox::information(NULL,"服务器连接","服务器连接失败，请稍后再试！！");
+                QMessageBox::information(NULL,"服务器连接","服务器连接失败/(ㄒoㄒ)/~~，请稍后再试！！");
             }
 
 
@@ -433,6 +459,8 @@ void maze::aboutme_()
                 if(tempstr1.count()>5)
                 {
                     QMessageBox::information(NULL,"修改昵称","昵称字数大于5，请重新输入！");
+                    issuc=false;
+                    continue;
                 }
                 else
                 {
@@ -443,7 +471,32 @@ void maze::aboutme_()
                     QString tempstr="修改昵称#"+QString(player1.name)+'#'+tempstr1;
                     //
                     //bool* lianjie=new bool(false);
-                    mysocket->waitForConnected();
+                    QTimer* temptimer=new QTimer(this);
+                    temptimer->start(2000);
+                    QDialog* wait=new QDialog(this);
+                    wait->resize(200,200);
+                    wait->setWindowOpacity(0.8);
+                    wait->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
+                    wait->setWindowModality(Qt::WindowModal);
+                    QLabel* templabel=new QLabel(wait);
+                    QLabel* templabel1=new QLabel("正在加载中(*^_^*)",wait);
+                    templabel->setMovie(jiazaigif);
+                    templabel->setGeometry(50,50,110,110);
+                    templabel1->setGeometry(50,150,150,50);
+                    templabel->show();
+                    templabel1->show();
+                    jiazaigif->start();
+                    wait->show();
+                    while(mysocket->state()!=QAbstractSocket::ConnectedState)
+                    {
+                        if(temptimer->remainingTime()==0)
+                        {
+                            break;
+                        }
+                        QCoreApplication::processEvents();
+                    }
+                    wait->close();
+                    delete wait;
                     if(mysocket->state()==QAbstractSocket::ConnectedState)
                     {
                         mysocket->write(tempstr.toUtf8());
@@ -475,7 +528,7 @@ void maze::aboutme_()
                     }
                     else
                     {
-                        QMessageBox::information(NULL,"服务器连接","服务器连接失败，请稍后再试！！");
+                        QMessageBox::information(NULL,"服务器连接","服务器连接失败/(ㄒoㄒ)/~~，请稍后再试！！");
                     }
                 }
                 }
