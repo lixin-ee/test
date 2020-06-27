@@ -175,37 +175,50 @@ void maze::mainscreen()
         {
             QMessageBox::information(NULL,"注册","昵称不能为空");//提示不能为空，messagebox怎么用，去看expclient里面我用过
         }
+        if(ui->lineEdit->text().count()>5)
+        {
+            QMessageBox::information(NULL,"注册","昵称字数超过5，请重新输入");
+        }
         else
         {
             mysocket=new QTcpSocket(this);
             mysocket->connectToHost(ip,port);
             QString tempstr='<'+ui->lineEdit->text()+'>';
-            mysocket->write(tempstr.toUtf8());
-            QObject::connect(mysocket,&QTcpSocket::readyRead,[&]()
+            mysocket->waitForConnected();
+            if(mysocket->state()==QAbstractSocket::ConnectedState)
             {
-                QByteArray tempbyte=mysocket->readAll();
-                //报服务器检查是否可注册
-                if(tempbyte=="注册失败")
+                mysocket->write(tempstr.toUtf8());
+                QObject::connect(mysocket,&QTcpSocket::readyRead,[&]()
                 {
-                    QMessageBox::information(NULL,"注册","昵称重复，请重新定义你的用户名");//提示名称重复
-                    QString info="结束";
-                    mysocket->write(info.toUtf8());//服务器主动断开
-                    mysocket->deleteLater();
-                }//失败
-                if(tempbyte=="注册成功")
-                {
-                  qstrcpy(player1.name,ui->lineEdit->text().toStdString().c_str());
-                  file.open(QIODevice::WriteOnly);
-                  file.write((char*)&player1,sizeof(player));
-                  file.close();
-                  QString info="结束";
-                  mysocket->write(info.toUtf8());//服务器主动断开
-                  denglu=1;
-                  mainscreen();
-                  mysocket->deleteLater();
-                }//成功
+                    QByteArray tempbyte=mysocket->readAll();
+                    //报服务器检查是否可注册
+                    if(tempbyte=="注册失败")
+                    {
+                        QMessageBox::information(NULL,"注册","昵称重复，请重新定义你的用户名");//提示名称重复
+                        QString info="结束";
+                        mysocket->write(info.toUtf8());//服务器主动断开
+                        mysocket->deleteLater();
+                    }//失败
+                    if(tempbyte=="注册成功")
+                    {
+                      qstrcpy(player1.name,ui->lineEdit->text().toStdString().c_str());
+                      file.open(QIODevice::WriteOnly);
+                      file.write((char*)&player1,sizeof(player));
+                      file.close();
+                      QString info="结束";
+                      mysocket->write(info.toUtf8());//服务器主动断开
+                      denglu=1;
+                      mainscreen();
+                      mysocket->deleteLater();
+                    }//成功
 
-            });
+                });
+            }
+            else
+            {
+                QMessageBox::information(NULL,"服务器连接","服务器连接失败，请稍后再试！！");
+            }
+
 
         }
     }
@@ -417,6 +430,10 @@ void maze::aboutme_()
                   issuc=true;
                   break;
                 }//修改不变，自然成功
+                if(tempstr1.count()>5)
+                {
+                    QMessageBox::information(NULL,"修改昵称","昵称字数大于5，请重新输入！");
+                }
                 else
                 {
                     qDebug()<<"2"<<"lianji";
@@ -424,33 +441,43 @@ void maze::aboutme_()
                     mysocket->connectToHost(ip,port);
                     mysocket->open(QIODevice::ReadWrite);
                     QString tempstr="修改昵称#"+QString(player1.name)+'#'+tempstr1;
-                    mysocket->write(tempstr.toUtf8());
-                    QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
+                    //
+                    //bool* lianjie=new bool(false);
+                    mysocket->waitForConnected();
+                    if(mysocket->state()==QAbstractSocket::ConnectedState)
                     {
-                        QByteArray tempbyte=mysocket->readAll();
-                        qDebug()<<"3"<<QString(tempbyte);
-                        //报服务器检查是否可注册
-                        if(tempbyte=="修改失败")
+                        mysocket->write(tempstr.toUtf8());
+                        QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
                         {
-                           QMessageBox::information(NULL,"修改昵称","昵称重复，请重新定义你的用户名");
-                           QString info="结束";
-                           mysocket->write(info.toUtf8());//服务器主动断开
-                           mysocket->deleteLater();
-                            //提示名称重复
-                        }//失败
-                        if(tempbyte=="修改成功")
-                        {
-                          qstrcpy(player1.name,tempstr1.toStdString().c_str());
-                          qDebug()<<"4"<<player1.name;
-                          QMessageBox::information(NULL,"修改昵称","修改成功！");
-                          QString info="结束";
-                          mysocket->write(info.toUtf8());//服务器主动断开
-                          mysocket->deleteLater();
-                        }//成功
+                            QByteArray tempbyte=mysocket->readAll();
+                            qDebug()<<"3"<<QString(tempbyte);
+                            //报服务器检查是否可注册
+                            if(tempbyte=="修改失败")
+                            {
+                               QMessageBox::information(NULL,"修改昵称","昵称重复，请重新定义你的用户名");
+                               QString info="结束";
+                               mysocket->write(info.toUtf8());//服务器主动断开
+                               mysocket->deleteLater();
+                                //提示名称重复
+                            }//失败
+                            if(tempbyte=="修改成功")
+                            {
+                              qstrcpy(player1.name,tempstr1.toStdString().c_str());
+                              qDebug()<<"4"<<player1.name;
+                              QMessageBox::information(NULL,"修改昵称","修改成功！");
+                              QString info="结束";
+                              mysocket->write(info.toUtf8());//服务器主动断开
+                              mysocket->deleteLater();
+                            }//成功
 
-                    });
+                        });
+
+                    }
+                    else
+                    {
+                        QMessageBox::information(NULL,"服务器连接","服务器连接失败，请稍后再试！！");
+                    }
                 }
-
                 }
              else
              {
