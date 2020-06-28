@@ -55,6 +55,7 @@ struct player
     vector<block> Ling;
     bool flag=1;
     bool flag1=1;
+    bool isfocus=1;
     block temp2(0,0,0);
     int td=0;
     int G[100][100];
@@ -290,10 +291,11 @@ void maze::mainscreen()
 }
 void maze::aboutus()//mainly written by lixin
 {
-    player1.entertain_egg=player1.entertain_egg+1;
+
     switch(xcount)
     {
     case 1:
+        player1.entertain_egg=player1.entertain_egg+1;
         Return->setDisabled(true);
         Replay->setDisabled(true);
         so=new QSound(":/heirentaiguan.wav");
@@ -387,7 +389,7 @@ void maze::aboutus()//mainly written by lixin
                      {
                          xx=1;xy=MY-2;
                      }
-                     allsquare[xx][xy]->type=x_label;
+                    allsquare[xx][xy]->type=x_label;
            break;
     }
 }
@@ -714,7 +716,7 @@ void maze::initgame()//mainly written by lixin 初始化游戏界面
     if(dtype==2)
     {memset(G, 0, sizeof(G));
     G[x_num][y_num]=1;}
-
+    isfocus=true;
     warning=0;
    //定义起始点
 }
@@ -792,6 +794,7 @@ void maze::replay()//mainly written by
 {
     if(gamesta!=4)
      {
+        isfocus=true;
     gametime =MX*MY*0.2;
     updatetimer();
     counttimer->start(1000);
@@ -884,7 +887,6 @@ void maze::replay()//mainly written by
         {
             xx=1;xy=MY-2;
         }
-        allsquare[xx][xy]->type=x_label;
     }
     }
     warning=0;
@@ -968,7 +970,6 @@ void maze::startgame2()//mainly written by huanghaoxiang
     {
         xx=1;xy=MY-2;
     }
-    allsquare[xx][xy]->type=x_label;
     gametime =MX*MY*0.2;
     updatetimer();
     counttimer=new QTimer(this);
@@ -1806,41 +1807,41 @@ void maze::keyPressEvent(QKeyEvent *event)//mainly wroten by jiashenghao 键盘�
     case Qt::Key_Up:
         dx=0;
         dy=-1;
-        if(gamesta==1)
+        if(gamesta==1&&isfocus)
             movemouse();
-        if(gamesta==2)
+        if(gamesta==2&&isfocus)
             movemouse2();
-        if(gamesta==3)
+        if(gamesta==3&&isfocus)
             movemouse3();
         break;
     case Qt::Key_Down:
         dx=0;
         dy=1;
-        if(gamesta==1)
+        if(gamesta==1&&isfocus)
             movemouse();
-        if(gamesta==2)
+        if(gamesta==2&&isfocus)
             movemouse2();
-        if(gamesta==3)
+        if(gamesta==3&&isfocus)
             movemouse3();
         break;
     case Qt::Key_Left:
         dx=-1;
         dy=0;
-        if(gamesta==1)
+        if(gamesta==1&&isfocus)
             movemouse();
-        if(gamesta==2)
+        if(gamesta==2&&isfocus)
             movemouse2();
-        if(gamesta==3)
+        if(gamesta==3&&isfocus)
             movemouse3();
         break;
     case Qt::Key_Right:
         dx=1;
         dy=0;
-        if(gamesta==1)
+        if(gamesta==1&&isfocus)
             movemouse();
-        if(gamesta==2)
+        if(gamesta==2&&isfocus)
             movemouse2();
-        if(gamesta==3)
+        if(gamesta==3&&isfocus)
             movemouse3();
         break;
     case Qt::Key_Space:
@@ -2093,7 +2094,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
             if(tempMouse->type==egg_label)
            {
                 cdHint(needCdHint);
-
+                allsquare[xx][xy]->type=x_label;
                tempMouse->type=ground_label;
                tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
@@ -2166,6 +2167,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
             if(tempMouse->type==egg_label)
            {
                 cdHint(needCdHint);
+               allsquare[xx][xy]->type=x_label;
                tempMouse->type=ground_label;
                tempMouse->label->clear();
                tempMouse->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
@@ -2184,9 +2186,7 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
                 {aboutus();
                 xtimer->start(xtime);
                 counttimer->stop();}
-
             }
-
             if(tempMouse->type==wall_label)//如果老鼠撞到了墙
                 {if(havehammer==1&&tempMouse->X!=MX-1&&tempMouse->X!=0&&tempMouse->Y!=MY-1&&tempMouse->Y!=0)
                     {tempMouse->type=ground_label;
@@ -2205,28 +2205,30 @@ void maze::movemouse2()//mainly written by huanghaoxiang 响应键盘的移动�
                 }
         }
     }
-   int mx=mouse->X;int my=mouse->Y;
-if((mx-xx)<=2&&(xx-mx)<=2&&(xy-my)<=2&&(my-xy)<=2)
+   if(seekegg)
 {
-    if(xl==nullptr)
-    {
-       xl=new QPixmap(":/xuanwo.png");
-       allsquare[xx][xy]->label->setPixmap(*xl);
-       allsquare[xx][xy]->label->setScaledContents(true);
-       allsquare[xx][xy]->label->show();
-    }
+          int mx=mouse->X;int my=mouse->Y;
+        if((mx-xx)<=2&&(xx-mx)<=2&&(xy-my)<=2&&(my-xy)<=2)
+        {
+            if(xl==nullptr)
+            {
+               xl=new QPixmap(":/xuanwo.png");
+               allsquare[xx][xy]->label->setPixmap(*xl);
+               allsquare[xx][xy]->label->setScaledContents(true);
+               allsquare[xx][xy]->label->show();
+            }
+        }
+        else
+        {
+            if(xl!=nullptr)
+            {
+                delete xl;
+                xl=nullptr;
+             allsquare[xx][xy]->label->clear();
+             allsquare[xx][xy]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
+            }
+        }
 }
-else
-{
-    if(xl!=nullptr)
-    {
-        delete xl;
-        xl=nullptr;
-     allsquare[xx][xy]->label->clear();
-     allsquare[xx][xy]->label->setStyleSheet("QLabel{border-image:url(:/diban.jpg)}");
-    }
-}
-
 }
 
 /*void maze::RandestructWall()//随机摧毁墙的构造地图函数，配合我写的砸墙函数使用，改用prim算法的时候记得注释掉--贾晟浩
@@ -2673,7 +2675,6 @@ void maze::gameover(int a,int b)//mainly written by lixin
                     {
                         xx=1;xy=MY-2;
                     }
-                    allsquare[xx][xy]->type=x_label;
                 }
 
                 if(b==1)
@@ -2717,21 +2718,10 @@ void maze::gameover(int a,int b)//mainly written by lixin
              }
              else
              {
-                 allsquare[MX-2][MY-2]->type=wall_label;
+                 isfocus=false;
                 if(b==1)
                 {
-                    delete cat->label;
-                    delete cat;
-                    cat=new square;
-                    cat->label=new QLabel(this);
-                    cat->X=1;
-                    cat->Y=MY-2;
-                    cat->label->setGeometry(Label_Size,(MY-2)*Label_Size,Label_Size,Label_Size);
-                    cat->type=cat_label;
-                    cat->label->setMovie(catgif);
-                    catgif->start();
-                    cat->label->show();
-                    mouse->label->clear();
+                mouse->label->clear();
                 }
              }
              delete donghua;
@@ -2907,7 +2897,8 @@ void maze::jiaHint(int isneed)
 }
 void maze::resizewindow()//mainly written by lixin
 {
-        resize((MX)*Label_Size,(MY+2)*Label_Size);
+
+        setFixedSize((MX)*Label_Size,(MY+2)*Label_Size);
     Clabel->setStyleSheet("QLabel{border-image:url(:/cover.jpg);}");
     Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
     rank->setGeometry(MX*Label_Size-2*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
@@ -2933,7 +2924,7 @@ void maze::resizewindow()//mainly written by lixin
     setting->setStyleSheet("QPushButton{border-image:url(:/setting.png);}"
                            "QPushButton:hover{border-image:url(:/setting2.png);}"
                            );
-    setting->setGeometry(4*MX/5*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
+    setting->setGeometry((4*MX/5-1)*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
     presentation->setGeometry(1*MX/5*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
     presentation->setStyleSheet("QPushButton{border-image:url(:/present.png);}"
                                 "QPushButton:hover{border-image:url(:/present2.png);}"
