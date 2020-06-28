@@ -132,7 +132,6 @@ private slots:
     QTimer* xtimer;
     QString name;
     QTcpSocket* mysocket;
-    int pace=0;
     QPushButton* xiugai;
 
 };

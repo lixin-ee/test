@@ -41,12 +41,6 @@ struct player
          classic_vic=_classic_vic;entertain_egg=_entertain_egg;devil_vic=_devil_vic;classic_rate=_classic_rate;
          devil_rate=_devil_rate;
     }
-    bool determine2()
-       {
-          if(name[0]=='\0')
-              return true;
-          return false;
-       }
 };
     QFile file("record.dat");
     player player1,player2;
@@ -73,6 +67,9 @@ struct player
     square* tempegg=nullptr;
     //将地图全部置为墙
 
+     int filesize=0;
+     int pace=0;
+     QFile tem_rankFile("rank.dat");
 maze::maze(QWidget *parent)//mainly written by lixin
     : QWidget(parent)
     , ui(new Ui::maze)
@@ -186,9 +183,10 @@ void maze::mainscreen()
             mysocket=new QTcpSocket(this);
             mysocket->connectToHost(ip,port);
             QString tempstr='<'+ui->lineEdit->text()+'>';
-            QTimer* temptimer=new QTimer(this);
-            temptimer->start(2000);
+
             QDialog* wait=new QDialog(this);
+            QTimer* temptimer=new QTimer(wait);
+            temptimer->start(2000);
             wait->resize(200,200);
             wait->setWindowOpacity(0.8);
             wait->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
@@ -473,9 +471,10 @@ void maze::aboutme_()
                     QString tempstr="修改昵称#"+QString(player1.name)+'#'+tempstr1;
                     //
                     //bool* lianjie=new bool(false);
-                    QTimer* temptimer=new QTimer(this);
-                    temptimer->start(2000);
+
                     QDialog* wait=new QDialog(this);
+                    QTimer* temptimer=new QTimer(wait);
+                    temptimer->start(2000);
                     wait->resize(200,200);
                     wait->setWindowOpacity(0.8);
                     wait->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
@@ -542,120 +541,132 @@ void maze::aboutme_()
             });
            }
 //创建标准对话框获取修改后的昵称,怎么做？还是看ecpclient,同时用messagebox提示是否为空，后面不做是否为空的判断,默认不考虑是否为空，
+    void maze::rank_()
 
-void maze::rank_()
-{
-    gamesta=6;
-    rank->hide();
-    rank->setDisabled(true);
-    aboutme->hide();
-    aboutme->setDisabled(true);
-    Clabel->hide();
-    Clabel->setDisabled(true);
-    setting->hide();
-    setting->setDisabled(true);
-    presentation->hide();
-    presentation->setDisabled(true);
-    start1->hide();
-    start1->setDisabled(true);
-    start2->hide();
-    start2->setDisabled(true);
-    start3->hide();
-    start3->setDisabled(true);
-    Return=new QPushButton(this);
-    Return->setFocusPolicy(Qt::NoFocus);
-    Return->setGeometry(0,MY*Label_Size,2*Label_Size,2*Label_Size);
-    Return->setStyleSheet("QPushButton{border-image:url(:/return.png);}"
-                          "QPushButton:hover{border-image:url(:/return2.png);}"
-                           );
-    QObject::connect(Return,SIGNAL(clicked()),this,SLOT(returnhome()));
-    Return->show();
-    mysocket->connectToHost(ip,port);
-    QString info="发送结构体";
-    mysocket->write(info.toUtf8());
-    int* filesize;
-    QString* filename;
-    int* receivesize;
-    *receivesize=0;
-    QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
     {
-        QByteArray tempbyte=mysocket->readAll();
-        if(pace==0&&tempbyte=="准备接收")//第一步
+        gamesta=6;
+        rank->hide();
+        rank->setDisabled(true);
+        aboutme->hide();
+        aboutme->setDisabled(true);
+        Clabel->hide();
+        Clabel->setDisabled(true);
+        setting->hide();
+        setting->setDisabled(true);
+        presentation->hide();
+        presentation->setDisabled(true);
+        start1->hide();
+        start1->setDisabled(true);
+        start2->hide();
+        start2->setDisabled(true);
+        start3->hide();
+        start3->setDisabled(true);
+        Return=new QPushButton(this);
+        Return->setFocusPolicy(Qt::NoFocus);
+        Return->setGeometry(0,MY*Label_Size,2*Label_Size,2*Label_Size);
+        Return->setStyleSheet("QPushButton{border-image:url(:/return.png);}"
+
+                              "QPushButton:hover{border-image:url(:/return2.png);}"
+
+                               );
+        QObject::connect(Return,SIGNAL(clicked()),this,SLOT(returnhome()));
+        Return->show();
+        mysocket=new QTcpSocket(this);
+        mysocket->connectToHost(ip,port);
+
+
+
+        QDialog* wait=new QDialog(this);
+        QTimer* temptimer=new QTimer(wait);
+        temptimer->start(1000);
+        wait->resize(200,200);
+        wait->setWindowOpacity(0.8);
+        wait->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
+        wait->setWindowModality(Qt::WindowModal);
+        QLabel* templabel=new QLabel(wait);
+        QLabel* templabel1=new QLabel("正在加载中(*^_^*)",wait);
+        templabel->setMovie(jiazaigif);
+        templabel->setGeometry(50,50,110,110);
+        templabel1->setGeometry(50,150,150,50);
+        templabel->show();
+        templabel1->show();
+        jiazaigif->start();
+        wait->show();
+        while(mysocket->state()!=QAbstractSocket::ConnectedState)
         {
-            mysocket->write((char*)&player1,sizeof(player));
-             pace++;
-        }
-        if(pace==1)//第二步
-        {
-            //tempbyte=mysocket->readAll();
-            QString tempstr3=tempbyte;
-            *filename=tempstr3.section("#",0,0);
-            *filesize=tempstr3.section("#",1,1).toInt();
-            //接收包头，处理包头，
-            QString info="接收包头成功";
-            mysocket->write(info.toUtf8());
-            pace++;
-        }
-         QFile rankfile(*filename);
-        if(pace==2)//第三步
-        {
-            rankfile.open(QIODevice::WriteOnly);
-            rankfile.close();
-            rankfile.open(QIODevice::ReadWrite);
-            while(*receivesize<*filesize)
+            if(temptimer->remainingTime()==0)
             {
-                tempbyte=mysocket->readAll();
-                rankfile.write(tempbyte);
-                *receivesize+=tempbyte.size();
+                break;
             }
-            file.close();                   //接收文件,循环直至接收文件大小与包头描述一致；
-
-
-            QString info1="文件接收完毕";
-            mysocket->write(info.toUtf8());
-            pace=0;
+            QCoreApplication::processEvents();
         }
+        wait->close();
+        delete wait;
 
-    });
-        QFile rankfile(*filename);
-        /*ui->tableWidget->setColumnCount(9);
-        QStringList m_Header;
-
-        m_Header<<QString("昵称")<<QString("经典场次")<<QString("经典胜场")<<QString("经典胜率")<<
-                  QString("娱乐场次")<<QString("彩蛋数")<<QString("魔鬼场次")<<QString("魔鬼胜场")<<
-                  QString("魔鬼胜率");
-        ui->tableWidget->setHorizontalHeaderLabels(m_Header);*/
-       /* ui->tableWidget->setHeaderData(0,Qt::Horizontal, "昵称");
-        ui->tableWidget->setHeaderData(1,Qt::Horizontal, "经典场次");
-        ui->tableWidget->setHeaderData(2,Qt::Horizontal, "经典胜场");
-        ui->tableWidget->setHeaderData(3,Qt::Horizontal, "经典胜率");
-        ui->tableWidget->setHeaderData(4,Qt::Horizontal, "娱乐场次");
-        ui->tableWidget->setHeaderData(5,Qt::Horizontal, "彩蛋数");
-        ui->tableWidget->setHeaderData(6,Qt::Horizontal, "魔鬼场次");
-        ui->tableWidget->setHeaderData(7,Qt::Horizontal, "魔鬼胜场");
-        ui->tableWidget->setHeaderData(8,Qt::Horizontal, "魔鬼胜率");
-    //表格视图，qtableview,qstandardmodel,
-        ui->tableWidget->setRowCount(10);
-        for(int i=0;i<10;i++)
+        //QTemporaryFile tem_rankFile;//创建临时文件，用于接收服务器发送的排行榜的消息
+        //tem_rankFile.open();
+        if(mysocket->state()==QAbstractSocket::ConnectedState)
+       {
+        QString info="发送结构体"; //提示服务器数据的收发开始了
+        mysocket->write(info.toUtf8());
+        QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()mutable
         {
-            ui->tableWidget->setHeaderData(0,Qt::Vertical, i+1);
-        }
-        rankfile.open(QIODevice::ReadWrite);
-        for(int i=0;i<10;i++)
-        {
-            rankfile.read(reinterpret_cast<char*>(&player2),sizeof(player2));
-            ui->tableWidget->setItem(0, 0, new QStandardItem(player2.name));
-            ui->tableWidget->setItem(0, 1, new QStandardItem(player2.classic_number));
-            ui->tableWidget->setItem(0, 2, new QStandardItem(player2.classic_vic));
-            ui->tableWidget->setItem(0, 3, new QStandardItem(player2.classic_rate));
-            ui->tableWidget->setItem(0, 4, new QStandardItem(player2.entertain_number));
-            ui->tableWidget->setItem(0, 5, new QStandardItem(player2.entertain_egg));
-            ui->tableWidget->setItem(0, 6, new QStandardItem(player2.devil_number));
-            ui->tableWidget->setItem(0, 7, new QStandardItem(player2.devil_vic));
-            ui->tableWidget->setItem(0, 8, new QStandardItem(player2.devil_rate));
-        }
-        file.close();*/
+            qDebug()<<pace;
+            QString tempstr3;
+            QByteArray tempbyte;
+            QString filename;
+            int receivesize=0;
+            //tem_rankFile.write(tempbyte.toStdString().data());
+            if(pace==0)//第一步，向服务器发送当前的玩家信息
+            {
+                mysocket->write((char*)&player1,sizeof(player));
+                //this_thread::sleep_for(chrono::milliseconds(100));
+                /*tempstr3=QString(tempbyte);*/
+                //this_thread::sleep_for(chrono::milliseconds(100));
+            }
 
+            if(pace==1)//第二步，接收服务器发来的文件名和文件大小，并且将其分别放至filename和filesize中
+
+            {
+                 tempbyte=mysocket->readAll();
+                tempstr3=QString(tempbyte);
+                QStringList list=tempstr3.split('#');
+                filesize=list[1].toInt();
+                //接收包头，处理包头，
+                QString info="接收包头成功";
+                mysocket->write(info.toUtf8());
+                //this_thread::sleep_for(chrono::milliseconds(100));
+            }
+           if(pace==2)//第三步，接收服务器发来的文件并将其写入创建的临时文件中
+
+            {
+                    //tem_rankFile.open(QIODevice::WriteOnly);
+                    tem_rankFile.open(QIODevice::WriteOnly);
+                    tempbyte=mysocket->readAll();
+                    while(receivesize<filesize)
+                    {
+                        //tem_rankFile.open(QIODevice::WriteOnly);
+                        //tempbyte=mysocket->readAll();
+                        receivesize+=tem_rankFile.write(tempbyte);
+                         qDebug()<<filesize<<receivesize;
+                    }
+                    //file.close();                   //接收文件,循环直至接收文件大小与包头描述一致；
+                    //this_thread::sleep_for(chrono::milliseconds(100))
+                    QString info1="文件接收完毕";
+                    mysocket->write(info1.toUtf8());//与服务器断开连接
+                    tem_rankFile.close();
+                    mysocket->deleteLater();
+                }
+            pace++;
+            if(pace==3)
+                pace=0;
+        });
+        }
+        else
+        {
+            QMessageBox::information(NULL,"服务器连接","服务器连接失败/(ㄒoㄒ)/~~，请稍后再试！！");
+        }
+        //这部分会先于数据接收执行，原因未知
 }
 void maze::initgame()//mainly written by lixin 初始化游戏界面
 {
