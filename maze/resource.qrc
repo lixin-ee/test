@@ -63,5 +63,8 @@
         <file>rank1.png</file>
         <file>rank2.png</file>
         <file>jiazai.gif</file>
+        <file>back.jpg</file>
+        <file>back2.jpg</file>
+        <file>back3.jpg</file>
     </qresource>
 </RCC>
