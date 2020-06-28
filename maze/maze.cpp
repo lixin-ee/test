@@ -31,8 +31,8 @@ struct block
  };
 struct player
 {
-     char name[20];int classic_number,entertain_number,devil_number,classic_vic,entertain_egg,
-    devil_vic;double classic_rate,devil_rate;
+     char name[20];
+     int classic_number,entertain_number,devil_number,classic_vic,entertain_egg,devil_vic;double classic_rate,devil_rate;
     player(QString _name="",int _calssic_number=0,int _entertain_number=0,int _devil_number=0,int _classic_vic=0,
            int _entertain_egg=0,int _devil_vic=0,double _classic_rate=0,double _devil_rate=0)
     {
@@ -89,7 +89,7 @@ maze::maze(QWidget *parent)//mainly written by lixin
         Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
         ui->setupUi(this);
         setWindowIcon(QIcon(":/tubiao.ico"));
-        ui->tableWidget->hide();
+        //ui->tableWidget->hide();
         setWindowTitle("maze521");
         mousegif=new QMovie(":/mouse1.gif");
         QSize s1(Label_Size+5,Label_Size+5);
@@ -134,6 +134,40 @@ maze::maze(QWidget *parent)//mainly written by lixin
         }
         QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
         QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
+
+
+        ui->label_3->hide();
+        ui->label_3->setDisabled(true);
+        ui->label_4->hide();
+        ui->label_4->setDisabled(true);
+        ui->label_5->hide();
+        ui->label_5->setDisabled(true);
+        ui->label_6->hide();
+        ui->label_6->setDisabled(true);
+        ui->label_7->hide();
+        ui->label_7->setDisabled(true);
+        ui->label_8->hide();
+        ui->label_8->setDisabled(true);
+
+        ui->label_9->hide();
+        ui->label_9->setDisabled(true);
+        ui->label_10->hide();
+        ui->label_10->setDisabled(true);
+        ui->label_11->hide();
+        ui->label_11->setDisabled(true);
+        ui->label_12->hide();
+        ui->label_12->setDisabled(true);
+        ui->label_13->hide();
+        ui->label_13->setDisabled(true);
+        ui->label_14->hide();
+        ui->label_14->setDisabled(true);
+        ui->label_15->hide();
+        ui->label_15->setDisabled(true);
+        ui->label_16->hide();
+        ui->label_16->setDisabled(true);
+
+
+
 
 }
 /*void maze::exit()
@@ -378,6 +412,54 @@ void maze::aboutme_()
     setting->setDisabled(true);
     presentation->hide();
     presentation->setDisabled(true);
+
+
+    ui->label_3->show();
+    ui->label_3->setDisabled(false);
+    ui->label_4->show();
+    ui->label_4->setDisabled(false);
+    ui->label_5->show();
+    ui->label_5->setDisabled(false);
+    ui->label_6->show();
+    ui->label_6->setDisabled(false);
+    ui->label_7->show();
+    ui->label_7->setDisabled(false);
+    ui->label_8->show();
+    ui->label_8->setDisabled(false);
+
+    ui->label_9->show();
+    ui->label_9->setDisabled(false);
+    ui->label_10->show();
+    ui->label_10->setDisabled(false);
+    ui->label_11->show();
+    ui->label_11->setDisabled(false);
+    ui->label_12->show();
+    ui->label_12->setDisabled(false);
+    ui->label_13->show();
+    ui->label_13->setDisabled(false);
+    ui->label_14->show();
+    ui->label_14->setDisabled(false);
+    ui->label_15->show();
+    ui->label_15->setDisabled(false);
+    ui->label_16->show();
+    ui->label_16->setDisabled(false);
+
+
+
+
+
+QLabel* background;
+background=new QLabel(this);
+background->setStyleSheet("QLabel{border-image:url(:/back.jpg);}");
+background->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+
+
+
+
+
+
+
+
     Return=new QPushButton(this);
     Return->setFocusPolicy(Qt::NoFocus);
     Return->setGeometry(0,MY*Label_Size,2*Label_Size,2*Label_Size);
@@ -393,8 +475,24 @@ void maze::aboutme_()
     start3->hide();
     start3->setDisabled(true);
     xiugai=new QPushButton("修改昵称",this);
-    xiugai->setGeometry(MX*Label_Size/2-50,MY*Label_Size/2-20,100,40);//位置之后自己调节；
+    xiugai->setGeometry(MX*Label_Size/2+90,MY*Label_Size/2-310,100,40);//位置之后自己调节；
     xiugai->show();
+
+    ui->label_11->setText((QString)player1.name);
+    ui->label_7->setText((QString)player1.classic_number);
+    ui->label_6->setText((QString)player1.entertain_number);
+    ui->label_8->setText((QString)player1.devil_number);
+    ui->label_15->setText((QString)player1.classic_vic);
+    ui->label_16->setText((QString)player1.entertain_egg);
+    ui->label_14->setText((QString)player1.devil_vic);
+
+
+
+
+
+
+
+
     QObject::connect(xiugai,&QPushButton::clicked,[&]()
        {
            bool issuc=false; //是否成功
@@ -703,6 +801,35 @@ void maze::returnhome()//mainly written by lixin  返回主界面
    rank->setDisabled(false);
    aboutme->show();
    aboutme->setDisabled(false);
+   ui->label_3->hide();
+   ui->label_3->setDisabled(true);
+   ui->label_4->hide();
+   ui->label_4->setDisabled(true);
+   ui->label_5->hide();
+   ui->label_5->setDisabled(true);
+   ui->label_6->hide();
+   ui->label_6->setDisabled(true);
+   ui->label_7->hide();
+   ui->label_7->setDisabled(true);
+   ui->label_8->hide();
+   ui->label_8->setDisabled(true);
+   ui->label_9->hide();
+   ui->label_9->setDisabled(true);
+   ui->label_10->hide();
+   ui->label_10->setDisabled(true);
+   ui->label_11->hide();
+   ui->label_11->setDisabled(true);
+   ui->label_12->hide();
+   ui->label_12->setDisabled(true);
+   ui->label_13->hide();
+   ui->label_13->setDisabled(true);
+   ui->label_14->hide();
+   ui->label_14->setDisabled(true);
+   ui->label_15->hide();
+   ui->label_15->setDisabled(true);
+   ui->label_16->hide();
+   ui->label_16->setDisabled(true);
+
    if(gamesta==5)
    {
        delete xiugai;
