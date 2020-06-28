@@ -167,6 +167,8 @@ maze::maze(QWidget *parent)//mainly written by lixin
         ui->label_15->setDisabled(true);
         ui->label_16->hide();
         ui->label_16->setDisabled(true);
+       ui->label_17->hide();
+        ui->label_17->setDisabled(true);
 
 
 
@@ -484,17 +486,22 @@ void maze::aboutme_()
     ui->label_15->setDisabled(false);
     ui->label_16->show();
     ui->label_16->setDisabled(false);
+    ui->label_17->show();
+    ui->label_17->setDisabled(false);
 
 
 
 
 
-QLabel* background;
-background=new QLabel(this);
-background->setStyleSheet("QLabel{border-image:url(:/back.jpg);}");
-background->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+ui->label_17->setStyleSheet("QLabel{border-image:url(:/back3.jpg);}");
+ui->label_17->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
 
-
+ui->label_10->setStyleSheet("color:red;");
+ui->label_12->setStyleSheet("color:red;");
+ui->label_9->setStyleSheet("color:yellow;");
+ui->label_13->setStyleSheet("color:yellow;");
+ui->label_3->setStyleSheet("color:green;");
+ui->label_4->setStyleSheet("color:green;");
 
 
 
@@ -883,37 +890,43 @@ void maze::returnhome()//mainly written by lixin  返回主界面
    rank->setDisabled(false);
    aboutme->show();
    aboutme->setDisabled(false);
-   ui->label_3->hide();
-   ui->label_3->setDisabled(true);
-   ui->label_4->hide();
-   ui->label_4->setDisabled(true);
-   ui->label_5->hide();
-   ui->label_5->setDisabled(true);
-   ui->label_6->hide();
-   ui->label_6->setDisabled(true);
-   ui->label_7->hide();
-   ui->label_7->setDisabled(true);
-   ui->label_8->hide();
-   ui->label_8->setDisabled(true);
-   ui->label_9->hide();
-   ui->label_9->setDisabled(true);
-   ui->label_10->hide();
-   ui->label_10->setDisabled(true);
-   ui->label_11->hide();
-   ui->label_11->setDisabled(true);
-   ui->label_12->hide();
-   ui->label_12->setDisabled(true);
-   ui->label_13->hide();
-   ui->label_13->setDisabled(true);
-   ui->label_14->hide();
-   ui->label_14->setDisabled(true);
-   ui->label_15->hide();
-   ui->label_15->setDisabled(true);
-   ui->label_16->hide();
-   ui->label_16->setDisabled(true);
+
 
    if(gamesta==5)
    {
+
+       ui->label_3->hide();
+       ui->label_3->setDisabled(true);
+       ui->label_4->hide();
+       ui->label_4->setDisabled(true);
+       ui->label_5->hide();
+       ui->label_5->setDisabled(true);
+       ui->label_6->hide();
+       ui->label_6->setDisabled(true);
+       ui->label_7->hide();
+       ui->label_7->setDisabled(true);
+       ui->label_8->hide();
+       ui->label_8->setDisabled(true);
+       ui->label_9->hide();
+       ui->label_9->setDisabled(true);
+       ui->label_10->hide();
+       ui->label_10->setDisabled(true);
+       ui->label_11->hide();
+       ui->label_11->setDisabled(true);
+       ui->label_12->hide();
+       ui->label_12->setDisabled(true);
+       ui->label_13->hide();
+       ui->label_13->setDisabled(true);
+       ui->label_14->hide();
+       ui->label_14->setDisabled(true);
+       ui->label_15->hide();
+       ui->label_15->setDisabled(true);
+       ui->label_16->hide();
+       ui->label_16->setDisabled(true);
+       ui->label_17->hide();
+       ui->label_17->setDisabled(true);
+
+
        delete xiugai;
    }
 }
