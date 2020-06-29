@@ -28,6 +28,7 @@
 #include<QTcpSocket>
 #include <QTableView>
 #include <QStandardItemModel>
+#include<QTableWidget>
 #define Label_Size  30
 using namespace std;
 
