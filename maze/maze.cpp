@@ -838,15 +838,16 @@ ui->label_12->setStyleSheet("color:red;");
             //delete item3;
         }
 
-
+        tableWidget->show();
+        tem_rankFile.close();
         /*QLabel* image=new QLabel(this);
         image->setStyleSheet("QLabel{border-image:url(:/rank.jpg)}");
 
         image->setGeometry(0,0,1500,800);
         image->show();
 
-        tem_rankFile.close();
-        tableWidget->show();*/
+
+        *///这里来添加图片
 
         /*if(Return->isFlat()){
             delete tableWidget;
