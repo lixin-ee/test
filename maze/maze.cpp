@@ -496,10 +496,10 @@ ui->label_17->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
 
 ui->label_10->setStyleSheet("color:red;");
 ui->label_12->setStyleSheet("color:red;");
-ui->label_9->setStyleSheet("color:yellow;");
-ui->label_13->setStyleSheet("color:yellow;");
-ui->label_3->setStyleSheet("color:green;");
-ui->label_4->setStyleSheet("color:green;");
+//ui->label_9->setStyleSheet("color:yellow;");
+//ui->label_13->setStyleSheet("color:yellow;");
+//ui->label_3->setStyleSheet("color:green;");
+//ui->label_4->setStyleSheet("color:green;");
 
 
 
@@ -525,12 +525,12 @@ ui->label_4->setStyleSheet("color:green;");
     xiugai->show();
 
     ui->label_11->setText((QString)player1.name);
-    ui->label_7->setText((QString)player1.classic_number);
-    ui->label_6->setText((QString)player1.entertain_number);
-    ui->label_8->setText((QString)player1.devil_number);
-    ui->label_15->setText((QString)player1.classic_vic);
-    ui->label_16->setText((QString)player1.entertain_egg);
-    ui->label_14->setText((QString)player1.devil_vic);
+    ui->label_7->setText(QString::number(player1.classic_number));
+    ui->label_6->setText(QString::number(player1.entertain_number));
+    ui->label_8->setText(QString::number(player1.devil_number));
+    ui->label_15->setText(QString::number(player1.classic_rate*100)+"%");
+    ui->label_16->setText(QString::number(player1.entertain_egg));
+    ui->label_14->setText(QString::number(player1.devil_rate*100)+"%");
 
 
 
