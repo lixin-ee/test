@@ -817,6 +817,12 @@ ui->label_12->setStyleSheet("color:red;");
             }
             tableWidget->setItem(i,0,item1);//写入第一列的数据
 
+            //delete item1;
+            //delete item2;
+            //delete item3;
+        }
+
+        for(int i=0;i<playerNum;i++){
             tem_rankFile.read((char*)&player3,sizeof (player));
             QTableWidgetItem *item2=new QTableWidgetItem("昵称："+QString(player3.name)+"\n魔鬼场数："+QString::number(player3.devil_number)
                                                          +"\n魔鬼胜率："+QString::number(player3.devil_rate)+"%");
@@ -825,6 +831,12 @@ ui->label_12->setStyleSheet("color:red;");
             }
             tableWidget->setItem(i,1,item2);//写入第二列的数据
 
+            //delete item1;
+            //delete item2;
+            //delete item3;
+        }
+
+        for(int i=0;i<playerNum;i++){
             tem_rankFile.read((char*)&player3,sizeof (player));
             QTableWidgetItem *item3=new QTableWidgetItem("昵称："+QString(player3.name)+"\n总场数："+QString::number(player3.entertain_number
                                                                                                               +player3.devil_number+player3.classic_number));
