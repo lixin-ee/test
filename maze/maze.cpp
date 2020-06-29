@@ -166,10 +166,6 @@ maze::maze(QWidget *parent)//mainly written by lixin
         ui->label_16->setDisabled(true);
        ui->label_17->hide();
         ui->label_17->setDisabled(true);
-
-
-
-
 }
 /*void maze::exit()
 {
@@ -258,6 +254,10 @@ void maze::mainscreen()
                         QMessageBox::information(NULL,"注册","昵称重复，请重新定义你的用户名");//提示名称重复
                         QString info="结束";
                         mysocket->write(info.toUtf8());//服务器主动断开
+                        while(mysocket->state()!=QAbstractSocket::UnconnectedState)
+                        {
+                            QCoreApplication::processEvents();
+                        }
                         mysocket->deleteLater();
                     }//失败
                     if(tempbyte=="注册成功")
@@ -268,6 +268,10 @@ void maze::mainscreen()
                       file.close();
                       QString info="结束";
                       mysocket->write(info.toUtf8());//服务器主动断开
+                      while(mysocket->state()!=QAbstractSocket::UnconnectedState)
+                      {
+                          QCoreApplication::processEvents();
+                      }
                       denglu=1;
                       mainscreen();
                       mysocket->deleteLater();
@@ -487,24 +491,15 @@ void maze::aboutme_()
     ui->label_17->show();
     ui->label_17->setDisabled(false);
 
-
-
-
-
 ui->label_17->setStyleSheet("QLabel{border-image:url(:/back3.jpg);}");
 ui->label_17->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
 
 ui->label_10->setStyleSheet("color:red;");
 ui->label_12->setStyleSheet("color:red;");
-ui->label_9->setStyleSheet("color:yellow;");
-ui->label_13->setStyleSheet("color:yellow;");
-ui->label_3->setStyleSheet("color:green;");
-ui->label_4->setStyleSheet("color:green;");
-
-
-
-
-
+//ui->label_9->setStyleSheet("color:yellow;");
+//ui->label_13->setStyleSheet("color:yellow;");
+//ui->label_3->setStyleSheet("color:green;");
+//ui->label_4->setStyleSheet("color:green;");
 
     Return=new QPushButton(this);
     Return->setFocusPolicy(Qt::NoFocus);
@@ -525,14 +520,20 @@ ui->label_4->setStyleSheet("color:green;");
     xiugai->show();
 
     ui->label_11->setText((QString)player1.name);
-    ui->label_7->setText((QString)player1.classic_number);
-    ui->label_6->setText((QString)player1.entertain_number);
-    ui->label_8->setText((QString)player1.devil_number);
-    ui->label_15->setText((QString)player1.classic_vic);
-    ui->label_16->setText((QString)player1.entertain_egg);
-    ui->label_14->setText((QString)player1.devil_vic);
+    ui->label_7->setText(QString::number(player1.classic_number));
+    ui->label_6->setText(QString::number(player1.entertain_number));
+    ui->label_8->setText(QString::number(player1.devil_number));
+<<<<<<< HEAD
+    ui->label_15->setText(QString::number(player1.classic_rate));
+    ui->label_16->setText(QString::number(player1.entertain_egg));
+    ui->label_14->setText(QString::number(player1.devil_vic));
+=======
+    ui->label_15->setText(QString::number(player1.classic_rate*100)+"%");
+    ui->label_16->setText(QString::number(player1.entertain_egg));
+    ui->label_14->setText(QString::number(player1.devil_rate*100)+"%");
 
 
+>>>>>>> 1020af05222aba63160b4b5ed48afbbb945eac3c
 
 
 
@@ -616,6 +617,10 @@ ui->label_4->setStyleSheet("color:green;");
                                QMessageBox::information(NULL,"修改昵称","昵称重复，请重新定义你的用户名");
                                QString info="结束";
                                mysocket->write(info.toUtf8());//服务器主动断开
+                               while(mysocket->state()!=QAbstractSocket::UnconnectedState)
+                               {
+                                   QCoreApplication::processEvents();
+                               }
                                mysocket->deleteLater();
                                 //提示名称重复
                             }//失败
@@ -626,6 +631,10 @@ ui->label_4->setStyleSheet("color:green;");
                               QMessageBox::information(NULL,"修改昵称","修改成功！");
                               QString info="结束";
                               mysocket->write(info.toUtf8());//服务器主动断开
+                              while(mysocket->state()!=QAbstractSocket::UnconnectedState)
+                              {
+                                  QCoreApplication::processEvents();
+                              }
                               mysocket->deleteLater();
                             }//成功
 
@@ -759,6 +768,10 @@ ui->label_4->setStyleSheet("color:green;");
                     //this_thread::sleep_for(chrono::milliseconds(100))
                     QString info1="文件接收完毕";
                     mysocket->write(info1.toUtf8());//与服务器断开连接
+                    while(mysocket->state()!=QAbstractSocket::UnconnectedState)
+                    {
+                        QCoreApplication::processEvents();
+                    }
                     tem_rankFile.close();
                     mysocket->deleteLater();
                 }
