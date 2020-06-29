@@ -523,22 +523,9 @@ ui->label_12->setStyleSheet("color:red;");
     ui->label_7->setText(QString::number(player1.classic_number));
     ui->label_6->setText(QString::number(player1.entertain_number));
     ui->label_8->setText(QString::number(player1.devil_number));
-<<<<<<< HEAD
-    ui->label_15->setText(QString::number(player1.classic_rate));
-    ui->label_16->setText(QString::number(player1.entertain_egg));
-    ui->label_14->setText(QString::number(player1.devil_vic));
-=======
     ui->label_15->setText(QString::number(player1.classic_rate*100)+"%");
     ui->label_16->setText(QString::number(player1.entertain_egg));
     ui->label_14->setText(QString::number(player1.devil_rate*100)+"%");
-
-
->>>>>>> 1020af05222aba63160b4b5ed48afbbb945eac3c
-
-
-
-
-
 
     QObject::connect(xiugai,&QPushButton::clicked,[&]()
        {
