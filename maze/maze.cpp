@@ -645,38 +645,8 @@ ui->label_12->setStyleSheet("color:red;");
     void maze::rank_()
 
     {
-        gamesta=6;
-        rank->hide();
-        rank->setDisabled(true);
-        aboutme->hide();
-        aboutme->setDisabled(true);
-        Clabel->hide();
-        Clabel->setDisabled(true);
-        setting->hide();
-        setting->setDisabled(true);
-        presentation->hide();
-        presentation->setDisabled(true);
-        start1->hide();
-        start1->setDisabled(true);
-        start2->hide();
-        start2->setDisabled(true);
-        start3->hide();
-        start3->setDisabled(true);
-        Return=new QPushButton(this);
-        Return->setFocusPolicy(Qt::NoFocus);
-        Return->setGeometry(0,MY*Label_Size,2*Label_Size,2*Label_Size);
-        Return->setStyleSheet("QPushButton{border-image:url(:/return.png);}"
-
-                              "QPushButton:hover{border-image:url(:/return2.png);}"
-
-                               );
-        QObject::connect(Return,SIGNAL(clicked()),this,SLOT(returnhome()));
-        Return->show();
         mysocket=new QTcpSocket(this);
         mysocket->connectToHost(ip,port);
-
-
-
         QDialog* wait=new QDialog(this);
         QTimer* temptimer=new QTimer(wait);
         temptimer->start(1000);
@@ -761,6 +731,89 @@ ui->label_12->setStyleSheet("color:red;");
                     }
                     tem_rankFile.close();
                     mysocket->deleteLater();
+
+                    QDialog * tempweight=new QDialog(this);
+                    tempweight->setFixedSize(1350,1000);
+                    tempweight->setWindowTitle("天梯榜");
+                    int playerNum=tem_rankFile.size()/(sizeof(player)*3);//定义当前玩家的数量
+                    // 构造了一个QTableWidget的对象，并且设置为10行，5列
+                    QTableWidget *tableWidget = new QTableWidget(playerNum,3,tempweight);
+                    // 也可用下面的方法构造QTableWidget对象
+                    // QTableWidget *tableWidget = new QTableWidget;
+                    // tableWidget->setRowCount(10); //设置行数为10
+                    // tableWidget->setColumnCount(5); //设置列数为5
+                    //tableWidget->setWindowTitle("QTableWidget & Item");
+                    tableWidget->resize(1350,1000); //设置表格
+                    tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);//将表格设置为只读
+
+                    tableWidget->setColumnWidth(0,450);//setColumnWidth用于设置某一列的宽度
+                    tableWidget->setColumnWidth(1,450);
+                    tableWidget->setColumnWidth(2,450);
+
+                    for(int i=0;i<playerNum;i++){
+                        tableWidget->setRowHeight(i,200);//setRowHeight用于设置某一行的高度
+                    }
+
+                    //tableWidget->setRowHeight(1,200);
+
+                    QStringList header;//表题
+                    header<<"娱乐彩蛋榜"<<"魔鬼胜率榜"<<"总场数榜";//设置表题
+                    tableWidget->setHorizontalHeaderLabels(header);
+                    /*tableWidget->setItem(0,0,new QTableWidgetItem("Jan"));
+                    tableWidget->setItem(1,0,new QTableWidgetItem("Feb"));
+                    tableWidget->setItem(2,0,new QTableWidgetItem("Mar"));
+
+                    tableWidget->setItem(0,1,new QTableWidgetItem(QIcon(":/Image/IED.png"), "Jan's month"));
+                    tableWidget->setItem(1,1,new QTableWidgetItem(QIcon(":/Image/IED.png"), "Feb's month"));
+                    tableWidget->setItem(2,1,new QTableWidgetItem(QIcon(":/Image/IED.png"), "Mar's month"));*/
+
+                    tem_rankFile.open(QIODevice::ReadOnly);
+                    for(int i=0;i<playerNum;i++){
+                        tem_rankFile.read((char*)&player3,sizeof (player));
+
+                        QTableWidgetItem *item1=new QTableWidgetItem("昵称："+QString(player3.name)+"\n娱乐场数："+QString::number(player3.entertain_number)
+                                                                     +"\n娱乐彩蛋数："+QString::number(player3.entertain_egg));
+                        if(i<3){
+                            item1->setForeground(QColor(200,111,100));//位于前三名的玩家会用红色字体显示
+                        }
+                        tableWidget->setItem(i,0,item1);//写入第一列的数据
+
+                        //delete item1;
+                        //delete item2;
+                        //delete item3;
+                    }
+
+                    for(int i=0;i<playerNum;i++){
+                        tem_rankFile.read((char*)&player3,sizeof (player));
+                        QTableWidgetItem *item2=new QTableWidgetItem("昵称："+QString(player3.name)+"\n魔鬼场数："+QString::number(player3.devil_number)
+                                                                     +"\n魔鬼胜率："+QString::number(player3.devil_rate)+"%");
+                        if(i<3){
+                            item2->setForeground(QColor(200,111,100));//位于前三名的玩家会用红色字体显示
+                        }
+                        tableWidget->setItem(i,1,item2);//写入第二列的数据
+                        //delete item1;
+                        //delete item2;
+                        //delete item3;
+                    }
+
+                    for(int i=0;i<playerNum;i++){
+                        tem_rankFile.read((char*)&player3,sizeof (player));
+                        QTableWidgetItem *item3=new QTableWidgetItem("昵称："+QString(player3.name)+"\n总场数："+QString::number(player3.entertain_number
+                                                                                                                          +player3.devil_number+player3.classic_number));
+                        if(i<3){
+                            item3->setForeground(QColor(200,111,100));//位于前三名的玩家会用红色字体显示
+                        }
+                        tableWidget->setItem(i,2,item3);//写入第三列的数据
+
+                        //delete item1;
+                        //delete item2;
+                        //delete item3;
+                    }
+                    tem_rankFile.close();
+                    tableWidget->show();
+                    tempweight->exec();
+                    tempweight->deleteLater();
+
                 }
             pace++;
             if(pace==3)
@@ -773,85 +826,6 @@ ui->label_12->setStyleSheet("color:red;");
         }
         //这部分会先于数据接收执行，原因未知
 
-
-        int playerNum=tem_rankFile.size()/(sizeof(player)*3);//定义当前玩家的数量
-        // 构造了一个QTableWidget的对象，并且设置为10行，5列
-        QTableWidget *tableWidget = new QTableWidget(playerNum,3);
-        // 也可用下面的方法构造QTableWidget对象
-        // QTableWidget *tableWidget = new QTableWidget;
-        // tableWidget->setRowCount(10); //设置行数为10
-        // tableWidget->setColumnCount(5); //设置列数为5
-        //tableWidget->setWindowTitle("QTableWidget & Item");
-        tableWidget->resize(1500, 1000); //设置表格
-        tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);//将表格设置为只读
-
-        tableWidget->setColumnWidth(0,450);//setColumnWidth用于设置某一列的宽度
-        tableWidget->setColumnWidth(1,450);
-        tableWidget->setColumnWidth(2,450);
-
-        for(int i=0;i<playerNum;i++){
-            tableWidget->setRowHeight(i,200);//setRowHeight用于设置某一行的高度
-        }
-
-        //tableWidget->setRowHeight(1,200);
-
-        QStringList header;//表题
-        header<<"娱乐彩蛋榜"<<"魔鬼胜率榜"<<"总场数榜";//设置表题
-        tableWidget->setHorizontalHeaderLabels(header);
-        /*tableWidget->setItem(0,0,new QTableWidgetItem("Jan"));
-        tableWidget->setItem(1,0,new QTableWidgetItem("Feb"));
-        tableWidget->setItem(2,0,new QTableWidgetItem("Mar"));
-
-        tableWidget->setItem(0,1,new QTableWidgetItem(QIcon(":/Image/IED.png"), "Jan's month"));
-        tableWidget->setItem(1,1,new QTableWidgetItem(QIcon(":/Image/IED.png"), "Feb's month"));
-        tableWidget->setItem(2,1,new QTableWidgetItem(QIcon(":/Image/IED.png"), "Mar's month"));*/
-
-        tem_rankFile.open(QIODevice::ReadOnly);
-        for(int i=0;i<playerNum;i++){
-            tem_rankFile.read((char*)&player3,sizeof (player));
-
-            QTableWidgetItem *item1=new QTableWidgetItem("昵称："+QString(player3.name)+"\n娱乐场数："+QString::number(player3.entertain_number)
-                                                         +"\n娱乐彩蛋数："+QString::number(player3.entertain_egg));
-            if(i<3){
-                item1->setForeground(QColor(200,111,100));//位于前三名的玩家会用红色字体显示
-            }
-            tableWidget->setItem(i,0,item1);//写入第一列的数据
-
-            //delete item1;
-            //delete item2;
-            //delete item3;
-        }
-
-        for(int i=0;i<playerNum;i++){
-            tem_rankFile.read((char*)&player3,sizeof (player));
-            QTableWidgetItem *item2=new QTableWidgetItem("昵称："+QString(player3.name)+"\n魔鬼场数："+QString::number(player3.devil_number)
-                                                         +"\n魔鬼胜率："+QString::number(player3.devil_rate)+"%");
-            if(i<3){
-                item2->setForeground(QColor(200,111,100));//位于前三名的玩家会用红色字体显示
-            }
-            tableWidget->setItem(i,1,item2);//写入第二列的数据
-
-            //delete item1;
-            //delete item2;
-            //delete item3;
-        }
-
-        for(int i=0;i<playerNum;i++){
-            tem_rankFile.read((char*)&player3,sizeof (player));
-            QTableWidgetItem *item3=new QTableWidgetItem("昵称："+QString(player3.name)+"\n总场数："+QString::number(player3.entertain_number
-                                                                                                              +player3.devil_number+player3.classic_number));
-            if(i<3){
-                item3->setForeground(QColor(200,111,100));//位于前三名的玩家会用红色字体显示
-            }
-            tableWidget->setItem(i,2,item3);//写入第三列的数据
-
-            //delete item1;
-            //delete item2;
-            //delete item3;
-        }
-
-        tableWidget->show();
-        tem_rankFile.close();
         /*QLabel* image=new QLabel(this);
         image->setStyleSheet("QLabel{border-image:url(:/rank.jpg)}");
 
@@ -1030,8 +1004,6 @@ void maze::returnhome()//mainly written by lixin  返回主界面
        ui->label_16->setDisabled(true);
        ui->label_17->hide();
        ui->label_17->setDisabled(true);
-
-
        delete xiugai;
    }
 }
