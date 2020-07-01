@@ -17,7 +17,8 @@
 #define up 8
 #define WALL -1
 #define NOTHING 2
-#define ip "127.0.0.1"
+#define ip "43.226.145.10"
+//#define ip "127.0.0.1"
 #define port 25565
 struct block
 {
@@ -66,8 +67,8 @@ struct player
     QPropertyAnimation *animation;
     square* tempegg=nullptr;
     //将地图全部置为墙
-
      int filesize=0;
+     int receivesize=0;
      int pace=0;
      QFile tem_rankFile("rank.dat");
 maze::maze(QWidget *parent)//mainly written by lixin
@@ -129,12 +130,9 @@ maze::maze(QWidget *parent)//mainly written by lixin
             {
                 file.close();
             }
-
         }
         QObject::connect(xtimer,SIGNAL(timeout()),this,SLOT(aboutus()));
         QObject::connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(mainscreen()));
-
-
         ui->label_3->hide();
         ui->label_3->setDisabled(true);
         ui->label_4->hide();
@@ -147,7 +145,6 @@ maze::maze(QWidget *parent)//mainly written by lixin
         ui->label_7->setDisabled(true);
         ui->label_8->hide();
         ui->label_8->setDisabled(true);
-
         ui->label_9->hide();
         ui->label_9->setDisabled(true);
         ui->label_10->hide();
@@ -680,13 +677,13 @@ ui->label_12->setStyleSheet("color:red;");
        {
         QString info="发送结构体"; //提示服务器数据的收发开始了
         mysocket->write(info.toUtf8());
+        tem_rankFile.open(QIODevice::WriteOnly);
         QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()mutable
         {
             qDebug()<<pace;
             QString tempstr3;
             QByteArray tempbyte;
             QString filename;
-            int receivesize=0;
             //tem_rankFile.write(tempbyte.toStdString().data());
             if(pace==0)//第一步，向服务器发送当前的玩家信息
             {
@@ -712,15 +709,18 @@ ui->label_12->setStyleSheet("color:red;");
 
             {
                     //tem_rankFile.open(QIODevice::WriteOnly);
-                    tem_rankFile.open(QIODevice::WriteOnly);
                     tempbyte=mysocket->readAll();
-                    while(receivesize<filesize)
+                    if(receivesize<filesize)
                     {
                         //tem_rankFile.open(QIODevice::WriteOnly);
                         //tempbyte=mysocket->readAll();
                         receivesize+=tem_rankFile.write(tempbyte);
                          qDebug()<<filesize<<receivesize;
+                         pace--;
                     }
+                    if(filesize<=receivesize)
+                    {
+                      pace++;
                     //file.close();                   //接收文件,循环直至接收文件大小与包头描述一致；
                     //this_thread::sleep_for(chrono::milliseconds(100))
                     QString info1="文件接收完毕";
@@ -813,11 +813,16 @@ ui->label_12->setStyleSheet("color:red;");
                     tableWidget->show();
                     tempweight->exec();
                     tempweight->deleteLater();
+                    }
 
                 }
             pace++;
             if(pace==3)
+            {
                 pace=0;
+                filesize=0;
+                receivesize=0;
+            }
         });
         }
         else
