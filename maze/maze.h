@@ -29,6 +29,8 @@
 #include <QTableView>
 #include <QStandardItemModel>
 #include<QTableWidget>
+#include<QHeaderView>
+#include<QPalette>
 #define Label_Size  30
 using namespace std;
 
