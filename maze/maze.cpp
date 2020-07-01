@@ -829,6 +829,7 @@ ui->label_12->setStyleSheet("color:red;");
                         }
                         tableWidget->setItem(i,0,item1);//写入第一列的数据
                         item1->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);//文字居中
+                        item1->setFont(QFont("SimHei",15));//设置字体
                         //delete item1;
                         //delete item2;
                         //delete item3;
@@ -851,6 +852,7 @@ ui->label_12->setStyleSheet("color:red;");
                         }
                         tableWidget->setItem(i,1,item2);//写入第二列的数据
                         item2->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);//文字居中
+                        item2->setFont(QFont("SimHei",15));//设置字体
                         //delete item1;
                         //delete item2;
                         //delete item3;
@@ -871,6 +873,7 @@ ui->label_12->setStyleSheet("color:red;");
                         }
                         tableWidget->setItem(i,2,item3);//写入第三列的数据
                         item3->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);//文字居中
+                        item3->setFont(QFont("SimHei",15));//设置字体
                         //delete item1;
                         //delete item2;
                         //delete item3;
