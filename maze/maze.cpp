@@ -17,8 +17,8 @@
 #define up 8
 #define WALL -1
 #define NOTHING 2
-#define ip "43.226.145.10"
-//#define ip "127.0.0.1"
+//#define ip "43.226.145.10"
+#define ip "127.0.0.1"
 #define port 25565
 struct block
 {
@@ -759,6 +759,48 @@ ui->label_12->setStyleSheet("color:red;");
                     QStringList header;//表题
                     header<<"娱乐彩蛋榜"<<"魔鬼胜率榜"<<"总场数榜";//设置表题
                     tableWidget->setHorizontalHeaderLabels(header);
+                    tableWidget->horizontalHeader()->setFixedHeight(150);//加宽表头
+                    QTableWidgetItem* columnHeaderItem0=tableWidget->horizontalHeaderItem(0);
+                    columnHeaderItem0->setFont(QFont("SimHei",28));//设置表头字体
+                    //columnHeaderItem0->setBackground(QColor(255,20,147));//设置表头背景颜色
+                    columnHeaderItem0->setForeground(QColor(255,20,147));//设置文字颜色
+
+                    QTableWidgetItem* columnHeaderItem1=tableWidget->horizontalHeaderItem(1);
+                    columnHeaderItem1->setFont(QFont("SimHei",28));//设置表头字体
+                    //columnHeaderItem1->setBackground(QColor(255,20,147));//设置表头背景颜色
+                    columnHeaderItem1->setForeground(QColor(0,0,139));//设置文字颜色
+
+                    QTableWidgetItem* columnHeaderItem2=tableWidget->horizontalHeaderItem(2);
+                    columnHeaderItem2->setFont(QFont("SimHei",28));//设置表头字体
+                    //columnHeaderItem2->setBackground(QColor(255,20,147));//设置表头背景颜色
+                    columnHeaderItem2->setForeground(QColor(0,0,255));//设置文字颜色
+
+                    QFont font=tableWidget->horizontalHeader()->font();
+                    font.setBold(true);
+                    tableWidget->horizontalHeader()->setFont(font);//加粗标题
+
+
+                    /*QLabel* image=new QLabel(tempweight);
+                    image->setStyleSheet("QLabel{border-image:url(:/caidan2.jpg)}");
+                    image->setGeometry(0,0,400,300);
+                    setAutoFillBackground(true);
+                    image->show();
+                    image->deleteLater();*/
+
+                    /*QPalette pal;
+                    QPixmap pixmap(":/caidan2.jpg");
+                    pal.setBrush(QPalette::Window,QBrush(pixmap));
+                    setPalette(pal);*/
+
+                    /*QPalette palette = tempweight->palette();
+
+                    palette.setBrush(QPalette::Active,QPalette::Window,QBrush(Qt::red));
+
+                    tempweight->setPalette(palette);
+
+                    tempweight->setAutoBackground(true);  */
+                    tempweight->setStyleSheet("border-image:url(:/rank_background.jpg);"); //设置背景图片
+
                     /*tableWidget->setItem(0,0,new QTableWidgetItem("Jan"));
                     tableWidget->setItem(1,0,new QTableWidgetItem("Feb"));
                     tableWidget->setItem(2,0,new QTableWidgetItem("Mar"));
@@ -770,14 +812,23 @@ ui->label_12->setStyleSheet("color:red;");
                     tem_rankFile.open(QIODevice::ReadOnly);
                     for(int i=0;i<playerNum;i++){
                         tem_rankFile.read((char*)&player3,sizeof (player));
+                        QTableWidgetItem *item1;
+                        if(QString(player3.name)==QString(player1.name)){
+                            item1=new QTableWidgetItem("昵称："+QString(player3.name)+"(本人)\n娱乐场数："+QString::number(player3.entertain_number)
+                                                                         +"\n娱乐彩蛋数："+QString::number(player3.entertain_egg));
+                            //item1->setBackground(QColor(255,228,196));
+                            item1->setForeground(QColor(0,0,255));//将玩家自己的昵称标记为蓝色
+                        }else{
+                            item1=new QTableWidgetItem("昵称："+QString(player3.name)+"\n娱乐场数："+QString::number(player3.entertain_number)
+                                                                         +"\n娱乐彩蛋数："+QString::number(player3.entertain_egg));
+                        }
 
-                        QTableWidgetItem *item1=new QTableWidgetItem("昵称："+QString(player3.name)+"\n娱乐场数："+QString::number(player3.entertain_number)
-                                                                     +"\n娱乐彩蛋数："+QString::number(player3.entertain_egg));
-                        if(i<3){
+
+                        if(i<3&&QString(player3.name)!=QString(player1.name)){
                             item1->setForeground(QColor(200,111,100));//位于前三名的玩家会用红色字体显示
                         }
                         tableWidget->setItem(i,0,item1);//写入第一列的数据
-
+                        item1->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);//文字居中
                         //delete item1;
                         //delete item2;
                         //delete item3;
@@ -785,12 +836,21 @@ ui->label_12->setStyleSheet("color:red;");
 
                     for(int i=0;i<playerNum;i++){
                         tem_rankFile.read((char*)&player3,sizeof (player));
-                        QTableWidgetItem *item2=new QTableWidgetItem("昵称："+QString(player3.name)+"\n魔鬼场数："+QString::number(player3.devil_number)
-                                                                     +"\n魔鬼胜率："+QString::number(player3.devil_rate)+"%");
-                        if(i<3){
+                        QTableWidgetItem *item2;
+                        if(QString(player3.name)==QString(player1.name)){
+                            item2=new QTableWidgetItem("昵称："+QString(player3.name)+"(本人)\n魔鬼场数："+QString::number(player3.devil_number)
+                                                       +"\n魔鬼胜率："+QString::number(player3.devil_rate*100)+"%");
+                            //item2->setBackground(QColor(255,228,196));
+                            item2->setForeground(QColor(0,0,255));//将玩家自己的昵称标记为蓝色
+                        }else{
+                            item2=new QTableWidgetItem("昵称："+QString(player3.name)+"\n魔鬼场数："+QString::number(player3.devil_number)
+                                                       +"\n魔鬼胜率："+QString::number(player3.devil_rate*100)+"%");
+                        }
+                        if(i<3&&QString(player3.name)!=QString(player1.name)){
                             item2->setForeground(QColor(200,111,100));//位于前三名的玩家会用红色字体显示
                         }
                         tableWidget->setItem(i,1,item2);//写入第二列的数据
+                        item2->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);//文字居中
                         //delete item1;
                         //delete item2;
                         //delete item3;
@@ -798,13 +858,19 @@ ui->label_12->setStyleSheet("color:red;");
 
                     for(int i=0;i<playerNum;i++){
                         tem_rankFile.read((char*)&player3,sizeof (player));
-                        QTableWidgetItem *item3=new QTableWidgetItem("昵称："+QString(player3.name)+"\n总场数："+QString::number(player3.entertain_number
-                                                                                                                          +player3.devil_number+player3.classic_number));
-                        if(i<3){
+                        QTableWidgetItem *item3;
+                        if(QString(player3.name)==QString(player1.name)){
+                            item3=new QTableWidgetItem("昵称："+QString(player3.name)+"(本人)\n总场数："+QString::number(player3.devil_number+player3.classic_number+player3.entertain_number));
+                            //item3->setBackground(QColor(255,228,196));
+                            item3->setForeground(QColor(0,0,255));//将玩家自己的昵称标记为蓝色
+                        }else{
+                            item3=new QTableWidgetItem("昵称："+QString(player3.name)+"\n总场数："+QString::number(player3.devil_number+player3.classic_number+player3.entertain_number));
+                        }
+                        if(i<3&&QString(player3.name)!=QString(player1.name)){
                             item3->setForeground(QColor(200,111,100));//位于前三名的玩家会用红色字体显示
                         }
                         tableWidget->setItem(i,2,item3);//写入第三列的数据
-
+                        item3->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);//文字居中
                         //delete item1;
                         //delete item2;
                         //delete item3;
