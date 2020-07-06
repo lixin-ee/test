@@ -488,7 +488,7 @@ void maze::aboutme_()
     ui->label_17->show();
     ui->label_17->setDisabled(false);
 
-ui->label_17->setStyleSheet("QLabel{border-image:url(:/back3.jpg);}");
+ui->label_17->setStyleSheet("QLabel{border-image:url(:/preview.jpg);}");
 ui->label_17->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
 
 ui->label_10->setStyleSheet("color:red;");

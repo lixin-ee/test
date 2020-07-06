@@ -67,5 +67,6 @@
         <file>back2.jpg</file>
         <file>back3.jpg</file>
         <file>rank_background.jpg</file>
+        <file>preview.jpg</file>
     </qresource>
 </RCC>
