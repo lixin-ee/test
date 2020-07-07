@@ -163,6 +163,24 @@ maze::maze(QWidget *parent)//mainly written by lixin
         ui->label_16->setDisabled(true);
        ui->label_17->hide();
         ui->label_17->setDisabled(true);
+        ui->label_18->hide();
+        ui->label_18->setDisabled(true);
+        ui->label_19->hide();
+        ui->label_19->setDisabled(true);
+        ui->label_20->hide();
+        ui->label_20->setDisabled(true);
+        ui->label_21->hide();
+        ui->label_21->setDisabled(true);
+        ui->label_22->hide();
+        ui->label_22->setDisabled(true);
+        ui->label_23->hide();
+        ui->label_23->setDisabled(true);
+        ui->label_24->hide();
+        ui->label_24->setDisabled(true);
+        ui->label_25->hide();
+        ui->label_25->setDisabled(true);
+        ui->label_26->hide();
+        ui->label_26->setDisabled(true);
 }
 /*void maze::exit()
 {
@@ -488,15 +506,35 @@ void maze::aboutme_()
     ui->label_17->show();
     ui->label_17->setDisabled(false);
 
+    ui->label_18->show();
+    ui->label_18->setDisabled(false);
+    ui->label_19->show();
+    ui->label_19->setDisabled(false);
+    ui->label_20->show();
+    ui->label_20->setDisabled(false);
+    ui->label_21->show();
+    ui->label_21->setDisabled(false);
+    ui->label_22->show();
+    ui->label_22->setDisabled(false);
+    ui->label_23->show();
+    ui->label_23->setDisabled(false);
+    ui->label_24->show();
+    ui->label_24->setDisabled(false);
+    ui->label_25->show();
+    ui->label_25->setDisabled(false);
+    ui->label_26->show();
+    ui->label_26->setDisabled(false);
+
+
 ui->label_17->setStyleSheet("QLabel{border-image:url(:/preview.jpg);}");
 ui->label_17->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
 
-ui->label_10->setStyleSheet("color:red;");
+ui->label_10->setStyleSheet("color:yellow;");
 ui->label_12->setStyleSheet("color:red;");
-//ui->label_9->setStyleSheet("color:yellow;");
-//ui->label_13->setStyleSheet("color:yellow;");
-//ui->label_3->setStyleSheet("color:green;");
-//ui->label_4->setStyleSheet("color:green;");
+ui->label_9->setStyleSheet("color:yellow;");
+ui->label_13->setStyleSheet("color:blue;");
+ui->label_3->setStyleSheet("color:green;");
+ui->label_4->setStyleSheet("color:yellow;");
 
     Return=new QPushButton(this);
     Return->setFocusPolicy(Qt::NoFocus);
@@ -513,7 +551,7 @@ ui->label_12->setStyleSheet("color:red;");
     start3->hide();
     start3->setDisabled(true);
     xiugai=new QPushButton("修改昵称",this);
-    xiugai->setGeometry(MX*Label_Size/2+90,MY*Label_Size/2-310,100,40);//位置之后自己调节；
+    xiugai->setGeometry(MX*Label_Size-180,MY*Label_Size/2-325,100,40);//位置之后自己调节；
     xiugai->show();
 
     ui->label_11->setText((QString)player1.name);
@@ -523,6 +561,10 @@ ui->label_12->setStyleSheet("color:red;");
     ui->label_15->setText(QString::number(player1.classic_rate*100)+"%");
     ui->label_16->setText(QString::number(player1.entertain_egg));
     ui->label_14->setText(QString::number(player1.devil_rate*100)+"%");
+
+    ui->label_24->setText(QString::number(player1.classic_number+player1.entertain_number+player1.devil_number));
+    ui->label_25->setText(QString::number(player1.classic_vic));
+    ui->label_26->setText(QString::number(player1.devil_vic));
 
     QObject::connect(xiugai,&QPushButton::clicked,[&]()
        {
@@ -1078,6 +1120,25 @@ void maze::returnhome()//mainly written by lixin  返回主界面
        ui->label_16->setDisabled(true);
        ui->label_17->hide();
        ui->label_17->setDisabled(true);
+       ui->label_18->hide();
+       ui->label_18->setDisabled(true);
+       ui->label_19->hide();
+       ui->label_19->setDisabled(true);
+       ui->label_20->hide();
+       ui->label_20->setDisabled(true);
+       ui->label_21->hide();
+       ui->label_21->setDisabled(true);
+       ui->label_22->hide();
+       ui->label_22->setDisabled(true);
+       ui->label_23->hide();
+       ui->label_23->setDisabled(true);
+       ui->label_24->hide();
+       ui->label_24->setDisabled(true);
+       ui->label_25->hide();
+       ui->label_25->setDisabled(true);
+       ui->label_26->hide();
+       ui->label_26->setDisabled(true);
+
        delete xiugai;
    }
 }
