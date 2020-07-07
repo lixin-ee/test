@@ -661,6 +661,7 @@ ui->label_4->setStyleSheet("color:yellow;");
                               {
                                   QCoreApplication::processEvents();
                               }
+                              ui->label_11->setText(tempstr1);
                               mysocket->deleteLater();
                             }//成功
 
