@@ -1,6 +1,6 @@
 #ifndef MAZE_H
 #define MAZE_H
-
+#define Label_Size 30
 #include<QLineEdit>
 #include <QWidget>
 #include<QMovie>
@@ -31,7 +31,7 @@
 #include<QTableWidget>
 #include<QHeaderView>
 #include<QPalette>
-#define Label_Size  30
+
 using namespace std;
 
 QT_BEGIN_NAMESPACE
@@ -89,7 +89,9 @@ private slots:
     void rank_();
     void aboutme_();
     //void exit();
-  private:
+    void on_pushButton_2_clicked();
+
+private:
     Ui::maze *ui;
     QPushButton* setting;
     QTimer* counttimer;
@@ -136,7 +138,7 @@ private slots:
     QString name;
     QTcpSocket* mysocket;
     QPushButton* xiugai;
-
+    bool isyouke=false;
 };
 static int gamesta=0;
 static int havehammer=0;

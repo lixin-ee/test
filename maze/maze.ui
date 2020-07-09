@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1402</width>
-    <height>658</height>
+    <width>1465</width>
+    <height>854</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -39,8 +39,19 @@
      <height>61</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Bahnschrift SemiBold</family>
+     <pointsize>22</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(170, 0, 0)</string>
+   </property>
    <property name="text">
-    <string>登录</string>
+    <string>注册</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -51,6 +62,9 @@
      <width>111</width>
      <height>61</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(0, 85, 127)</string>
    </property>
    <property name="text">
     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -69,6 +83,9 @@ p, li { white-space: pre-wrap; }
      <height>51</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">font: 75 italic 24pt &quot;Adobe Devanagari&quot;;</string>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -81,6 +98,9 @@ p, li { white-space: pre-wrap; }
      <width>391</width>
      <height>101</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(85, 0, 127)</string>
    </property>
    <property name="text">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:22pt;&quot;&gt;（昵称字数在五个以内）&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -281,7 +301,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>1030</x>
+     <x>1010</x>
      <y>30</y>
      <width>110</width>
      <height>90</height>
@@ -308,19 +328,25 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="font">
     <font>
-     <family>Segoe Script</family>
+     <family>Arial</family>
      <pointsize>15</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
     </font>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(170, 85, 127)</string>
+   </property>
    <property name="text">
-    <string>TextLabel</string>
+    <string>哈哈</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_17">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>-10</y>
+     <x>210</x>
+     <y>220</y>
      <width>1241</width>
      <height>691</height>
     </rect>
@@ -491,6 +517,50 @@ p, li { white-space: pre-wrap; }
     <string>魔</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>740</y>
+     <width>211</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>24</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(0, 85, 255)</string>
+   </property>
+   <property name="text">
+    <string>游客模式</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="textEdit">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>60</y>
+     <width>611</width>
+     <height>511</height>
+    </rect>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'SimSun'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt; color:#005500;&quot;&gt;广而告之：服务器常开时间段为11.00-22.00，当然有时候可能忘了开也说不准，玩家只需在第一次时注册之后打开游戏便可直接进入游戏主界面，如果不巧，服务器没开，你又没注册，那只能进入游客模式，游客模式无法查看个人场次等信息，亦无法参与天梯榜。&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt; color:#aa007f;&quot;&gt;关于游戏规则：本游戏只是一次界面设计编程以及网络信息传输的尝试，对游戏规则的思考并不深入，我亦深知有多种途径可以刷分，但又有什么必要呢，各位不必纠结于游戏规则，更不必纠结于天梯榜的排名，就只是尝试这玩一下就好。&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt; color:#00007f;&quot;&gt;最后感谢你尝试本游戏,如果你发现什么bug，或者有什么疑问，亦或者是有好的想法，都可以向任何一个我的队友以及我提出，当然男（mei）女（zi）平（you）等（xian），欢迎各位的反（tu）馈（cao）。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
   <zorder>label_17</zorder>
   <zorder>pushButton</zorder>
   <zorder>label</zorder>
@@ -511,6 +581,8 @@ p, li { white-space: pre-wrap; }
   <zorder>label_24</zorder>
   <zorder>label_25</zorder>
   <zorder>label_26</zorder>
+  <zorder>pushButton_2</zorder>
+  <zorder>textEdit</zorder>
  </widget>
  <resources/>
  <connections/>

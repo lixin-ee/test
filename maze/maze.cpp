@@ -17,9 +17,9 @@
 #define up 8
 #define WALL -1
 #define NOTHING 2
-//#define ip "43.226.145.10"
 #define ip "127.0.0.1"
 #define port 25565
+
 struct block
 {
         int row, column, direction;
@@ -65,6 +65,8 @@ struct player
     int needJiaHint=1;
     QLabel* xlabel;
     QPropertyAnimation *animation;
+    int tempMX;
+    int tempMY;
     square* tempegg=nullptr;
     //将地图全部置为墙
      int filesize=0;
@@ -81,12 +83,15 @@ maze::maze(QWidget *parent)//mainly written by lixin
         screen_height = mm.height();
         int temp1=0.7*screen_width/(Label_Size*2);
         MX=2*temp1+1;
+        tempMX=MX;
         temp1=0.9*screen_height/(Label_Size*2);
         MY=2*temp1-1;
+        tempMY=MY;
         Clabel=new QLabel(this);
         Clabel->setStyleSheet("QLabel{border-image:url(:/cover.jpg);}");
-        Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
         ui->setupUi(this);
+        this->setFixedSize(this->width(),this->height());
+        Clabel->setGeometry(0,0,this->width(),this->height());
         setWindowIcon(QIcon(":/tubiao.ico"));
         //ui->tableWidget->hide();
         setWindowTitle("maze521");
@@ -109,17 +114,7 @@ maze::maze(QWidget *parent)//mainly written by lixin
                 }
         else
         {
-            /*file.read(reinterpret_cast<char*>(&player1),sizeof(player));
-            file.close();
-            if(player1.determine2())
-            {
 
-            }
-            else
-            {
-                denglu=1;
-                mainscreen();
-            }*/
             if(file.read(reinterpret_cast<char*>(&player1),sizeof(player)))
             {
                 file.close();
@@ -161,7 +156,7 @@ maze::maze(QWidget *parent)//mainly written by lixin
         ui->label_15->setDisabled(true);
         ui->label_16->hide();
         ui->label_16->setDisabled(true);
-       ui->label_17->hide();
+        ui->label_17->hide();
         ui->label_17->setDisabled(true);
         ui->label_18->hide();
         ui->label_18->setDisabled(true);
@@ -218,15 +213,16 @@ void maze::mainscreen()
     if(!denglu)
     {
         if(ui->lineEdit->text()==NULL)
-        {
+      {
             QMessageBox::information(NULL,"注册","昵称不能为空");//提示不能为空，messagebox怎么用，去看expclient里面我用过
-        }
+      }
+        else
+      {
         if(ui->lineEdit->text().count()>5)
         {
             QMessageBox::information(NULL,"注册","昵称字数超过5，请重新输入");
         }
-        else
-        {
+        else{
             mysocket=new QTcpSocket(this);
             mysocket->connectToHost(ip,port);
             QString tempstr='<'+ui->lineEdit->text()+'>';
@@ -299,10 +295,9 @@ void maze::mainscreen()
                 QMessageBox::information(NULL,"服务器连接","服务器连接失败/(ㄒoㄒ)/~~，请稍后再试！！");
             }
 
-
-        }
-    }
-
+         }
+     }
+}
     if(denglu)
     {
     start1=new QPushButton(this);
@@ -310,37 +305,37 @@ void maze::mainscreen()
     start3=new QPushButton(this);
     setting=new QPushButton(this);
     presentation=new QPushButton(this);
-    rank=new QPushButton(this);
-    aboutme=new QPushButton(this);
     ui->label_2->hide();
     ui->label->setDisabled(true);
     ui->label->hide();
     ui->lineEdit->hide();
     ui->pushButton->hide();
+    ui->pushButton_2->hide();
+    ui->pushButton_2->setDisabled(true);
+    ui->textEdit->hide();
     ui->pushButton->setDisabled(true);
-    resizewindow();
+    if(!isyouke)
+    {
+    rank=new QPushButton(this);
+    aboutme=new QPushButton(this);
+    QObject::connect(aboutme,SIGNAL(clicked()),this,SLOT(aboutme_()));
+    QObject::connect(rank,SIGNAL(clicked()),this, SLOT(rank_()));
     rank->show();
-    rank->setDisabled(false);
     aboutme->show();
-    aboutme->setDisabled(false);
-    setting->show();
-    setting->setDisabled(false);
+    }
     start1->show();
-    start1->setDisabled(false);
     start2->show();
-    start2->setDisabled(false);
     start3->show();
-    start3->setDisabled(false);
+    setting->show();
     presentation->show();
-    presentation->setDisabled(false);
+    resizewindow();
     QObject::connect(start1,SIGNAL(clicked()),this,SLOT(startgame1()));
     QObject::connect(start2,SIGNAL(clicked()),this,SLOT(startgame2()));
     QObject::connect(start3,SIGNAL(clicked()),this,SLOT(startgame3()));
     QObject::connect(setting,SIGNAL(clicked()),this,SLOT(settingslot()));
     QObject::connect(presentation,SIGNAL(clicked()),this,SLOT(present()));
-    QObject::connect(aboutme,SIGNAL(clicked()),this,SLOT(aboutme_()));
-    QObject::connect(rank,SIGNAL(clicked()),this, SLOT(rank_()));
     }
+
 }
 void maze::aboutus()//mainly written by lixin
 {
@@ -462,6 +457,7 @@ void maze::startgame1()//mainly written by lixin
 void maze::aboutme_()
 {
     gamesta=5;
+    this->setFixedSize(tempMX*Label_Size,(tempMY+2)*Label_Size);
     rank->hide();
     rank->setDisabled(true);
     aboutme->hide();
@@ -527,7 +523,7 @@ void maze::aboutme_()
 
 
 ui->label_17->setStyleSheet("QLabel{border-image:url(:/preview.jpg);}");
-ui->label_17->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+ui->label_17->setGeometry(0,0,tempMX*Label_Size,tempMY*Label_Size);
 
 ui->label_10->setStyleSheet("color:yellow;");
 ui->label_12->setStyleSheet("color:red;");
@@ -538,7 +534,7 @@ ui->label_4->setStyleSheet("color:yellow;");
 
     Return=new QPushButton(this);
     Return->setFocusPolicy(Qt::NoFocus);
-    Return->setGeometry(0,MY*Label_Size,2*Label_Size,2*Label_Size);
+    Return->setGeometry(0,tempMY*Label_Size,2*Label_Size,2*Label_Size);
     Return->setStyleSheet("QPushButton{border-image:url(:/return.png);}"
                           "QPushButton:hover{border-image:url(:/return2.png);}"
                            );
@@ -551,7 +547,7 @@ ui->label_4->setStyleSheet("color:yellow;");
     start3->hide();
     start3->setDisabled(true);
     xiugai=new QPushButton("修改昵称",this);
-    xiugai->setGeometry(MX*Label_Size-180,MY*Label_Size/2-325,100,40);//位置之后自己调节；
+    xiugai->setGeometry(tempMX*Label_Size-180,tempMY*Label_Size/2-325,100,40);//位置之后自己调节；
     xiugai->show();
 
     ui->label_11->setText((QString)player1.name);
@@ -776,7 +772,7 @@ ui->label_4->setStyleSheet("color:yellow;");
                     mysocket->deleteLater();
 
                     QDialog * tempweight=new QDialog(this);
-                    tempweight->setFixedSize(1350,1000);
+                    tempweight->setFixedSize(900,600);
                     tempweight->setWindowTitle("天梯榜");
                     int playerNum=tem_rankFile.size()/(sizeof(player)*3);//定义当前玩家的数量
                     // 构造了一个QTableWidget的对象，并且设置为10行，5列
@@ -786,15 +782,15 @@ ui->label_4->setStyleSheet("color:yellow;");
                     // tableWidget->setRowCount(10); //设置行数为10
                     // tableWidget->setColumnCount(5); //设置列数为5
                     //tableWidget->setWindowTitle("QTableWidget & Item");
-                    tableWidget->resize(1350,1000); //设置表格
+                    tableWidget->resize(900,600); //设置表格
                     tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);//将表格设置为只读
 
-                    tableWidget->setColumnWidth(0,450);//setColumnWidth用于设置某一列的宽度
-                    tableWidget->setColumnWidth(1,450);
-                    tableWidget->setColumnWidth(2,450);
+                    tableWidget->setColumnWidth(0,300);//setColumnWidth用于设置某一列的宽度
+                    tableWidget->setColumnWidth(1,300);
+                    tableWidget->setColumnWidth(2,300);
 
                     for(int i=0;i<playerNum;i++){
-                        tableWidget->setRowHeight(i,200);//setRowHeight用于设置某一行的高度
+                        tableWidget->setRowHeight(i,100);//setRowHeight用于设置某一行的高度
                     }
 
                     //tableWidget->setRowHeight(1,200);
@@ -960,10 +956,13 @@ ui->label_4->setStyleSheet("color:yellow;");
 
 void maze::initgame()//mainly written by lixin 初始化游戏界面
 {
+    if(!isyouke)
+    {
     rank->hide();
     rank->setDisabled(true);
     aboutme->hide();
     aboutme->setDisabled(true);
+    }
     Clabel->hide();
     Clabel->setDisabled(true);
     setting->hide();
@@ -1063,11 +1062,6 @@ void maze::returnhome()//mainly written by lixin  返回主界面
         {player1.classic_rate=double(player1.classic_vic)/double(player1.classic_number);}
         if(player1.devil_number!=0)
         {player1.devil_rate=double(player1.devil_vic)/double(player1.devil_number);}
-        if(file.open(QIODevice::WriteOnly))
-        {
-            file.write(reinterpret_cast<char*>(&player1),sizeof(player1));
-            file.close();
-        }
  }
    delete Return;
    Clabel->show();
@@ -1082,15 +1076,16 @@ void maze::returnhome()//mainly written by lixin  返回主界面
    start3->setDisabled(false);
    presentation->show();
    presentation->setDisabled(false);
+   if(!isyouke)
+   {
    rank->show();
    rank->setDisabled(false);
    aboutme->show();
    aboutme->setDisabled(false);
-
-
+   }
    if(gamesta==5)
    {
-
+       this->setFixedSize(MX*Label_Size,(MY+2)*Label_Size);
        ui->label_3->hide();
        ui->label_3->setDisabled(true);
        ui->label_4->hide();
@@ -1139,7 +1134,6 @@ void maze::returnhome()//mainly written by lixin  返回主界面
        ui->label_25->setDisabled(true);
        ui->label_26->hide();
        ui->label_26->setDisabled(true);
-
        delete xiugai;
    }
 }
@@ -3254,6 +3248,8 @@ void maze::resizewindow()//mainly written by lixin
         setFixedSize((MX)*Label_Size,(MY+2)*Label_Size);
     Clabel->setStyleSheet("QLabel{border-image:url(:/cover.jpg);}");
     Clabel->setGeometry(0,0,MX*Label_Size,MY*Label_Size);
+    if(!isyouke)
+    {
     rank->setGeometry(MX*Label_Size-2*Label_Size,MY*Label_Size,2*Label_Size,2*Label_Size);
     rank->setStyleSheet("QPushButton{border-image:url(:/rank.png);}"
                         "QPushButton:hover{border-image:url(:/rank1.png);}"
@@ -3262,6 +3258,7 @@ void maze::resizewindow()//mainly written by lixin
     aboutme->setStyleSheet("QPushButton{border-image:url(:/aboutme.png);}"
                         "QPushButton:hover{border-image:url(:/aboutme1.png);}"
                          "QPushButton:pressed{border-image:url(:/aboutme2.png);}");
+    }
     start1->setGeometry(MX * Label_Size / 2-width()/10 ,MY * Label_Size / 2,width()/5,2*height()/15);
     start1->setStyleSheet("QPushButton{border-image:url(:/m1.png);}"
                           "QPushButton:hover{border-image:url(:/m12.png);}"
@@ -3282,6 +3279,16 @@ void maze::resizewindow()//mainly written by lixin
     presentation->setStyleSheet("QPushButton{border-image:url(:/present.png);}"
                                 "QPushButton:hover{border-image:url(:/present2.png);}"
                                  "QPushButton:pressed{border-image:url(:/present1.png);}");
+}
+
+void maze::on_pushButton_2_clicked()
+{
+    isyouke=true;
+    denglu=true;
+    mainscreen();
+    ui->pushButton_2->hide();
+    ui->pushButton_2->setDisabled(true);
+    ui->textEdit->hide();
 }
 maze::~maze()//mainly written by lixin
 {
@@ -3318,4 +3325,5 @@ maze::~maze()//mainly written by lixin
      }
     delete [] allsquare;}
 }
+
 
