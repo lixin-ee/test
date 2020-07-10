@@ -17,8 +17,10 @@
 #define up 8
 #define WALL -1
 #define NOTHING 2
-#define ip "127.0.0.1"
-#define port 25565
+#define ip "182.254.145.163"
+//#define ip "127.0.0.1"
+//#define port 25565
+#define port 24798
 
 struct block
 {
@@ -54,7 +56,7 @@ struct player
     block temp2(0,0,0);
     int td=0;
     int G[100][100];
-    int ptime=500;
+    int ptime=20;
     int xtime=5000;
     int xcount=1;
     int xx=0;
@@ -94,7 +96,7 @@ maze::maze(QWidget *parent)//mainly written by lixin
         Clabel->setGeometry(0,0,this->width(),this->height());
         setWindowIcon(QIcon(":/tubiao.ico"));
         //ui->tableWidget->hide();
-        setWindowTitle("maze521");
+        setWindowTitle("maze521.v2.0");
         mousegif=new QMovie(":/mouse1.gif");
         QSize s1(Label_Size+5,Label_Size+5);
         catgif=new QMovie(":/cat2.gif");
@@ -468,7 +470,6 @@ void maze::aboutme_()
     setting->setDisabled(true);
     presentation->hide();
     presentation->setDisabled(true);
-
 
     ui->label_3->show();
     ui->label_3->setDisabled(false);
