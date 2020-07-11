@@ -266,17 +266,16 @@ void maze::mainscreen()
                delete mysocket;
                mysocket=new QTcpSocket(this);
                mysocket->connectToHost(ip,port);
-           }
-           temptimer->start(3000);
-            while(mysocket->state()!=QAbstractSocket::ConnectedState)
-            {
-                if(temptimer->remainingTime()==0)
+               temptimer->start(3000);
+                while(mysocket->state()!=QAbstractSocket::ConnectedState)
                 {
-                    break;
+                    if(temptimer->remainingTime()==0)
+                    {
+                        break;
+                    }
+                    QCoreApplication::processEvents();
                 }
-                QCoreApplication::processEvents();
-            }
-
+           }
             if(mysocket->state()==QAbstractSocket::ConnectedState)
             {
                 qDebug()<<"hah";
@@ -664,16 +663,17 @@ ui->label_4->setStyleSheet("color:yellow;");
                        delete mysocket;
                        mysocket=new QTcpSocket(this);
                        mysocket->connectToHost(ip,port);
-                   }
-                   temptimer->start(3000);
-                    while(mysocket->state()!=QAbstractSocket::ConnectedState)
-                    {
-                        if(temptimer->remainingTime()==0)
+                       temptimer->start(3000);
+                        while(mysocket->state()!=QAbstractSocket::ConnectedState)
                         {
-                            break;
+                            if(temptimer->remainingTime()==0)
+                            {
+                                break;
+                            }
+                            QCoreApplication::processEvents();
                         }
-                        QCoreApplication::processEvents();
-                    }
+                   }
+
                     if(mysocket->state()==QAbstractSocket::ConnectedState)
                     {
                         mysocket->write(tempstr.toUtf8());
@@ -767,7 +767,8 @@ ui->label_4->setStyleSheet("color:yellow;");
         });
         while(temptimer->remainingTime()!=20)
         {
-          if(mysocket->state()==QAbstractSocket::UnconnectedState) break;
+          if(mysocket->state()==QAbstractSocket::UnconnectedState)
+          {break;}
           QCoreApplication::processEvents();
         }
        if(mysocket->state()==QAbstractSocket::ConnectedState)
@@ -776,16 +777,16 @@ ui->label_4->setStyleSheet("color:yellow;");
            delete mysocket;
            mysocket=new QTcpSocket(this);
            mysocket->connectToHost(ip,port);
-       }
-       temptimer->start(3000);
-        while(mysocket->state()!=QAbstractSocket::ConnectedState)
-        {
-            if(temptimer->remainingTime()==0)
+            while(mysocket->state()!=QAbstractSocket::ConnectedState)
             {
-                break;
+                if(temptimer->remainingTime()==0)
+                {
+                    break;
+                }
+                QCoreApplication::processEvents();
             }
-            QCoreApplication::processEvents();
-        }
+       }
+
         //QTemporaryFile tem_rankFile;//创建临时文件，用于接收服务器发送的排行榜的消息
         //tem_rankFile.open();
         if(mysocket->state()==QAbstractSocket::ConnectedState)
