@@ -225,13 +225,12 @@ void maze::mainscreen()
             QMessageBox::information(NULL,"注册","昵称字数超过5，请重新输入");
         }
         else{
+            QString tempstr='<'+ui->lineEdit->text()+'>';
             mysocket=new QTcpSocket(this);
             mysocket->connectToHost(ip,port);
-            QString tempstr='<'+ui->lineEdit->text()+'>';
-
             QDialog* wait=new QDialog(this);
             QTimer* temptimer=new QTimer(wait);
-            temptimer->start(2000);
+            temptimer->start(3000);
             wait->resize(200,200);
             wait->setWindowOpacity(0.8);
             wait->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
@@ -245,6 +244,30 @@ void maze::mainscreen()
             templabel1->show();
             jiazaigif->start();
             wait->show();
+            mysocket->write("hahh");
+            QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()mutable
+            {
+               QString tempb=mysocket->readAll();
+               if(tempb.startsWith("HTTP"))
+               {
+                  mysocket->close();
+                  delete mysocket;
+                  mysocket=new QTcpSocket(this);
+               }
+            });
+            while(temptimer->remainingTime()!=20)
+            {
+              if(mysocket->state()==QAbstractSocket::UnconnectedState) break;
+              QCoreApplication::processEvents();
+            }
+           if(mysocket->state()==QAbstractSocket::ConnectedState)
+           {
+               mysocket->close();
+               delete mysocket;
+               mysocket=new QTcpSocket(this);
+               mysocket->connectToHost(ip,port);
+           }
+           temptimer->start(3000);
             while(mysocket->state()!=QAbstractSocket::ConnectedState)
             {
                 if(temptimer->remainingTime()==0)
@@ -253,12 +276,12 @@ void maze::mainscreen()
                 }
                 QCoreApplication::processEvents();
             }
-            wait->close();
-            delete wait;
+
             if(mysocket->state()==QAbstractSocket::ConnectedState)
             {
+                qDebug()<<"hah";
                 mysocket->write(tempstr.toUtf8());
-                QObject::connect(mysocket,&QTcpSocket::readyRead,[&]()
+                QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()
                 {
                     QByteArray tempbyte=mysocket->readAll();
                     //报服务器检查是否可注册
@@ -270,8 +293,10 @@ void maze::mainscreen()
                         while(mysocket->state()!=QAbstractSocket::UnconnectedState)
                         {
                             QCoreApplication::processEvents();
+                            qDebug()<<1;
                         }
-                        mysocket->deleteLater();
+                        wait->close();
+                        delete wait;
                     }//失败
                     if(tempbyte=="注册成功")
                     {
@@ -285,18 +310,20 @@ void maze::mainscreen()
                       {
                           QCoreApplication::processEvents();
                       }
+                      wait->close();
+                      delete wait;
                       denglu=1;
                       mainscreen();
-                      mysocket->deleteLater();
                     }//成功
-
                 });
             }
             else
             {
+                delete mysocket;
+                wait->close();
+                delete wait;
                 QMessageBox::information(NULL,"服务器连接","服务器连接失败/(ㄒoㄒ)/~~，请稍后再试！！");
             }
-
          }
      }
 }
@@ -593,17 +620,15 @@ ui->label_4->setStyleSheet("color:yellow;");
                 }
                 else
                 {
-                    qDebug()<<"2"<<"lianji";
-                    mysocket=new QTcpSocket(this);
-                    mysocket->connectToHost(ip,port);
-                    mysocket->open(QIODevice::ReadWrite);
                     QString tempstr="修改昵称#"+QString(player1.name)+'#'+tempstr1;
                     //
                     //bool* lianjie=new bool(false);
-
+                    qDebug()<<"2"<<"lianji";
+                    mysocket=new QTcpSocket(this);
+                    mysocket->connectToHost(ip,port);
                     QDialog* wait=new QDialog(this);
                     QTimer* temptimer=new QTimer(wait);
-                    temptimer->start(2000);
+                    temptimer->start(3000);
                     wait->resize(200,200);
                     wait->setWindowOpacity(0.8);
                     wait->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
@@ -617,6 +642,30 @@ ui->label_4->setStyleSheet("color:yellow;");
                     templabel1->show();
                     jiazaigif->start();
                     wait->show();
+                    mysocket->write("hahh");
+                    QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()mutable
+                    {
+                       QString tempb=mysocket->readAll();
+                       if(tempb.startsWith("HTTP"))
+                       {
+                          mysocket->close();
+                          delete mysocket;
+                          mysocket=new QTcpSocket(this);
+                       }
+                    });
+                    while(temptimer->remainingTime()!=20)
+                    {
+                      if(mysocket->state()==QAbstractSocket::UnconnectedState) break;
+                      QCoreApplication::processEvents();
+                    }
+                   if(mysocket->state()==QAbstractSocket::ConnectedState)
+                   {
+                       mysocket->close();
+                       delete mysocket;
+                       mysocket=new QTcpSocket(this);
+                       mysocket->connectToHost(ip,port);
+                   }
+                   temptimer->start(3000);
                     while(mysocket->state()!=QAbstractSocket::ConnectedState)
                     {
                         if(temptimer->remainingTime()==0)
@@ -625,8 +674,6 @@ ui->label_4->setStyleSheet("color:yellow;");
                         }
                         QCoreApplication::processEvents();
                     }
-                    wait->close();
-                    delete wait;
                     if(mysocket->state()==QAbstractSocket::ConnectedState)
                     {
                         mysocket->write(tempstr.toUtf8());
@@ -645,6 +692,8 @@ ui->label_4->setStyleSheet("color:yellow;");
                                    QCoreApplication::processEvents();
                                }
                                mysocket->deleteLater();
+                               wait->close();
+                               delete wait;
                                 //提示名称重复
                             }//失败
                             if(tempbyte=="修改成功")
@@ -660,6 +709,8 @@ ui->label_4->setStyleSheet("color:yellow;");
                               }
                               ui->label_11->setText(tempstr1);
                               mysocket->deleteLater();
+                              wait->close();
+                              delete wait;
                             }//成功
 
                         });
@@ -667,6 +718,9 @@ ui->label_4->setStyleSheet("color:yellow;");
                     }
                     else
                     {
+                        delete mysocket;
+                        wait->close();
+                        delete wait;
                         QMessageBox::information(NULL,"服务器连接","服务器连接失败/(ㄒoㄒ)/~~，请稍后再试！！");
                     }
                 }
@@ -683,10 +737,10 @@ ui->label_4->setStyleSheet("color:yellow;");
 
     {
         mysocket=new QTcpSocket(this);
-        mysocket->connectToHost(ip,port);
+        mysocket->connectToHost(ip,port); 
         QDialog* wait=new QDialog(this);
         QTimer* temptimer=new QTimer(wait);
-        temptimer->start(1000);
+        temptimer->start(3000);
         wait->resize(200,200);
         wait->setWindowOpacity(0.8);
         wait->setWindowFlags(Qt::Dialog|Qt::FramelessWindowHint);
@@ -700,6 +754,30 @@ ui->label_4->setStyleSheet("color:yellow;");
         templabel1->show();
         jiazaigif->start();
         wait->show();
+        mysocket->write("hahh");
+        QObject::connect(mysocket,&QTcpSocket::readyRead,[=]()mutable
+        {
+           QString tempb=mysocket->readAll();
+           if(tempb.startsWith("HTTP"))
+           {
+              mysocket->close();
+              delete mysocket;
+              mysocket=new QTcpSocket(this);
+           }
+        });
+        while(temptimer->remainingTime()!=20)
+        {
+          if(mysocket->state()==QAbstractSocket::UnconnectedState) break;
+          QCoreApplication::processEvents();
+        }
+       if(mysocket->state()==QAbstractSocket::ConnectedState)
+       {
+           mysocket->close();
+           delete mysocket;
+           mysocket=new QTcpSocket(this);
+           mysocket->connectToHost(ip,port);
+       }
+       temptimer->start(3000);
         while(mysocket->state()!=QAbstractSocket::ConnectedState)
         {
             if(temptimer->remainingTime()==0)
@@ -708,13 +786,10 @@ ui->label_4->setStyleSheet("color:yellow;");
             }
             QCoreApplication::processEvents();
         }
-        wait->close();
-        delete wait;
-
         //QTemporaryFile tem_rankFile;//创建临时文件，用于接收服务器发送的排行榜的消息
         //tem_rankFile.open();
         if(mysocket->state()==QAbstractSocket::ConnectedState)
-       {
+        {
         QString info="发送结构体"; //提示服务器数据的收发开始了
         mysocket->write(info.toUtf8());
         tem_rankFile.open(QIODevice::WriteOnly);
@@ -736,8 +811,9 @@ ui->label_4->setStyleSheet("color:yellow;");
             if(pace==1)//第二步，接收服务器发来的文件名和文件大小，并且将其分别放至filename和filesize中
 
             {
-                 tempbyte=mysocket->readAll();
+                tempbyte=mysocket->readAll();
                 tempstr3=QString(tempbyte);
+                qDebug()<<tempstr3;
                 QStringList list=tempstr3.split('#');
                 filesize=list[1].toInt();
                 //接收包头，处理包头，
@@ -928,6 +1004,8 @@ ui->label_4->setStyleSheet("color:yellow;");
             pace++;
             if(pace==3)
             {
+                wait->close();
+                delete wait;
                 pace=0;
                 filesize=0;
                 receivesize=0;
@@ -935,9 +1013,11 @@ ui->label_4->setStyleSheet("color:yellow;");
         });
         }
         else
-        {
-            QMessageBox::information(NULL,"服务器连接","服务器连接失败/(ㄒoㄒ)/~~，请稍后再试！！");
-        }
+           {   mysocket->deleteLater();
+            wait->close();
+            delete wait;
+             QMessageBox::information(NULL,"服务器连接","服务器连接失败/(ㄒoㄒ)/~~，请稍后再试！！");
+           }
         //这部分会先于数据接收执行，原因未知
 
         /*QLabel* image=new QLabel(this);
